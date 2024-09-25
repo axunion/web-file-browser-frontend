@@ -1,17 +1,18 @@
 import { useState, useEffect } from "react";
 import FileItem, { type File } from "../components/FileItem";
 
+const data = [
+  { id: 1, name: "ドキュメント", type: "folder" },
+  { id: 2, name: "動画.mp4", type: "video" },
+  { id: 3, name: "写真.jpg", type: "image" },
+  { id: 4, name: "メモ.txt", type: "text" },
+];
+
 function Index() {
   const [files, setFiles] = useState<File[]>([]);
 
   useEffect(() => {
-    const data = [
-      { id: 1, name: "ドキュメント", type: "folder" },
-      { id: 2, name: "レポート.pdf", type: "pdf" },
-      { id: 3, name: "写真.jpg", type: "image" },
-      { id: 4, name: "メモ.txt", type: "text" },
-    ];
-    setFiles(data);
+    setFiles(data as File[]);
   }, []);
 
   return (
