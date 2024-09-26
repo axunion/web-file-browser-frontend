@@ -1,28 +1,27 @@
 export type File = {
-  id: number;
   name: string;
-  type: "folder" | "video" | "image" | "text";
+  type: "folder" | "video" | "audio" | "image" | "text";
+};
+
+const iconClasses = {
+  folder: "i-flat-color-icons-folder",
+  video: "i-flat-color-icons-video-file",
+  audio: "i-flat-color-icons-audio-file",
+  image: "i-flat-color-icons-image-file",
+  text: "i-flat-color-icons-file",
 };
 
 function FileItem({ file }: { file: File }) {
   const renderIcon = () => {
-    switch (file.type) {
-      case "folder":
-        return <div className="w-16 h-16 i-mdi-folder"></div>;
-      case "video":
-        return <div className="w-16 h-16 i-mdi-file-video"></div>;
-      case "image":
-        return <div className="w-16 h-16 i-mdi-file-image"></div>;
-      default:
-        return <div className="w-16 h-16 i-mdi-file-document"></div>;
-    }
+    const iconClass = iconClasses[file.type] || null;
+    return iconClass ? <div className={`w-18 h-18 ${iconClass}`}></div> : null;
   };
 
   return (
-    <div className="py-4 flex flex-col items-center">
+    <button className="py-5 flex flex-col items-center">
       {renderIcon()}
       <p className="mt-2 text-center text-sm break-all">{file.name}</p>
-    </div>
+    </button>
   );
 }
 
