@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import FileItem, { type File } from "../components/FileItem";
+import FileItem, { type File } from "@/components/FileItem";
 
 const data = [
   { name: "ドキュメント", type: "folder" },
@@ -9,7 +9,7 @@ const data = [
   { name: "メモ.txt", type: "text" },
 ];
 
-function Index() {
+const Index = () => {
   const [files, setFiles] = useState<File[]>([]);
 
   useEffect(() => {
@@ -23,6 +23,6 @@ function Index() {
       ))}
     </div>
   );
-}
+};
 
 export default Index;

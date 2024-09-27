@@ -1,7 +1,7 @@
-import Header from "./components/Header";
-import Index from "./pages/Index";
+import Header from "@/components/Header";
+import Index from "@/pages/Index";
 
-function App() {
+const App = () => {
   return (
     <div className="flex flex-col min-h-screen bg-amber-50 text-amber-900">
       <Header />
@@ -11,6 +11,6 @@ function App() {
       </main>
     </div>
   );
-}
+};
 
 export default App;

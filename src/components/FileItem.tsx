@@ -3,6 +3,10 @@ export type File = {
   type: "folder" | "video" | "audio" | "image" | "text";
 };
 
+export type FileItemProps = {
+  file: File;
+};
+
 const iconClasses = {
   folder: "i-flat-color-icons-folder",
   video: "i-flat-color-icons-video-file",
@@ -11,7 +15,7 @@ const iconClasses = {
   text: "i-flat-color-icons-file",
 };
 
-function FileItem({ file }: { file: File }) {
+const FileItem = ({ file }: FileItemProps) => {
   const renderIcon = () => {
     const iconClass = iconClasses[file.type] || null;
     return iconClass ? <div className={`w-18 h-18 ${iconClass}`}></div> : null;
@@ -23,6 +27,6 @@ function FileItem({ file }: { file: File }) {
       <p className="mt-2 text-center text-sm break-all">{file.name}</p>
     </button>
   );
-}
+};
 
 export default FileItem;
