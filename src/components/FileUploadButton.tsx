@@ -1,8 +1,8 @@
 import { ChangeEvent } from "react";
 
-interface FileUploadButtonProps {
+export type FileUploadButtonProps = {
   onFilesSelected?: (files: File[]) => void;
-}
+};
 
 const FileUploadButton = ({ onFilesSelected }: FileUploadButtonProps) => {
   const handleFileChange = (event: ChangeEvent) => {
