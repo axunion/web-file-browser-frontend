@@ -1,9 +1,18 @@
 import DirectorySvg from "@/assets/DirectorySvg";
 import FileUploadButton from "@/components/FileUploadButton";
+import { useModal } from "@/hooks/modalContext";
 
 const Header = () => {
+  const { showModal } = useModal();
+
   const handleFileChange = (files: File[]): void => {
     console.log(files);
+
+    showModal(
+      <div>
+        <p>ファイル名：{files[0].name}</p>
+      </div>
+    );
   };
 
   return (
