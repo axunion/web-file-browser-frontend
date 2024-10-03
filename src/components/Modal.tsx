@@ -14,9 +14,9 @@ const Modal = ({ isOpen, onClose, children }: ModalProps) => {
         onClick={onClose}
       ></div>
 
-      <div className="relative bg-white p-6 rounded shadow-lg z-10">
+      <div className="relative w-4/5 max-w-xs max-h-full p-6 rounded bg-amber-50 shadow-lg z-10">
         <button
-          className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
+          className="absolute top-2 right-2 text-amber-900"
           onClick={onClose}
         >
           &times;
