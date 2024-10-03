@@ -1,10 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { ModalContext } from "@/hooks/modalContext";
 import Modal from "@/components/Modal";
 
-const ModalProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+const ModalProvider = ({ children }: { children: React.ReactNode }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [modalContent, setModalContent] = useState<React.ReactNode>(null);
 

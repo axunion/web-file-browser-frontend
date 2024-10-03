@@ -13,7 +13,7 @@ export const useModal = () => {
   const context = useContext(ModalContext);
 
   if (!context) {
-    throw new Error("useModal は ModalProvider 内で使用してください。");
+    throw new Error("useModal must be used within a ModalProvider.");
   }
 
   return context;

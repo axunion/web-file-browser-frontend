@@ -10,7 +10,10 @@ const Header = () => {
 
     showModal(
       <div>
-        <p>ファイル名：{files[0].name}</p>
+        <p>
+          <strong>ファイルアップロード</strong>
+        </p>
+        <p className="mt-2 text-sm">{files[0].name}</p>
       </div>
     );
   };
