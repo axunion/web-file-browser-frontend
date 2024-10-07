@@ -1,3 +1,5 @@
+import "@/App.css";
+
 export type ModalProps = {
   isOpen: boolean;
   onClose: () => void;
@@ -13,7 +15,7 @@ const Modal = ({ isOpen, onClose, children }: ModalProps) => {
 
   return (
     <div
-      className="fixed inset-0 bg-[#00000080] flex items-center justify-center z-50"
+      className={`fade-in fixed inset-0 bg-[#00000080] flex items-center justify-center z-50`}
       onClick={onClose}
     >
       <div
