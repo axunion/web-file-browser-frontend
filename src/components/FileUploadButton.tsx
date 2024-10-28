@@ -5,13 +5,10 @@ export type FileUploadButtonProps = {
 };
 
 const FileUploadButton = ({ onFilesSelected }: FileUploadButtonProps) => {
-  const handleFileChange = (event: ChangeEvent) => {
-    const input = event.target as HTMLInputElement;
-    const files = input.files ? Array.from(input.files) : [];
-
-    if (onFilesSelected) {
-      onFilesSelected(files);
-    }
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files ? Array.from(event.target.files) : [];
+    onFilesSelected?.(files);
+    event.target.value = "";
   };
 
   return (
@@ -21,8 +18,12 @@ const FileUploadButton = ({ onFilesSelected }: FileUploadButtonProps) => {
         className="hidden"
         multiple
         onChange={handleFileChange}
+        aria-label="Upload files"
       />
-      <div className="i-mdi-cloud-upload-outline w-6 h-6"></div>
+      <div
+        className="i-mdi-cloud-upload-outline w-6 h-6"
+        aria-hidden="true"
+      ></div>
     </label>
   );
 };
