@@ -33,13 +33,13 @@ const Modal = ({ isOpen, onClose, children }: ModalProps) => {
 
   return (
     <div
+      role="dialog"
+      aria-labelledby="modal-title"
+      aria-describedby="modal-description"
       className={`fixed inset-0 bg-[#00000080] flex items-center justify-center z-50 ${
         isOpen ? "fade-in" : "fade-out"
       }`}
       onClick={onClose}
-      role="dialog"
-      aria-labelledby="modal-title"
-      aria-describedby="modal-description"
     >
       <div
         className="relative w-4/5 max-w-xs max-h-80vh p-5 rounded bg-amber-50 shadow-lg z-10"

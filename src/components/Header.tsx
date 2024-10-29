@@ -1,27 +1,7 @@
 import { useCallback } from "react";
-import Button from "@/components/Button";
 import FileUploadButton from "@/components/FileUploadButton";
+import FileUploadModalContent from "@/components/FileUploadModalContent";
 import { useModal } from "@/hooks/modalContext";
-
-export type UploadModalContentProps = {
-  files: File[];
-  onUpload: () => void;
-};
-
-const UploadModalContent = ({ files, onUpload }: UploadModalContentProps) => (
-  <div>
-    <h2 className="flex gap-2 items-center">
-      <span className="i-flat-color-icons-upload w-6 h-6"></span>
-      <span className="text-xl">Upload</span>
-    </h2>
-
-    <p className="my-8 text-sm">{files[0].name}</p>
-
-    <Button size="large" className="w-full text-center" onClick={onUpload}>
-      OK
-    </Button>
-  </div>
-);
 
 const Header = () => {
   const { showModal, hideModal } = useModal();
@@ -42,7 +22,7 @@ const Header = () => {
       }
 
       showModal(
-        <UploadModalContent files={files} onUpload={() => upload(files)} />
+        <FileUploadModalContent files={files} onUpload={() => upload(files)} />
       );
     },
     [showModal, upload]

@@ -5,7 +5,6 @@ export type File = {
 
 export type FileItemProps = {
   file: File;
-  onClick?: (file: File) => void;
 };
 
 const iconClasses = {
@@ -16,20 +15,18 @@ const iconClasses = {
   text: "i-flat-color-icons-file",
 };
 
-const FileItem = ({ file, onClick }: FileItemProps) => {
+const FileItem = ({ file }: FileItemProps) => {
   const iconClass = iconClasses[file.type] || null;
 
   const handleClick = () => {
-    if (onClick) {
-      onClick(file);
-    }
+    console.log(file);
   };
 
   return (
     <button
+      aria-label={`File type is ${file.type}`}
       className="py-5 flex flex-col items-center"
       onClick={handleClick}
-      aria-label={`File type is ${file.type}`}
     >
       {iconClass && (
         <div className={`w-16 h-16 ${iconClass}`} aria-hidden="true"></div>

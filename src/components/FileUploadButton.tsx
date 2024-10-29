@@ -15,10 +15,10 @@ const FileUploadButton = ({ onFilesSelected }: FileUploadButtonProps) => {
     <label className="cursor-pointer text-teal-200">
       <input
         type="file"
+        aria-label="Upload files"
         className="hidden"
         multiple
         onChange={handleFileChange}
-        aria-label="Upload files"
       />
       <div
         className="i-mdi-cloud-upload-outline w-6 h-6"
