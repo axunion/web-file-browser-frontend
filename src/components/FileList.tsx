@@ -9,7 +9,7 @@ const data: File[] = [
   { name: "メモ.txt", type: "text" },
 ];
 
-const Index = () => {
+const FileList = () => {
   const [files] = useState<File[]>(data);
 
   const gridClasses =
@@ -24,4 +24,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default FileList;

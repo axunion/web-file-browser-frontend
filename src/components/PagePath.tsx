@@ -14,7 +14,7 @@ const PagePath = ({ paths }: PagePathProps) => {
   );
 
   return (
-    <nav className="px-5 py-3 flex" aria-label="Breadcrumb">
+    <nav aria-label="Breadcrumb" className="px-5 py-3 flex">
       <ol className="inline-flex items-center">
         {paths.map((path, index) => (
           <li key={path} className="inline-flex items-center">

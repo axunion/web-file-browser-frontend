@@ -1,7 +1,7 @@
+import FileList from "@/components/FileList";
 import Header from "@/components/Header";
 import PagePath from "@/components/PagePath";
 import ModalProvider from "@/contexts/ModalProvider";
-import Index from "@/pages/Index";
 
 const App = () => {
   return (
@@ -11,7 +11,7 @@ const App = () => {
         <PagePath paths={["1", "2"]} />
 
         <main className="flex-grow container mx-auto p-4">
-          <Index />
+          <FileList />
         </main>
       </div>
     </ModalProvider>
