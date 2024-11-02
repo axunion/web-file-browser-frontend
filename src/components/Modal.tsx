@@ -1,5 +1,4 @@
 import { useCallback, useEffect } from "react";
-import "@/App.css";
 
 export type ModalProps = {
   isOpen: boolean;
