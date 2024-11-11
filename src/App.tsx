@@ -10,7 +10,7 @@ const App = () => {
 
   return (
     <ModalProvider>
-      <div className="flex flex-col min-h-screen bg-amber-50 text-amber-900">
+      <div className="viewport flex flex-col min-h-screen">
         <Header />
         <PagePath paths={paths} />
 
