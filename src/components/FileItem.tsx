@@ -25,15 +25,13 @@ const FileItem = ({ file }: FileItemProps) => {
   return (
     <button
       aria-label={`File type is ${file.type}`}
-      className="py-5 flex flex-col items-center"
+      className="text-shadow-light max-w-full mx-auto flex flex-col items-center justify-center p-2"
       onClick={handleClick}
     >
       {iconClass && (
-        <div className={`w-16 h-16 ${iconClass}`} aria-hidden="true"></div>
+        <span className={`w-16 h-16 ${iconClass}`} aria-hidden="true"></span>
       )}
-      <p className="mt-2 text-center text-sm break-all truncate w-full">
-        {file.name}
-      </p>
+      <span className=" mt-2 text-xs text-left line-clamp-2">{file.name}</span>
     </button>
   );
 };

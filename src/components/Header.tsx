@@ -29,10 +29,10 @@ const Header = () => {
   );
 
   return (
-    <header className="flex justify-between px-5 py-3 bg-amber-900 text-amber-50 shadow-md">
-      <h1 className="text-lg tracking-wider">
-        <span className="i-flat-color-icons-folder w-6 h-6 mr-2 inline-block align-text-bottom"></span>
-        Web File Browser
+    <header className="flex justify-between p-4">
+      <h1 className="flex items-center gap-2 text-xl tracking-wider">
+        <span className="i-flat-color-icons-folder w-8 h-8"></span>
+        <span>Web File Browser</span>
       </h1>
 
       <FileUploadButton onFilesSelected={handleFileChange} />

@@ -12,7 +12,7 @@ const FileUploadButton = ({ onFilesSelected }: FileUploadButtonProps) => {
   };
 
   return (
-    <label className="cursor-pointer text-teal-200">
+    <label className="cursor-pointer text-[--accent-color]">
       <input
         type="file"
         aria-label="Upload files"
@@ -21,7 +21,7 @@ const FileUploadButton = ({ onFilesSelected }: FileUploadButtonProps) => {
         onChange={handleFileChange}
       />
       <div
-        className="i-mdi-cloud-upload-outline w-6 h-6"
+        className="i-mdi-cloud-upload-outline w-8 h-8"
         aria-hidden="true"
       ></div>
     </label>
