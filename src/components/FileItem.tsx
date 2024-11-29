@@ -1,14 +1,12 @@
-export type File = {
-  name: string;
-  type: "folder" | "video" | "audio" | "image" | "text";
-};
+import type { DirectoryItem } from "@/types/api";
 
 export type FileItemProps = {
-  file: File;
+  file: DirectoryItem;
 };
 
 const iconClasses = {
-  folder: "i-flat-color-icons-folder",
+  file: "i-flat-color-icons-file",
+  directory: "i-flat-color-icons-folder",
   video: "i-flat-color-icons-video-file",
   audio: "i-flat-color-icons-audio-file",
   image: "i-flat-color-icons-image-file",
@@ -25,7 +23,7 @@ const FileItem = ({ file }: FileItemProps) => {
   return (
     <button
       aria-label={`File type is ${file.type}`}
-      className="text-shadow-light max-w-full mx-auto flex flex-col items-center justify-center p-2"
+      className="max-w-full mx-auto flex flex-col items-center justify-center p-2"
       onClick={handleClick}
     >
       {iconClass && (

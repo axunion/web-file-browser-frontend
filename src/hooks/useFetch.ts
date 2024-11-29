@@ -43,7 +43,7 @@ const useFetch = <T>(
 
         // const json = await response.json();
         const json = [
-          { name: "ドキュメント", type: "folder" },
+          { name: "ドキュメント", type: "directory" },
           { name: "動画.mp4", type: "video" },
           { name: "音声.m4a", type: "audio" },
           { name: "写真.jpg", type: "image" },

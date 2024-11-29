@@ -13,12 +13,19 @@ const PagePath = ({ paths }: PagePathProps) => {
     [paths]
   );
 
+  const separator = () => (
+    <span className="i-mdi:slash-forward inline-block"></span>
+  );
+
   return (
     <nav aria-label="Breadcrumb" className="flex px-4">
       <ol className="inline-flex items-center opacity-80">
+        <li className="inline-flex items-center">{separator()}</li>
+
         {paths.map((path, index) => (
           <li key={path} className="inline-flex items-center">
-            <span className="i-mdi:slash-forward inline-block"></span>
+            {index === 0 ? null : separator()}
+
             <button
               className="text-sm font-medium"
               onClick={() => clickPath(index)}

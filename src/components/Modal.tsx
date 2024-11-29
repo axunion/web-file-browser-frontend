@@ -41,11 +41,11 @@ const Modal = ({ isOpen, onClose, children }: ModalProps) => {
       onClick={onClose}
     >
       <div
-        className="relative w-4/5 max-w-xs max-h-80vh p-5 rounded bg-amber-50 shadow-lg z-10"
+        className="relative w-4/5 max-w-xs max-h-80vh p-5 rounded bg-[--background-color] shadow-lg z-10"
         onClick={stopPropagation}
       >
         <button
-          className="absolute top-3 right-3 text-amber-900"
+          className="absolute top-3 right-3 text-[--accent-color]"
           onClick={onClose}
           aria-label="Close Modal"
         >

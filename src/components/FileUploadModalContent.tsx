@@ -21,7 +21,7 @@ const FileUploadModalContent = ({
 
       <button
         aria-label="Button"
-        className={`bg-amber-700 w-full py-2 text-center text-xl text-white ${baseClasses}`}
+        className={`bg-[--primary-color] w-full py-2 text-center text-xl text-[--background-color] ${baseClasses}`}
         onClick={onUpload}
       >
         OK
