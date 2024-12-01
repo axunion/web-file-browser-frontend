@@ -1,5 +1,5 @@
 export type DirectoryItem = {
-  type: "file" | "directory" | "video" | "audio" | "image" | "text";
+  type: "file" | "directory";
   name: string;
   size?: number;
 };

@@ -1,19 +1,23 @@
-import type { DirectoryItem } from "@/types/api";
+import type { ApiResponse } from "@/types/api";
 import FileItem from "@/components/FileItem";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import useFetch from "@/hooks/useFetch";
+import useHash from "@/hooks/useHash";
 
 const FileList = () => {
-  const { data } = useFetch<DirectoryItem[]>("");
+  const [hash] = useHash();
+  const baseUrl = import.meta.env.VITE_ENDPOINT_LIST;
+  const params = hash ? { path: hash.slice(1) } : undefined;
+  const { response, error, loading } = useFetch<ApiResponse>(baseUrl, params);
 
   const gridClasses =
     "grid gap-x-2 gap-y-4 grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10";
 
-  return !data || data.length === 0 ? (
+  return loading || error || !response || !response.list ? (
     <LoadingSpinner />
   ) : (
     <div className={`fade-in ${gridClasses}`}>
-      {data.map((file, index) => (
+      {response.list.map((file, index) => (
         <div key={`${file.name}-${index}`}>
           <FileItem file={file} />
         </div>
