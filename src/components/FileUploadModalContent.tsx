@@ -1,10 +1,10 @@
 export type FileUploadModalContentProps = {
-  files: File[];
+  file: File;
   onUpload: () => void;
 };
 
 const FileUploadModalContent = ({
-  files,
+  file,
   onUpload,
 }: FileUploadModalContentProps) => {
   const baseClasses =
@@ -17,7 +17,7 @@ const FileUploadModalContent = ({
         <span className="text-xl">Upload</span>
       </h2>
 
-      <p className="my-8 text-sm">{files[0].name}</p>
+      <p className="my-8 text-sm">{file.name}</p>
 
       <button
         aria-label="Button"
