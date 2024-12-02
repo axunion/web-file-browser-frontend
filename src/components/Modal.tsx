@@ -1,4 +1,5 @@
 import { useCallback, useEffect } from "react";
+import { createPortal } from "react-dom";
 
 export type ModalProps = {
   isOpen: boolean;
@@ -30,7 +31,7 @@ const Modal = ({ isOpen, onClose, children }: ModalProps) => {
     e.stopPropagation();
   };
 
-  return (
+  return createPortal(
     <div
       role="dialog"
       aria-labelledby="modal-title"
@@ -54,7 +55,8 @@ const Modal = ({ isOpen, onClose, children }: ModalProps) => {
 
         {children}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

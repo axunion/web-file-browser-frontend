@@ -1,42 +1,43 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import FileUploadButton from "@/components/FileUploadButton";
 import FileUploadModalContent from "@/components/FileUploadModalContent";
-import { useModal } from "@/hooks/modalContext";
+import Modal from "@/components/Modal";
 
 const Header = () => {
-  const { showModal, hideModal } = useModal();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [files, setFiles] = useState<File[]>([]);
 
-  const upload = useCallback(
-    (files: File[]) => {
-      console.log(files);
-      hideModal();
-    },
-    [hideModal]
-  );
+  const handleFileChange = (files: File[]): void => {
+    if (files.length === 0) {
+      console.error("No files selected");
+      return;
+    }
 
-  const handleFileChange = useCallback(
-    (files: File[]): void => {
-      if (files.length === 0) {
-        console.error("No files selected");
-        return;
-      }
+    setFiles(files);
+    setIsModalOpen(true);
+  };
 
-      showModal(
-        <FileUploadModalContent files={files} onUpload={() => upload(files)} />
-      );
-    },
-    [showModal, upload]
-  );
+  const upload = useCallback(() => {
+    console.log(files);
+    setFiles([]);
+    setIsModalOpen(false);
+  }, [files]);
 
   return (
-    <header className="flex justify-between p-4">
-      <h1 className="flex items-center gap-2 text-xl tracking-wider">
-        <span className="i-flat-color-icons-folder w-8 h-8"></span>
-        <span>Web File Browser</span>
-      </h1>
+    <>
+      <header className="flex justify-between p-4">
+        <h1 className="flex items-center gap-2 text-xl tracking-wider">
+          <span className="i-flat-color-icons-folder w-8 h-8"></span>
+          <span>Web File Browser</span>
+        </h1>
 
-      <FileUploadButton onFilesSelected={handleFileChange} />
-    </header>
+        <FileUploadButton onFilesSelected={handleFileChange} />
+      </header>
+
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <FileUploadModalContent file={files[0]} onUpload={upload} />
+      </Modal>
+    </>
   );
 };
 
