@@ -1,13 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
-type Params = Record<string, string | number | boolean>;
+type Params = Record<string, string | number | boolean | null | undefined>;
 type FetchState<T> = {
   response: T | null;
   error: Error | null;
   loading: boolean;
 };
 
-const useFetch = <T>(
+const useFetch = <T = unknown>(
   baseUrl: string,
   params?: Params,
   options?: RequestInit
@@ -18,12 +18,17 @@ const useFetch = <T>(
     loading: true,
   });
 
+  const memoizedParams = useMemo(() => params, [params]);
+  const memoizedOptions = useMemo(() => options, [options]);
+
   useEffect(() => {
     const url = new URL(baseUrl);
 
-    if (params) {
-      Object.entries(params).forEach(([key, value]) => {
-        url.searchParams.append(key, String(value));
+    if (memoizedParams) {
+      Object.entries(memoizedParams).forEach(([key, value]) => {
+        if (value !== null && value !== undefined) {
+          url.searchParams.append(key, String(value));
+        }
       });
     }
 
@@ -33,7 +38,10 @@ const useFetch = <T>(
     const fetchData = async () => {
       try {
         setState((prev) => ({ ...prev, loading: true }));
-        const response = await fetch(url.toString(), { ...options, signal });
+        const response = await fetch(url.toString(), {
+          ...memoizedOptions,
+          signal,
+        });
 
         if (!response.ok) {
           throw new Error(
@@ -41,15 +49,7 @@ const useFetch = <T>(
           );
         }
 
-        // const json = [
-        //   { name: "ドキュメント", type: "directory" },
-        //   { name: "動画.mp4", type: "video" },
-        //   { name: "音声.m4a", type: "audio" },
-        //   { name: "写真.jpg", type: "image" },
-        //   { name: "メモ.txt", type: "text" },
-        // ] as T;
         const json = await response.json();
-        await new Promise((resolve) => setTimeout(resolve, 500));
 
         setState({
           response: json,
@@ -75,7 +75,7 @@ const useFetch = <T>(
     return () => {
       controller.abort();
     };
-  }, [baseUrl, options, params]);
+  }, [baseUrl, memoizedOptions, memoizedParams]);
 
   return state;
 };
