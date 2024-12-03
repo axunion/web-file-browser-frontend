@@ -4,17 +4,47 @@ export type FileItemProps = {
   file: DirectoryItem;
 };
 
+type FileType = "directory" | "file" | "video" | "audio" | "image" | "text";
+
 const iconClasses = {
-  file: "i-flat-color-icons-file",
   directory: "i-flat-color-icons-folder",
+  file: "i-flat-color-icons-file",
   video: "i-flat-color-icons-video-file",
   audio: "i-flat-color-icons-audio-file",
   image: "i-flat-color-icons-image-file",
   text: "i-flat-color-icons-file",
 };
 
+const getFileType = (name: string): FileType => {
+  const extension = name.toLowerCase().split(".").pop() || "";
+  const videoExtensions = ["mp4", "mov", "avi", "wmv", "flv", "mkv", "webm"];
+  const audioExtensions = ["mp3", "wav", "aac", "ogg", "m4a", "wma"];
+  const imageExtensions = ["jpg", "jpeg", "png", "gif", "bmp", "webp", "svg"];
+  const textExtensions = ["txt", "doc", "docx", "pdf", "rtf", "md"];
+
+  if (videoExtensions.includes(extension)) {
+    return "video";
+  } else if (audioExtensions.includes(extension)) {
+    return "audio";
+  } else if (imageExtensions.includes(extension)) {
+    return "image";
+  } else if (textExtensions.includes(extension)) {
+    return "text";
+  }
+
+  return "file";
+};
+
 const FileItem = ({ file }: FileItemProps) => {
-  const iconClass = iconClasses[file.type] || null;
+  let fileType: FileType;
+
+  if (file.type === "directory") {
+    fileType = "directory";
+  } else {
+    fileType = getFileType(file.name);
+  }
+
+  const iconClass = iconClasses[fileType];
 
   const handleClick = () => {
     console.log(file);
