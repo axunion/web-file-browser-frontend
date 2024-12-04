@@ -13,18 +13,18 @@ const PagePath = ({ paths }: PagePathProps) => {
     [paths]
   );
 
-  const separator = () => (
-    <span className="i-mdi:slash-forward inline-block"></span>
-  );
-
   return (
-    <nav aria-label="Breadcrumb" className="flex px-4">
-      <ol className="inline-flex items-center opacity-80">
-        <li className="inline-flex items-center">{separator()}</li>
+    <nav aria-label="Breadcrumb" className="flex px-4 text-sm">
+      <ol className="flex items-center opacity-80 gap-2">
+        <li className="inline-flex items-center gap-1">
+          <span className="i-flat-color-icons:opened-folder w-4 h-4"></span>
+          <span>Home</span>
+        </li>
 
         {paths.map((path, index) => (
-          <li key={path} className="inline-flex items-center">
-            {index === 0 ? null : separator()}
+          <li key={path} className="inline-flex items-center gap-1">
+            <span className="i-mdi:keyboard-arrow-right w-3 h-3"></span>
+            <span className="i-flat-color-icons:opened-folder w-4 h-4"></span>
 
             <button
               className="text-sm font-medium"
