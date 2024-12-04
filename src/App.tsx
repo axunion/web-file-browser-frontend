@@ -1,8 +1,8 @@
 import type { ApiResponse } from "@/types/api";
+import Breadcrumb from "@/components/Breadcrumb";
 import FileList from "@/components/FileList";
 import Header from "@/components/Header";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import PagePath from "@/components/PagePath";
 import useFetch from "@/hooks/useFetch";
 import useHash from "@/hooks/useHash";
 
@@ -21,7 +21,7 @@ const App = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <PagePath paths={paths} />
+      <Breadcrumb paths={paths} />
       <main className="flex-grow container mx-auto p-6">
         <FileList list={response.list} />
       </main>
