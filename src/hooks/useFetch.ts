@@ -1,6 +1,6 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 
-type Params = Record<string, string | number | boolean | null | undefined>;
+type Params = Record<string, string>;
 type FetchState<T> = {
   response: T | null;
   error: Error | null;
@@ -18,16 +18,13 @@ const useFetch = <T = unknown>(
     loading: true,
   });
 
-  const memoizedParams = useMemo(() => params, [params]);
-  const memoizedOptions = useMemo(() => options, [options]);
-
   useEffect(() => {
     const url = new URL(baseUrl);
 
-    if (memoizedParams) {
-      Object.entries(memoizedParams).forEach(([key, value]) => {
-        if (value !== null && value !== undefined) {
-          url.searchParams.append(key, String(value));
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value) {
+          url.searchParams.append(key, value);
         }
       });
     }
@@ -39,7 +36,7 @@ const useFetch = <T = unknown>(
       try {
         setState((prev) => ({ ...prev, loading: true }));
         const response = await fetch(url.toString(), {
-          ...memoizedOptions,
+          ...options,
           signal,
         });
 
@@ -75,7 +72,7 @@ const useFetch = <T = unknown>(
     return () => {
       controller.abort();
     };
-  }, [baseUrl, memoizedOptions, memoizedParams]);
+  }, [baseUrl, params, options]);
 
   return state;
 };
