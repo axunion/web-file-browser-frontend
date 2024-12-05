@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import type { ApiResponse } from "@/types/api";
 import Breadcrumb from "@/components/Breadcrumb";
 import FileList from "@/components/FileList";
@@ -10,11 +11,13 @@ const App = () => {
   const [hash] = useHash();
   const baseUrl = import.meta.env.VITE_ENDPOINT_LIST;
   const path = hash && hash.slice(1);
-  const params = path ? { path } : undefined;
+  const memorizedParams = useMemo(() => (path ? { path } : undefined), [path]);
   const paths = path ? path.split("/").filter(Boolean) : [];
-  const { response, error, loading } = useFetch<ApiResponse>(baseUrl, params);
+  const { response, error, loading } = useFetch<ApiResponse>(
+    baseUrl,
+    memorizedParams
+  );
 
-  if (loading) return <LoadingSpinner />;
   if (error) return <div>エラーが発生しました。再試行してください。</div>;
   if (!response || !response.list) return <div>データが見つかりません。</div>;
 
@@ -22,8 +25,9 @@ const App = () => {
     <div className="flex flex-col min-h-screen">
       <Header />
       <Breadcrumb paths={paths} />
+
       <main className="flex-grow container mx-auto p-6">
-        <FileList list={response.list} />
+        {loading ? <LoadingSpinner /> : <FileList list={response.list} />}
       </main>
     </div>
   );
