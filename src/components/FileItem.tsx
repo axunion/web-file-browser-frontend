@@ -1,10 +1,9 @@
 import type { DirectoryItem } from "@/types/api";
+import { getFileType } from "@/utils/getFileType";
 
 export type FileItemProps = {
   file: DirectoryItem;
 };
-
-type FileType = "directory" | "file" | "video" | "audio" | "image" | "text";
 
 const iconClasses = {
   directory: "i-flat-color-icons-folder",
@@ -15,35 +14,9 @@ const iconClasses = {
   text: "i-flat-color-icons-file",
 };
 
-const getFileType = (name: string): FileType => {
-  const extension = name.toLowerCase().split(".").pop() || "";
-  const videoExtensions = ["mp4", "mov", "avi", "wmv", "flv", "mkv", "webm"];
-  const audioExtensions = ["mp3", "wav", "aac", "ogg", "m4a", "wma"];
-  const imageExtensions = ["jpg", "jpeg", "png", "gif", "bmp", "webp", "svg"];
-  const textExtensions = ["txt", "doc", "docx", "pdf", "rtf", "md"];
-
-  if (videoExtensions.includes(extension)) {
-    return "video";
-  } else if (audioExtensions.includes(extension)) {
-    return "audio";
-  } else if (imageExtensions.includes(extension)) {
-    return "image";
-  } else if (textExtensions.includes(extension)) {
-    return "text";
-  }
-
-  return "file";
-};
-
 const FileItem = ({ file }: FileItemProps) => {
-  let fileType: FileType;
-
-  if (file.type === "directory") {
-    fileType = "directory";
-  } else {
-    fileType = getFileType(file.name);
-  }
-
+  const fileType =
+    file.type === "directory" ? "directory" : getFileType(file.name);
   const iconClass = iconClasses[fileType];
 
   const handleClick = () => {
