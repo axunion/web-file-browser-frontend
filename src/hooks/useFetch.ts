@@ -35,10 +35,7 @@ const useFetch = <T = unknown>(
     const fetchData = async () => {
       try {
         setState((prev) => ({ ...prev, loading: true }));
-        const response = await fetch(url.toString(), {
-          ...options,
-          signal,
-        });
+        const response = await fetch(url.toString(), { ...options, signal });
 
         if (!response.ok) {
           throw new Error(

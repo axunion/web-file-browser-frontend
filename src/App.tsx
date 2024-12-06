@@ -1,14 +1,13 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { ApiResponse } from "@/types/api";
 import Breadcrumb from "@/components/Breadcrumb";
 import FileList from "@/components/FileList";
 import Header from "@/components/Header";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import useFetch from "@/hooks/useFetch";
-import useHash from "@/hooks/useHash";
 
 const App = () => {
-  const [hash] = useHash();
+  const [hash, setHash] = useState(() => window.location.hash ?? "");
   const baseUrl = import.meta.env.VITE_ENDPOINT_LIST;
   const path = hash && hash.slice(1);
   const memorizedParams = useMemo(() => (path ? { path } : undefined), [path]);
@@ -17,6 +16,12 @@ const App = () => {
     baseUrl,
     memorizedParams
   );
+
+  useEffect(() => {
+    const handleHashChange = () => setHash(window.location.hash);
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, []);
 
   if (error) return <div>エラーが発生しました。再試行してください。</div>;
   if (!response || !response.list) return <div>データが見つかりません。</div>;
