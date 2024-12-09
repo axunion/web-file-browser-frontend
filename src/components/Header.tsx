@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
+import FileUpload from "@/components/FileUpload";
 import FileUploadButton from "@/components/FileUploadButton";
-import FileUploadModalContent from "@/components/FileUploadModalContent";
 import Modal from "@/components/Modal";
 
 const Header = () => {
@@ -35,7 +35,7 @@ const Header = () => {
       </header>
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <FileUploadModalContent file={files[0]} onUpload={upload} />
+        <FileUpload file={files[0]} onUpload={upload} />
       </Modal>
     </>
   );
