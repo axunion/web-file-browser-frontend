@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import type { ApiResponse } from "@/types/api";
 import Breadcrumb from "@/components/Breadcrumb";
+import ErrorModal from "@/components/ErrorErrorModal";
 import FileList from "@/components/FileList";
 import Header from "@/components/Header";
 import LoadingSpinner from "@/components/LoadingSpinner";
@@ -23,17 +24,24 @@ const App = () => {
     return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);
 
-  if (error) return <div>エラーが発生しました。再試行してください。</div>;
-  if (!response || !response.list) return <div>データが見つかりません。</div>;
-
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
       <Breadcrumb paths={paths} />
 
       <main className="flex-grow container mx-auto p-6">
-        {loading ? <LoadingSpinner /> : <FileList list={response.list} />}
+        {loading ? (
+          <LoadingSpinner />
+        ) : !response?.list ? (
+          <div>データはありません</div>
+        ) : (
+          <FileList list={response.list} />
+        )}
       </main>
+
+      <ErrorModal isOpen={!!error} onClose={() => (window.location.href = "/")}>
+        エラーが発生しました。
+      </ErrorModal>
     </div>
   );
 };
