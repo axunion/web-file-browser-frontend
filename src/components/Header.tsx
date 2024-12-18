@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { Icon } from "@iconify/react";
 import FileUpload from "@/components/FileUpload";
 import FileUploadButton from "@/components/FileUploadButton";
 import Modal from "@/components/Modal";
@@ -27,7 +28,7 @@ const Header = () => {
     <>
       <header className="flex justify-between p-4">
         <h1 className="flex items-center gap-2 text-xl tracking-wider">
-          <span className="i-flat-color-icons-folder w-8 h-8"></span>
+          <Icon icon="flat-color-icons:folder" className="w-8 h-8" />
           <span>Web File Browser</span>
         </h1>
 

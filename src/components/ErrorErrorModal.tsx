@@ -1,3 +1,4 @@
+import { Icon } from "@iconify/react";
 import Modal from "@/components/Modal";
 
 export type ErrorProps = {
@@ -11,7 +12,7 @@ const ErrorModal = ({ isOpen, onClose, children }: ErrorProps) => {
     <Modal isOpen={isOpen} onClose={onClose}>
       <section>
         <div className="flex gap-2 items-center">
-          <span className="i-flat-color-icons-high-priority w-6 h-6"></span>
+          <Icon icon="flat-color-icons:high-priority" className="w-6 h-6" />
           <span className="text-xl">Error</span>
         </div>
 

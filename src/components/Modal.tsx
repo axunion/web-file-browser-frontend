@@ -1,5 +1,6 @@
 import { useCallback, useEffect } from "react";
 import { createPortal } from "react-dom";
+import { Icon } from "@iconify/react";
 
 export type ModalProps = {
   isOpen: boolean;
@@ -50,7 +51,7 @@ const Modal = ({ isOpen, onClose, children }: ModalProps) => {
           onClick={onClose}
           aria-label="Close Modal"
         >
-          <div className="i-mdi-close-thick w-6 h-6"></div>
+          <Icon icon="mdi:close-thick" className="w-6 h-6" />
         </button>
 
         {children}

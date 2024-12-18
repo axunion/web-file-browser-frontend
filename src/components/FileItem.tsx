@@ -1,3 +1,4 @@
+import { Icon } from "@iconify/react";
 import type { DirectoryItem } from "@/types/api";
 import { getFileType } from "@/utils/getFileType";
 
@@ -5,19 +6,19 @@ export type FileItemProps = {
   file: DirectoryItem;
 };
 
-const iconClasses = {
-  directory: "i-flat-color-icons-folder",
-  file: "i-flat-color-icons-file",
-  video: "i-flat-color-icons-video-file",
-  audio: "i-flat-color-icons-audio-file",
-  image: "i-flat-color-icons-image-file",
-  text: "i-flat-color-icons-file",
+const iconSize = "w-16 h-16";
+const icons = {
+  directory: <Icon icon="flat-color-icons:folder" className={iconSize} />,
+  file: <Icon icon="flat-color-icons:file" className={iconSize} />,
+  video: <Icon icon="flat-color-icons:video-file" className={iconSize} />,
+  audio: <Icon icon="flat-color-icons:audio-file" className={iconSize} />,
+  image: <Icon icon="flat-color-icons:image-file" className={iconSize} />,
+  text: <Icon icon="flat-color-icons:file" className={iconSize} />,
 };
 
 const FileItem = ({ file }: FileItemProps) => {
   const fileType =
     file.type === "directory" ? "directory" : getFileType(file.name);
-  const iconClass = iconClasses[fileType];
 
   const handleClick = () => {
     console.log(file);
@@ -29,9 +30,7 @@ const FileItem = ({ file }: FileItemProps) => {
       className="max-w-full mx-auto flex flex-col items-center justify-center p-2"
       onClick={handleClick}
     >
-      {iconClass && (
-        <span className={`w-16 h-16 ${iconClass}`} aria-hidden="true"></span>
-      )}
+      {icons[fileType]}
       <span className=" mt-2 text-xs text-left line-clamp-2">{file.name}</span>
     </button>
   );
