@@ -1,10 +1,17 @@
 import { useCallback } from "react";
+import { Icon } from "@iconify/react";
 
 export type PagePathProps = {
   paths: string[];
 };
 
 const PagePath = ({ paths }: PagePathProps) => {
+  const icon = (
+    <Icon icon="flat-color-icons:opened-folder" className="w-6 h-6" />
+  );
+  const separator = (
+    <Icon icon="mdi:keyboard-arrow-right" className="w-3 h-3" />
+  );
   const clickPath = useCallback(
     (index: number) => {
       const clickedPath = paths.slice(0, index + 1).join("/");
@@ -17,14 +24,14 @@ const PagePath = ({ paths }: PagePathProps) => {
     <nav aria-label="Breadcrumb" className="flex px-4 text-sm">
       <ol className="flex items-center opacity-80 gap-2">
         <li className="inline-flex items-center gap-1">
-          <span className="i-flat-color-icons:opened-folder w-4 h-4"></span>
+          {icon}
           <span>Home</span>
         </li>
 
         {paths.map((path, index) => (
           <li key={path} className="inline-flex items-center gap-1">
-            <span className="i-mdi:keyboard-arrow-right w-3 h-3"></span>
-            <span className="i-flat-color-icons:opened-folder w-4 h-4"></span>
+            {separator}
+            {icon}
 
             <button
               className="text-sm font-medium"

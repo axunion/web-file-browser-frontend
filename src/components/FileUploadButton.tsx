@@ -1,4 +1,5 @@
 import { ChangeEvent } from "react";
+import { Icon } from "@iconify/react";
 
 export type FileUploadButtonProps = {
   onFilesSelected: (files: File[]) => void;
@@ -23,10 +24,12 @@ const FileUploadButton = ({ onFilesSelected }: FileUploadButtonProps) => {
         className="hidden"
         onChange={handleFileChange}
       />
-      <div
-        className="i-mdi-cloud-upload-outline w-8 h-8"
+
+      <Icon
+        icon="mdi:cloud-upload-outline"
+        className="w-8 h-8"
         aria-hidden="true"
-      ></div>
+      />
     </label>
   );
 };
