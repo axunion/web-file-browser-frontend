@@ -6,11 +6,13 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "eslint .",
     "preview": "vite preview",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "validate": "npm run format:check && npm run lint",
+    "format": "biome format ./src",
+    "format:fix": "biome format --write ./src",
+    "lint": "biome lint ./src",
+    "lint:fix": "biome lint --write ./src",
+    "check": "biome check ./src",
+    "check:fix": "biome check --write ./src",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
@@ -19,23 +21,15 @@
     "swr": "^2.2.5"
   },
   "devDependencies": {
-    "@eslint/js": "^9.9.0",
-    "@iconify-json/flat-color-icons": "^1.2.0",
-    "@iconify-json/mdi": "^1.2.0",
+    "@biomejs/biome": "1.9.4",
     "@iconify/react": "^5.1.0",
     "@types/node": "^22.7.3",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react-swc": "^3.5.0",
-    "eslint": "^9.9.0",
-    "eslint-plugin-react-hooks": "^5.1.0-rc.0",
-    "eslint-plugin-react-refresh": "^0.4.9",
-    "globals": "^15.9.0",
-    "prettier": "3.3.3",
     "typescript": "^5.5.3",
-    "typescript-eslint": "^8.0.1",
     "unocss": "^0.62.4",
-    "vite": "^5.4.1"
+    "vite": "^5.4.11"
   },
   "volta": {
     "node": "22.12.0"
