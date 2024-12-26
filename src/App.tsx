@@ -3,20 +3,14 @@ import ErrorModal from "@/components/ErrorErrorModal";
 import FileList from "@/components/FileList";
 import Header from "@/components/Header";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import useFetch from "@/hooks/useFetch";
-import type { ApiResponse } from "@/types/api";
-import { useEffect, useMemo, useState } from "react";
+import useFileList from "@/hooks/useFileList";
+import { useEffect, useState } from "react";
 
 const App = () => {
 	const [hash, setHash] = useState(() => window.location.hash ?? "");
-	const baseUrl = import.meta.env.VITE_ENDPOINT_LIST;
 	const path = hash?.slice(1);
-	const memorizedParams = useMemo(() => (path ? { path } : undefined), [path]);
 	const paths = path ? path.split("/").filter(Boolean) : [];
-	const { response, error, loading } = useFetch<ApiResponse>(
-		baseUrl,
-		memorizedParams,
-	);
+	const { data, error, isLoading } = useFileList(path);
 	const redirectToRoot = () => {
 		window.location.href = "/";
 	};
@@ -33,12 +27,12 @@ const App = () => {
 			<Breadcrumb paths={paths} />
 
 			<main className="flex-grow container mx-auto p-6">
-				{loading ? (
+				{isLoading ? (
 					<LoadingSpinner />
-				) : !response?.list ? (
-					<div>データはありません</div>
+				) : data?.list ? (
+					<FileList list={data.list} />
 				) : (
-					<FileList list={response.list} />
+					<div>データはありません</div>
 				)}
 			</main>
 
