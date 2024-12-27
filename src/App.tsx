@@ -4,19 +4,18 @@ import FileList from "@/components/FileList";
 import Header from "@/components/Header";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import useFileList from "@/hooks/useFileList";
+import { type HashResult, getHash } from "@/utils/getHash";
 import { useEffect, useState } from "react";
 
 const App = () => {
-	const [hash, setHash] = useState(() => window.location.hash ?? "");
-	const path = hash?.slice(1);
-	const paths = path ? path.split("/").filter(Boolean) : [];
-	const { data, error, isLoading } = useFileList(path);
+	const [hashResult, setHashResult] = useState<HashResult>(getHash());
+	const { data, error, isLoading } = useFileList(hashResult.path);
 	const redirectToRoot = () => {
 		window.location.href = "/";
 	};
 
 	useEffect(() => {
-		const handleHashChange = () => setHash(window.location.hash);
+		const handleHashChange = () => setHashResult(getHash());
 		window.addEventListener("hashchange", handleHashChange);
 		return () => window.removeEventListener("hashchange", handleHashChange);
 	}, []);
@@ -24,7 +23,7 @@ const App = () => {
 	return (
 		<div className="flex flex-col min-h-screen">
 			<Header />
-			<Breadcrumb paths={paths} />
+			<Breadcrumb paths={hashResult.paths} />
 
 			<main className="flex-grow container mx-auto p-6">
 				{isLoading ? (
