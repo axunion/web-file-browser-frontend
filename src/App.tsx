@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 
 const App = () => {
 	const [hashResult, setHashResult] = useState<HashResult>(getHash());
-	const { data, error, isLoading } = useFileList(hashResult.path);
+	const { fileList, error, isLoading } = useFileList(hashResult.path);
 	const redirectToRoot = () => {
 		window.location.href = "/";
 	};
@@ -28,8 +28,8 @@ const App = () => {
 			<main className="flex-grow container mx-auto p-6">
 				{isLoading ? (
 					<LoadingSpinner />
-				) : data?.list ? (
-					<FileList list={data.list} />
+				) : fileList ? (
+					<FileList list={fileList} />
 				) : (
 					<div>データはありません</div>
 				)}
