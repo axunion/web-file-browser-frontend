@@ -4,21 +4,29 @@ import FileList from "@/components/FileList";
 import Header from "@/components/Header";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import useFileList from "@/hooks/useFileList";
-import { type HashResult, getHash } from "@/utils/getHash";
+import { getHash } from "@/utils/getHash";
 import { useEffect, useState } from "react";
 
 const App = () => {
-	const [hashResult, setHashResult] = useState<HashResult>(getHash());
-	const { fileList, error, isLoading } = useFileList(hashResult.path);
+	const [hashResult, setHashResult] = useState(getHash());
+	const { fileList, isLoading, error, fetchFileList } = useFileList(
+		hashResult.path,
+	);
+
 	const redirectToRoot = () => {
 		window.location.href = "/";
 	};
 
 	useEffect(() => {
-		const handleHashChange = () => setHashResult(getHash());
+		const handleHashChange = () => {
+			const hashResult = getHash();
+			setHashResult(hashResult);
+			fetchFileList(hashResult.path);
+		};
+
 		window.addEventListener("hashchange", handleHashChange);
 		return () => window.removeEventListener("hashchange", handleHashChange);
-	}, []);
+	}, [fetchFileList]);
 
 	return (
 		<div className="flex flex-col min-h-screen">
