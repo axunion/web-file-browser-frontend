@@ -1,24 +1,39 @@
 import type { DirectoryItem, ApiResponse } from "@/types/api";
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
+import { useState, useEffect, useCallback } from "react";
 
 type Fetcher = (...args: [RequestInfo, RequestInit?]) => Promise<ApiResponse>;
-type UseFileList = {
-	fileList?: DirectoryItem[];
-	error?: Error;
-	isLoading: boolean;
-};
 
-const endpoint: string = import.meta.env.VITE_ENDPOINT_LIST;
+const endpoint: string = import.meta.env.VITE_ENDPOINT_LIST ?? "";
 const fetcher: Fetcher = (...args) => fetch(...args).then((res) => res.json());
+const buildPath = (path: string) => endpoint + (path ? `?path=${path}` : "");
 
-const useFileList = (path: string): UseFileList => {
-	const key = `${endpoint}${path}`;
-	const { data, error, isLoading } = useSWR<ApiResponse, Error>(key, fetcher);
+const useFileList = (initPath: string) => {
+	const [path, setPath] = useState(initPath);
+	const [fileList, setFileList] = useState<DirectoryItem[]>([]);
+
+	const memoizedFetcher = useCallback(fetcher, []);
+	const { data, error, isValidating } = useSWR<ApiResponse>(
+		buildPath(path),
+		memoizedFetcher,
+	);
+
+	useEffect(() => {
+		if (Array.isArray(data?.list)) {
+			setFileList(data.list);
+		}
+	}, [data]);
+
+	const fetchFileList = useCallback((newPath: string) => {
+		setPath(newPath);
+		mutate(buildPath(newPath));
+	}, []);
 
 	return {
-		fileList: data?.list,
+		fileList,
+		isLoading: isValidating,
 		error,
-		isLoading,
+		fetchFileList,
 	};
 };
 
