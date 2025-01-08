@@ -1,6 +1,6 @@
-import type { DirectoryItem, ApiResponse } from "@/types/api";
+import type { ApiResponse, DirectoryItem } from "@/types/api";
+import { useCallback, useEffect, useState } from "react";
 import useSWR, { mutate } from "swr";
-import { useState, useEffect, useCallback } from "react";
 
 type Fetcher = (...args: [RequestInfo, RequestInit?]) => Promise<ApiResponse>;
 
