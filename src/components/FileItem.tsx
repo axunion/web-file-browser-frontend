@@ -1,5 +1,6 @@
 import type { DirectoryItem } from "@/types/api";
-import { getFileType } from "@/utils/getFileType";
+import { getFileType } from "@/utils/fileType";
+import { appendPath } from "@/utils/path";
 import { Icon } from "@iconify/react";
 
 export type FileItemProps = {
@@ -21,7 +22,9 @@ const FileItem = ({ file }: FileItemProps) => {
 		file.type === "directory" ? "directory" : getFileType(file.name);
 
 	const handleClick = () => {
-		console.log(file);
+		if (file.type === "directory") {
+			appendPath(file.name);
+		}
 	};
 
 	return (
