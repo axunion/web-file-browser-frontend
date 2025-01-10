@@ -4,22 +4,18 @@ import FileList from "@/components/FileList";
 import Header from "@/components/Header";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import useFileList from "@/hooks/useFileList";
-import { getHash } from "@/utils/getHash";
+import { getPath, resetPath } from "@/utils/path";
 import { useEffect, useState } from "react";
 
 const App = () => {
-	const [hashResult, setHashResult] = useState(getHash());
+	const [hashResult, setHashResult] = useState(getPath());
 	const { fileList, isLoading, error, fetchFileList } = useFileList(
 		hashResult.path,
 	);
 
-	const redirectToRoot = () => {
-		window.location.href = "/";
-	};
-
 	useEffect(() => {
 		const handleHashChange = () => {
-			const hashResult = getHash();
+			const hashResult = getPath();
 			setHashResult(hashResult);
 			fetchFileList(hashResult.path);
 		};
@@ -43,7 +39,7 @@ const App = () => {
 				)}
 			</main>
 
-			<ErrorModal isOpen={!!error} onClose={redirectToRoot}>
+			<ErrorModal isOpen={!!error} onClose={resetPath}>
 				エラーが発生しました。
 			</ErrorModal>
 		</div>
