@@ -1,8 +1,10 @@
-import type { ApiResponse, DirectoryItem } from "@/types/api";
+import type { DirectoryItem, FileListResponse } from "@/types/api";
 import { useCallback, useEffect, useState } from "react";
 import useSWR, { mutate } from "swr";
 
-type Fetcher = (...args: [RequestInfo, RequestInit?]) => Promise<ApiResponse>;
+type Fetcher = (
+	...args: [RequestInfo, RequestInit?]
+) => Promise<FileListResponse>;
 
 const endpoint: string = import.meta.env.VITE_ENDPOINT_LIST ?? "";
 const fetcher: Fetcher = (...args) => fetch(...args).then((res) => res.json());
@@ -13,13 +15,13 @@ const useFileList = (initPath: string) => {
 	const [fileList, setFileList] = useState<DirectoryItem[]>([]);
 
 	const memoizedFetcher = useCallback(fetcher, []);
-	const { data, error, isValidating } = useSWR<ApiResponse>(
+	const { data, error, isValidating } = useSWR<FileListResponse>(
 		buildPath(path),
 		memoizedFetcher,
 	);
 
 	useEffect(() => {
-		if (Array.isArray(data?.list)) {
+		if (data?.status === "success") {
 			setFileList(data.list);
 		}
 	}, [data]);
