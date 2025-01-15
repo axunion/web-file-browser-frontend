@@ -1,5 +1,5 @@
 import Breadcrumb from "@/components/Breadcrumb";
-import ErrorModal from "@/components/ErrorErrorModal";
+import ErrorModal from "@/components/ErrorModal";
 import FileList from "@/components/FileList";
 import Header from "@/components/Header";
 import LoadingSpinner from "@/components/LoadingSpinner";

@@ -34,17 +34,19 @@ const Modal = ({ isOpen, onClose, children }: ModalProps) => {
 
 	return createPortal(
 		<div
-			className={`fixed inset-0 bg-[#00000080] flex items-center justify-center z-50 ${
+			className={`fixed inset-0 bg-[#00000080] flex items-center justify-center z-10 ${
 				isOpen ? "fade-in" : "fade-out"
 			}`}
 			onClick={() => {}}
 			onKeyDown={onClose}
 		>
 			<div
-				className="relative w-4/5 max-w-xs max-h-80vh p-5 rounded bg-[--background-color] shadow-lg z-10"
+				className="relative w-4/5 max-w-xs max-h-80vh p-5 rounded bg-[--background-color] shadow-lg"
 				onClick={() => {}}
 				onKeyDown={stopPropagation}
 			>
+				{children}
+
 				<button
 					type="button"
 					className="absolute top-3 right-3 text-[--accent-color]"
@@ -53,8 +55,6 @@ const Modal = ({ isOpen, onClose, children }: ModalProps) => {
 				>
 					<Icon icon="mdi:close-thick" className="w-6 h-6" />
 				</button>
-
-				{children}
 			</div>
 		</div>,
 		document.body,
