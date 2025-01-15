@@ -1,10 +1,9 @@
 import type { UploadFileResponse } from "@/types/api";
-import { useState, useCallback } from "react";
+import { useCallback, useState } from "react";
 
 const endpoint: string = import.meta.env.VITE_ENDPOINT_UPLOAD ?? "";
 
 const useFileUpload = () => {
-	const [file, setFile] = useState<File | null>(null);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [error, setError] = useState<string | null>(null);
 
@@ -32,7 +31,6 @@ const useFileUpload = () => {
 				}
 
 				const data: UploadFileResponse = await response.json();
-				setFile(null);
 				return data;
 			} catch (err) {
 				const errorMessage =
@@ -47,8 +45,6 @@ const useFileUpload = () => {
 	);
 
 	return {
-		file,
-		setFile,
 		isLoading,
 		error,
 		uploadFile,

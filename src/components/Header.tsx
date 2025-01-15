@@ -8,7 +8,7 @@ const Header = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [files, setFiles] = useState<File[]>([]);
 
-	const handleFileChange = (files: File[]): void => {
+	const onFilesSelected = useCallback((files: File[]): void => {
 		if (files.length === 0) {
 			console.error("No files selected");
 			return;
@@ -16,13 +16,16 @@ const Header = () => {
 
 		setFiles(files);
 		setIsModalOpen(true);
-	};
+	}, []);
 
-	const upload = useCallback(() => {
-		console.log(files);
+	const onClosed = useCallback(() => {
+		setIsModalOpen(false);
+	}, []);
+
+	const onUpload = useCallback(() => {
 		setFiles([]);
 		setIsModalOpen(false);
-	}, [files]);
+	}, []);
 
 	return (
 		<>
@@ -32,11 +35,11 @@ const Header = () => {
 					<span>Web File Browser</span>
 				</h1>
 
-				<FileUploadButton onFilesSelected={handleFileChange} />
+				<FileUploadButton onFilesSelected={onFilesSelected} />
 			</header>
 
-			<Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-				<FileUpload file={files[0]} onUpload={upload} />
+			<Modal isOpen={isModalOpen} onClose={onClosed}>
+				<FileUpload file={files[0]} onUpload={onUpload} />
 			</Modal>
 		</>
 	);

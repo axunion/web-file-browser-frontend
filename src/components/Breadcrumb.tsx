@@ -1,5 +1,5 @@
-import { Icon } from "@iconify/react";
 import { setPaths } from "@/utils/path";
+import { Icon } from "@iconify/react";
 import { useCallback } from "react";
 
 export type PagePathProps = {
