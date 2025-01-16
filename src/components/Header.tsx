@@ -38,9 +38,11 @@ const Header = () => {
 				<FileUploadButton onFilesSelected={onFilesSelected} />
 			</header>
 
-			<Modal isOpen={isModalOpen} onClose={onClosed}>
-				<FileUpload file={files[0]} onUpload={onUpload} />
-			</Modal>
+			{isModalOpen && (
+				<Modal onClose={onClosed}>
+					<FileUpload file={files[0]} onUpload={onUpload} />
+				</Modal>
+			)}
 		</>
 	);
 };

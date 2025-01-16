@@ -42,9 +42,9 @@ const FileUpload = ({ file, onUpload }: FileUploadProps) => {
 
 			{isLoading && <LoadingSpinner />}
 
-			<ErrorModal isOpen={!!error} onClose={reload}>
-				エラーが発生しました。
-			</ErrorModal>
+			{error && (
+				<ErrorModal onClose={reload}>エラーが発生しました。</ErrorModal>
+			)}
 		</section>
 	);
 };

@@ -39,9 +39,9 @@ const App = () => {
 				)}
 			</main>
 
-			<ErrorModal isOpen={!!error} onClose={resetPath}>
-				エラーが発生しました。
-			</ErrorModal>
+			{error && (
+				<ErrorModal onClose={resetPath}>エラーが発生しました。</ErrorModal>
+			)}
 		</div>
 	);
 };
