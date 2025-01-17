@@ -8,18 +8,10 @@ export type ModalProps = {
 };
 
 const Modal = ({ onClose, children }: ModalProps) => {
-	const [isOpen, setIsOpen] = useState(true);
-	const stopPropagation = (e: React.KeyboardEvent) => e.stopPropagation();
-	const close = () => setIsOpen(false);
-
-	const handleKeyDown = (e: React.KeyboardEvent) => {
-		if (e.key === "Escape") {
-			close();
-		}
-	};
-
+	const [isClosing, setIsClosing] = useState(false);
+	const close = () => setIsClosing(true);
 	const handleAnimationEnd = () => {
-		if (!isOpen) {
+		if (isClosing) {
 			onClose();
 		}
 	};
@@ -27,16 +19,14 @@ const Modal = ({ onClose, children }: ModalProps) => {
 	return createPortal(
 		<div
 			className={`fixed inset-0 bg-[#00000080] flex items-center justify-center z-10 ${
-				isOpen ? "fade-in" : "fade-out"
+				isClosing ? "fade-out" : "fade-in"
 			}`}
-			onClick={() => {}}
-			onKeyDown={handleKeyDown}
+			onPointerDown={close}
 			onAnimationEnd={handleAnimationEnd}
 		>
 			<div
 				className="relative w-4/5 max-w-xs max-h-80vh p-5 rounded bg-[--background-color] shadow-lg"
-				onClick={() => {}}
-				onKeyDown={stopPropagation}
+				onPointerDown={(e) => e.stopPropagation()}
 			>
 				{children}
 
