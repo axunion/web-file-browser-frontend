@@ -35,7 +35,10 @@ const FileItem = ({ file }: FileItemProps) => {
 			onClick={handleClick}
 		>
 			{icons[fileType]}
-			<span className=" mt-2 text-xs text-left line-clamp-2">{file.name}</span>
+
+			<div className="line-clamp-2 mt-2 px-2 text-xs text-left break-all">
+				{file.name}
+			</div>
 		</button>
 	);
 };
