@@ -7,13 +7,8 @@ export type PagePathProps = {
 };
 
 const PagePath = ({ paths }: PagePathProps) => {
-	const icon = (
-		<Icon icon="flat-color-icons:opened-folder" className="w-6 h-6" />
-	);
-
-	const separator = (
-		<Icon icon="mdi:keyboard-arrow-right" className="w-3 h-3" />
-	);
+	const icon = <Icon icon="mdi:folder-open" className="w-4 h-4" />;
+	const separator = <Icon icon="mdi-light:chevron-right" className="w-4 h-4" />;
 
 	const Button = ({
 		children,
@@ -42,16 +37,15 @@ const PagePath = ({ paths }: PagePathProps) => {
 
 	return (
 		<nav aria-label="Breadcrumb" className="flex px-4 text-sm">
-			<ol className="flex items-center opacity-80 gap-2">
-				<li className="inline-flex items-center gap-1">
+			<ol className="flex items-center opacity-80">
+				<li className="flex items-center gap-1">
 					{icon}
-					<Button index={-1}>Home</Button>
+					<Button index={-1}>TOP</Button>
 				</li>
 
 				{paths.map((path, index) => (
-					<li key={getKey(index)} className="inline-flex items-center gap-1">
+					<li key={getKey(index)} className="flex items-center">
 						{separator}
-						{icon}
 						<Button index={index}>{path}</Button>
 					</li>
 				))}
