@@ -34,7 +34,7 @@ const FileUpload = ({ file, onUpload }: FileUploadProps) => {
 				type="button"
 				disabled={isLoading}
 				aria-label="Upload file"
-				className="bg-[--primary-color] rounded w-full py-2 text-center text-xl text-[--background-color]"
+				className="bg-(--primary-color) rounded-sm w-full py-2 text-center text-xl text-(--background-color)"
 				onClick={upload}
 			>
 				OK

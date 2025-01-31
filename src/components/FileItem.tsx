@@ -7,7 +7,7 @@ export type FileItemProps = {
 	file: DirectoryItem;
 };
 
-const iconSize = "w-16 h-16";
+const iconSize = "w-12 h-12";
 const icons = {
 	directory: <Icon icon="flat-color-icons:folder" className={iconSize} />,
 	file: <Icon icon="flat-color-icons:file" className={iconSize} />,

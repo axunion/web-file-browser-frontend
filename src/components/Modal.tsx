@@ -25,14 +25,14 @@ const Modal = ({ onClose, children }: ModalProps) => {
 			onAnimationEnd={handleAnimationEnd}
 		>
 			<div
-				className="relative w-4/5 max-w-xs max-h-80vh p-5 rounded bg-[--background-color] shadow-lg"
+				className="relative w-4/5 max-w-xs max-h-80vh p-5 rounded-sm bg-(--background-color) shadow-lg"
 				onPointerDown={(e) => e.stopPropagation()}
 			>
 				{children}
 
 				<button
 					type="button"
-					className="absolute top-3 right-3 text-[--accent-color]"
+					className="absolute top-3 right-3 text-(--accent-color)"
 					onClick={close}
 					aria-label="Close Modal"
 				>

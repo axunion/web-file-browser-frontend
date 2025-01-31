@@ -12,7 +12,7 @@ const FileUploadButton = ({ onFilesSelected }: FileUploadButtonProps) => {
 	};
 
 	return (
-		<label className="cursor-pointer text-[--accent-color]">
+		<label className="cursor-pointer text-(--accent-color)">
 			<input
 				type="file"
 				aria-label="Click to upload files"
