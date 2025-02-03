@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import useFileList from "@/hooks/useFileList";
 import { getPath, resetPath } from "@/utils/path";
+import { Icon } from "@iconify/react";
 import { useEffect, useState } from "react";
 
 const App = () => {
@@ -37,6 +38,13 @@ const App = () => {
 				) : (
 					<div>データはありません</div>
 				)}
+
+				<div className="fixed bottom-4 right-2">
+					<Icon
+						icon={`flat-color-icons:${fileList ? "empty" : "full"}-trash`}
+						className="w-16 h-16"
+					/>
+				</div>
 			</main>
 
 			{error && (

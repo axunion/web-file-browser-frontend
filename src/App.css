@@ -18,6 +18,10 @@
 	}
 }
 
+.fade-in {
+	animation: fadeIn 0.3s ease-in-out;
+}
+
 @keyframes fadeOut {
 	from {
 		opacity: 1;
@@ -25,10 +29,6 @@
 	to {
 		opacity: 0;
 	}
-}
-
-.fade-in {
-	animation: fadeIn 0.3s ease-in-out;
 }
 
 .fade-out {

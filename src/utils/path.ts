@@ -11,7 +11,7 @@ export const getPath = (): PathResult => {
 };
 
 export const setPath = (path: string) => {
-	window.location.hash = `#${path}`;
+	window.location.hash = path;
 };
 
 export const setPaths = (paths: string[]) => {
@@ -28,5 +28,5 @@ export const appendPath = (path: string) => {
 };
 
 export const resetPath = () => {
-	window.location.hash = "";
+	window.location.href = "";
 };

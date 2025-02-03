@@ -10,29 +10,22 @@ const PagePath = ({ paths }: PagePathProps) => {
 	const icon = <Icon icon="mdi:folder-open" className="w-4 h-4" />;
 	const separator = <Icon icon="mdi-light:chevron-right" className="w-4 h-4" />;
 
+	const getKey = useCallback(
+		(index: number) => paths.slice(0, index + 1).join(),
+		[paths],
+	);
+
 	const Button = ({
 		children,
 		index,
 	}: { children: React.ReactNode; index: number }) => (
 		<button
 			type="button"
-			className="text-sm font-medium"
-			onClick={() => clickPath(index)}
+			className="text-sm font-medium cursor-pointer"
+			onClick={() => setPaths(paths.slice(0, index + 1))}
 		>
 			{children}
 		</button>
-	);
-
-	const getKey = useCallback(
-		(index: number) => paths.slice(0, index + 1).join(),
-		[paths],
-	);
-
-	const clickPath = useCallback(
-		(index: number) => {
-			setPaths(paths.slice(0, index + 1));
-		},
-		[paths],
 	);
 
 	return (
