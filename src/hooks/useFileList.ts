@@ -18,6 +18,7 @@ const useFileList = (initPath: string) => {
 	const { data, error, isValidating } = useSWR<FileListResponse>(
 		buildPath(path),
 		memoizedFetcher,
+		{ revalidateOnFocus: false },
 	);
 
 	useEffect(() => {
