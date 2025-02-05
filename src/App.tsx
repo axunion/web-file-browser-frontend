@@ -30,7 +30,7 @@ const App = () => {
 			<Header />
 			<Breadcrumb paths={hashResult.paths} />
 
-			<main className="grow container mx-auto p-6">
+			<main className="grow container mx-auto px-4 pb-8">
 				{isLoading ? (
 					<LoadingSpinner />
 				) : fileList ? (
