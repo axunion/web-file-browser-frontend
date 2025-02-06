@@ -2,7 +2,6 @@ import Breadcrumb from "@/components/Breadcrumb";
 import ErrorModal from "@/components/ErrorModal";
 import FileList from "@/components/FileList";
 import Header from "@/components/Header";
-import LoadingSpinner from "@/components/LoadingSpinner";
 import useFileList from "@/hooks/useFileList";
 import { getPath, resetPath } from "@/utils/path";
 import { Icon } from "@iconify/react";
@@ -30,9 +29,13 @@ const App = () => {
 			<Header />
 			<Breadcrumb paths={hashResult.paths} />
 
-			<main className="grow container mx-auto px-4 pb-8">
+			<main className="relative grow w-full p-4 pb-12">
 				{isLoading ? (
-					<LoadingSpinner />
+					<>
+						<div className="absolute inset-0 flex items-center justify-center">
+							<Icon icon="eos-icons:loading" className="h-6 w-6" />
+						</div>
+					</>
 				) : fileList ? (
 					<FileList list={fileList} />
 				) : (
