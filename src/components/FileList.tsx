@@ -12,7 +12,7 @@ const endpoint: string = import.meta.env.VITE_ENDPOINT_DATA ?? "";
 const FileList = ({ list }: FileListProps) => {
 	const dirPath = `${endpoint}${getPath().path}/`;
 	const gridClasses =
-		"grid gap-x-2 gap-y-4 grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10";
+		"grid gap-x-2 gap-y-4 grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10";
 
 	return (
 		<div className={`fade-in ${gridClasses}`}>
