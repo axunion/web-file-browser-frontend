@@ -12,7 +12,9 @@ const Button = ({ children, isActive, onClick }: ButtonProps) => {
 	return (
 		<button
 			type="button"
-			className={`px-6 py-3 cursor-pointer duration-200 ${isActive ? "text-blue-500" : "text-gray-500"}`}
+			className={`px-6 py-3 cursor-pointer duration-200 ${
+				isActive ? "text-(--primary-color)" : "opacity-50"
+			}`}
 			onClick={onClick}
 		>
 			{children}
@@ -24,7 +26,7 @@ const TabBar = () => {
 	const [activeTab, setActiveTab] = useState<TabName>("File");
 
 	return (
-		<div className="fixed bottom-0 w-full bg-white">
+		<div className="fixed bottom-0 w-full bg-[--background-color">
 			<div className="flex justify-around px-8">
 				<Button
 					isActive={activeTab === "File"}

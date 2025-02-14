@@ -1,10 +1,14 @@
+import BackButton from "./BackButton";
 import FileUpload from "@/components/FileUpload";
 import FileUploadButton from "@/components/FileUploadButton";
 import Modal from "@/components/Modal";
-import { Icon } from "@iconify/react";
 import { useCallback, useState } from "react";
 
-const Header = () => {
+export type HeaderProps = {
+	title?: string;
+};
+
+const Header = ({ title }: HeaderProps) => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [files, setFiles] = useState<File[]>([]);
 
@@ -29,13 +33,16 @@ const Header = () => {
 
 	return (
 		<>
-			<header className="flex justify-between p-4">
-				<h1 className="flex items-center gap-2 text-xl tracking-wider">
-					<Icon icon="flat-color-icons:folder" className="w-8 h-8" />
-					<span>Web File Browser</span>
+			<header className="flex justify-between items-center p-4">
+				<span className="w-8 h-8">{title && <BackButton />}</span>
+
+				<h1 className="px-3 line-clamp-1 break-all text-xl tracking-wider">
+					<span>{title ?? "Web File Browser"}</span>
 				</h1>
 
-				<FileUploadButton onFilesSelected={onFilesSelected} />
+				<span className="w-8 h-8">
+					<FileUploadButton onFilesSelected={onFilesSelected} />
+				</span>
 			</header>
 
 			{isModalOpen && (
