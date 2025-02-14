@@ -1,4 +1,3 @@
-import Breadcrumb from "@/components/Breadcrumb";
 import ErrorModal from "@/components/ErrorModal";
 import FileList from "@/components/FileList";
 import Header from "@/components/Header";
@@ -28,8 +27,7 @@ const App = () => {
 	return (
 		<>
 			<div className="flex flex-col min-h-screen">
-				<Header />
-				<Breadcrumb paths={hashResult.paths} />
+				<Header title={hashResult.paths.slice(-1).pop()} />
 
 				<main className="relative grow w-full p-4 pb-12">
 					{isLoading ? (
