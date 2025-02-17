@@ -23,18 +23,18 @@ const FileUpload = ({ file, onUpload }: FileUploadProps) => {
 
 	return (
 		<section>
-			<div className="flex gap-2 items-center">
-				<Icon icon="flat-color-icons:upload" className="w-6 h-6" />
-				<span className="text-xl">Upload</span>
+			<div className="flex gap-2 items-center text-(--primary-color)">
+				<Icon icon="line-md:upload-loop" className="w-8 h-8" />
+				<span className="text-2xl">Upload</span>
 			</div>
 
-			<p className="my-8 text-sm">{file.name}</p>
+			<p className="flex justify-center my-12">{file.name}</p>
 
 			<button
 				type="button"
 				disabled={isLoading}
 				aria-label="Upload file"
-				className="bg-(--primary-color) rounded-sm w-full py-2 text-center text-xl text-(--background-color)"
+				className="block bg-(--primary-color) rounded-full m-auto py-2 px-12 cursor-pointer text-xl text-(--background-color)"
 				onClick={upload}
 			>
 				OK

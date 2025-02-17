@@ -13,7 +13,7 @@ const Button = ({ children, isActive, onClick }: ButtonProps) => {
 		<button
 			type="button"
 			className={`px-6 py-3 cursor-pointer duration-200 ${
-				isActive ? "text-(--primary-color)" : "opacity-50"
+				isActive ? "text-(--primary-color)" : "opacity-25"
 			}`}
 			onClick={onClick}
 		>
