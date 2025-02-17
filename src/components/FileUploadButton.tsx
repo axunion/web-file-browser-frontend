@@ -22,7 +22,7 @@ const FileUploadButton = ({ onFilesSelected }: FileUploadButtonProps) => {
 				onChange={handleFileChange}
 			/>
 
-			<Icon icon="mdi:cloud-upload-outline" className="w-8 h-8" />
+			<Icon icon="line-md:cloud-alt-upload" className="w-8 h-8" />
 		</label>
 	);
 };
