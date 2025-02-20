@@ -26,7 +26,7 @@ const TabBar = () => {
 	const [activeTab, setActiveTab] = useState<TabName>("File");
 
 	return (
-		<div className="fixed bottom-0 w-full bg-[--background-color">
+		<div className="fixed bottom-0 w-full bg-(--background-color)/50 backdrop-blur-xs">
 			<div className="flex justify-around px-8">
 				<Button
 					isActive={activeTab === "File"}
