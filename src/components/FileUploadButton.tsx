@@ -12,7 +12,7 @@ const FileUploadButton = ({ onFilesSelected }: FileUploadButtonProps) => {
 	};
 
 	return (
-		<label className="cursor-pointer text-(--accent-color)">
+		<label className="cursor-pointer text-(--primary-color)">
 			<input
 				type="file"
 				aria-label="Click to upload files"
@@ -22,7 +22,7 @@ const FileUploadButton = ({ onFilesSelected }: FileUploadButtonProps) => {
 				onChange={handleFileChange}
 			/>
 
-			<Icon icon="line-md:cloud-alt-upload" className="w-8 h-8" />
+			<Icon icon="line-md:cloud-alt-upload-filled-loop" className="w-8 h-8" />
 		</label>
 	);
 };

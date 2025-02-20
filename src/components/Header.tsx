@@ -10,7 +10,7 @@ export type HeaderProps = {
 
 const Header = ({ title }: HeaderProps) => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
-	const [files, setFiles] = useState<File[]>([]);
+	const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
 	const onFilesSelected = useCallback((files: File[]): void => {
 		if (files.length === 0) {
@@ -18,7 +18,7 @@ const Header = ({ title }: HeaderProps) => {
 			return;
 		}
 
-		setFiles(files);
+		setSelectedFiles(files);
 		setIsModalOpen(true);
 	}, []);
 
@@ -27,27 +27,29 @@ const Header = ({ title }: HeaderProps) => {
 	}, []);
 
 	const onUpload = useCallback(() => {
-		setFiles([]);
+		setSelectedFiles([]);
 		setIsModalOpen(false);
 	}, []);
 
 	return (
 		<>
-			<header className="flex justify-between items-center p-4">
-				<span className="w-8 h-8">{title && <BackButton />}</span>
+			<header className="fixed top-0 w-full z-10 bg-(--background-color)/50 backdrop-blur-lg">
+				<div className="flex justify-between items-center p-4">
+					<span className="w-8 h-8">{title && <BackButton />}</span>
 
-				<h1 className="px-3 line-clamp-1 break-all text-xl tracking-wider">
-					<span>{title ?? "Web File Browser"}</span>
-				</h1>
+					<h1 className="px-3 line-clamp-1 break-all text-xl tracking-wider">
+						<span>{title ?? "Web File Browser"}</span>
+					</h1>
 
-				<span className="w-8 h-8">
-					<FileUploadButton onFilesSelected={onFilesSelected} />
-				</span>
+					<span className="w-8 h-8">
+						<FileUploadButton onFilesSelected={onFilesSelected} />
+					</span>
+				</div>
 			</header>
 
 			{isModalOpen && (
 				<Modal onClose={onClosed}>
-					<FileUpload file={files[0]} onUpload={onUpload} />
+					<FileUpload file={selectedFiles[0]} onUpload={onUpload} />
 				</Modal>
 			)}
 		</>

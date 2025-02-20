@@ -26,23 +26,21 @@ const App = () => {
 
 	return (
 		<>
-			<div className="flex flex-col min-h-screen">
-				<Header title={hashResult.paths.slice(-1).pop()} />
+			<Header title={hashResult.paths.slice(-1).pop()} />
 
-				<main className="relative grow w-full p-4 pb-12">
-					{isLoading ? (
-						<>
-							<div className="absolute inset-0 flex items-center justify-center">
-								<Icon icon="eos-icons:loading" className="h-6 w-6" />
-							</div>
-						</>
-					) : fileList ? (
-						<FileList list={fileList} />
-					) : (
-						<div>データはありません</div>
-					)}
-				</main>
-			</div>
+			<main className="min-h-screen relative grow w-full px-4 py-16">
+				{isLoading ? (
+					<>
+						<div className="absolute inset-0 flex items-center justify-center">
+							<Icon icon="eos-icons:loading" className="h-6 w-6" />
+						</div>
+					</>
+				) : fileList ? (
+					<FileList list={fileList} />
+				) : (
+					<div>データはありません</div>
+				)}
+			</main>
 
 			<TabBar />
 
