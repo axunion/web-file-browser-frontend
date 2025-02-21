@@ -9,8 +9,8 @@ export type FileItemProps = {
 
 const iconSize = "w-16 h-16";
 const icons = {
-	audio: <Icon icon="flat-color-icons:audio-file" className={iconSize} />,
 	text: <Icon icon="flat-color-icons:document" className={iconSize} />,
+	pdf: <Icon icon="vscode-icons:file-type-pdf2" className={iconSize} />,
 	file: <Icon icon="flat-color-icons:file" className={iconSize} />,
 };
 
@@ -20,23 +20,34 @@ const FileItem = ({ file, dirPath }: FileItemProps) => {
 
 	const renderContent = () => {
 		switch (fileType) {
-			case "image":
-				return <img src={src} className="h-15 pb-1" alt="" />;
 			case "video":
 				return (
 					<video src={src} className="h-16 aspect-video" controls>
 						<track kind="captions" />
 					</video>
 				);
+			case "audio":
+				return (
+					<audio controls src={src}>
+						<track kind="captions" />
+					</audio>
+				);
+			case "image":
+				return <img src={src} className="h-15 pb-1" alt="" />;
 			default:
-				return icons[fileType] || icons.file;
+				return (
+					<a href={src} target="_blank" rel="noreferrer">
+						{icons[fileType] ?? icons.file}
+					</a>
+				);
 		}
 	};
 
 	return (
 		<span className="max-w-full mx-auto flex flex-col items-center justify-center p-2 cursor-pointer">
 			{renderContent()}
-			<div className="line-clamp-2 mt-1 px-2 text-xs text-left break-all">
+
+			<div className="line-clamp-2 mt-1 px-2 text-xs break-all">
 				{file.name}
 			</div>
 		</span>
