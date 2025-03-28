@@ -6,7 +6,7 @@ export type FileUploadButtonProps = {
 };
 
 const FileUploadButton = ({ onFilesSelected }: FileUploadButtonProps) => {
-	const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+	const onFileChange = (event: ChangeEvent<HTMLInputElement>) => {
 		const files = event.target.files ? Array.from(event.target.files) : [];
 		onFilesSelected(files);
 	};
@@ -19,10 +19,10 @@ const FileUploadButton = ({ onFilesSelected }: FileUploadButtonProps) => {
 				role="button"
 				tabIndex={0}
 				className="hidden"
-				onChange={handleFileChange}
+				onChange={onFileChange}
 			/>
 
-			<Icon icon="line-md:cloud-alt-upload-filled-loop" className="w-8 h-8" />
+			<Icon icon="line-md:file-upload" className="w-8 h-8" />
 		</label>
 	);
 };
