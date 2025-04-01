@@ -16,20 +16,20 @@ const icons = {
 
 const FileItem = ({ file, dirPath }: FileItemProps) => {
 	const fileType = getFileType(file.name);
-	const src = `${dirPath}/${file.name}`;
+	const src = `${dirPath}${file.name}`;
 
 	const renderContent = () => {
 		switch (fileType) {
 			case "video":
 				return (
-					<video src={src} className="h-16 aspect-video" controls>
-						<track kind="captions" />
+					<video controls src={src} className="h-16 aspect-video">
+						<track src="" kind="captions" />
 					</video>
 				);
 			case "audio":
 				return (
 					<audio controls src={src}>
-						<track kind="captions" />
+						<track src="" kind="captions" />
 					</audio>
 				);
 			case "image":
