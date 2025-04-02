@@ -1,7 +1,6 @@
 export type DirectoryItem = {
 	type: "file" | "directory";
 	name: string;
-	size?: number;
 };
 
 export type FileListSuccessResponse = {
@@ -18,7 +17,6 @@ export type FileListResponse = FileListSuccessResponse | FileListErrorResponse;
 
 export type UploadFileSuccessResponse = {
 	status: "success";
-	filename: string;
 };
 
 export type UploadFileErrorResponse = {
