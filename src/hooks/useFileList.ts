@@ -24,6 +24,8 @@ const useFileList = (initPath: string) => {
 	useEffect(() => {
 		if (data?.status === "success") {
 			setFileList(data.list);
+		} else {
+			setFileList([]);
 		}
 	}, [data]);
 
