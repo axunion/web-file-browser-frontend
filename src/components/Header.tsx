@@ -44,7 +44,9 @@ const Header = ({ title }: HeaderProps) => {
 					</h1>
 
 					<span className="w-8 h-8">
-						<FileUploadButton onFilesSelected={onFilesSelected} />
+						{title !== "trash" && (
+							<FileUploadButton onFilesSelected={onFilesSelected} />
+						)}
 					</span>
 				</div>
 			</header>
