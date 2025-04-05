@@ -1,7 +1,6 @@
+import { ENDPOINT_UPLOAD } from "@/constants/config";
 import type { UploadFileResponse } from "@/types/api";
 import { useCallback, useState } from "react";
-
-const endpoint: string = import.meta.env.VITE_ENDPOINT_UPLOAD ?? "";
 
 const useFileUpload = () => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -9,7 +8,7 @@ const useFileUpload = () => {
 
 	const uploadFile = useCallback(
 		async (file: File): Promise<UploadFileResponse> => {
-			if (!endpoint) {
+			if (!ENDPOINT_UPLOAD) {
 				throw new Error("Upload endpoint is not defined");
 			}
 
@@ -20,7 +19,7 @@ const useFileUpload = () => {
 			formData.append("file", file);
 
 			try {
-				const response = await fetch(endpoint, {
+				const response = await fetch(ENDPOINT_UPLOAD, {
 					method: "POST",
 					body: formData,
 				});

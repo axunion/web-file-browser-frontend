@@ -1,3 +1,4 @@
+import { ENDPOINT_LIST } from "@/constants/config";
 import type { DirectoryItem, FileListResponse } from "@/types/api";
 import { useCallback, useEffect, useState } from "react";
 import useSWR, { mutate } from "swr";
@@ -6,9 +7,9 @@ type Fetcher = (
 	...args: [RequestInfo, RequestInit?]
 ) => Promise<FileListResponse>;
 
-const endpoint: string = import.meta.env.VITE_ENDPOINT_LIST ?? "";
 const fetcher: Fetcher = (...args) => fetch(...args).then((res) => res.json());
-const buildPath = (path: string) => endpoint + (path ? `?path=${path}` : "");
+const buildUrl = (path: string) =>
+	ENDPOINT_LIST + (path ? `?path=${path}` : "");
 
 const useFileList = (initPath: string) => {
 	const [path, setPath] = useState(initPath);
@@ -16,7 +17,7 @@ const useFileList = (initPath: string) => {
 
 	const memoizedFetcher = useCallback(fetcher, []);
 	const { data, error, isValidating } = useSWR<FileListResponse>(
-		buildPath(path),
+		buildUrl(path),
 		memoizedFetcher,
 		{ revalidateOnFocus: false },
 	);
@@ -31,7 +32,7 @@ const useFileList = (initPath: string) => {
 
 	const fetchFileList = useCallback((newPath: string) => {
 		setPath(newPath);
-		mutate(buildPath(newPath));
+		mutate(buildUrl(newPath));
 	}, []);
 
 	return {

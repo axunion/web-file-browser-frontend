@@ -15,6 +15,10 @@ export type FileListErrorResponse = {
 
 export type FileListResponse = FileListSuccessResponse | FileListErrorResponse;
 
+export type UploadFileRequest = {
+	file: File;
+};
+
 export type UploadFileSuccessResponse = {
 	status: "success";
 };
@@ -27,3 +31,24 @@ export type UploadFileErrorResponse = {
 export type UploadFileResponse =
 	| UploadFileSuccessResponse
 	| UploadFileErrorResponse;
+
+export type RenameFileRequest = {
+	path?: string;
+	name: string;
+	newName: string;
+};
+
+export type RenameFileSuccessResponse = {
+	status: "success";
+	path: string;
+	filename: string;
+};
+
+export type RenameFileErrorResponse = {
+	status: "error";
+	message: string;
+};
+
+export type RenameFileResponse =
+	| RenameFileSuccessResponse
+	| RenameFileErrorResponse;
