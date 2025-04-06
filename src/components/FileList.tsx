@@ -1,4 +1,5 @@
 import FileItem from "@/components/FileItem";
+import { ENDPOINT_DATA } from "@/constants/config";
 import type { DirectoryItem } from "@/types/api";
 import { appendPath, getPath } from "@/utils/path";
 import { Icon } from "@iconify/react";
@@ -7,10 +8,8 @@ export type FileListProps = {
 	list: DirectoryItem[];
 };
 
-const endpoint: string = import.meta.env.VITE_ENDPOINT_DATA ?? "";
-
 const FileList = ({ list }: FileListProps) => {
-	const dirPath = `${endpoint}${getPath().path}/`;
+	const dirPath = `${ENDPOINT_DATA}${getPath().path}/`;
 	const gridClasses =
 		"grid gap-x-2 gap-y-4 grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10";
 
