@@ -8,10 +8,6 @@ const useFileUpload = () => {
 
 	const uploadFile = useCallback(
 		async (file: File): Promise<UploadFileResponse> => {
-			if (!ENDPOINT_UPLOAD) {
-				throw new Error("Upload endpoint is not defined");
-			}
-
 			setIsLoading(true);
 			setError(null);
 
@@ -29,8 +25,7 @@ const useFileUpload = () => {
 					throw new Error(errorText || "Upload failed");
 				}
 
-				const data: UploadFileResponse = await response.json();
-				return data;
+				return await response.json();
 			} catch (err) {
 				const errorMessage =
 					err instanceof Error ? err.message : "An unknown error occurred";
