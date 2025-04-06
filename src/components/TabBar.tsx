@@ -1,4 +1,4 @@
-import { getPath, setPath, resetPath } from "@/utils/path";
+import { getPath, resetPath, setPath } from "@/utils/path";
 import { Icon } from "@iconify/react";
 import { useEffect, useState } from "react";
 
