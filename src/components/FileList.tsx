@@ -3,12 +3,13 @@ import { ENDPOINT_DATA } from "@/constants/config";
 import type { DirectoryItem } from "@/types/api";
 import { appendPath, getPath } from "@/utils/path";
 import { Icon } from "@iconify/react";
+import { memo } from "react";
 
 export type FileListProps = {
 	list: DirectoryItem[];
 };
 
-const FileList = ({ list }: FileListProps) => {
+const FileList = memo(({ list }: FileListProps) => {
 	const dirPath = `${ENDPOINT_DATA}${getPath().path}/`;
 	const gridClasses =
 		"grid gap-x-2 gap-y-4 grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10";
@@ -37,6 +38,6 @@ const FileList = ({ list }: FileListProps) => {
 			))}
 		</div>
 	);
-};
+});
 
 export default FileList;
