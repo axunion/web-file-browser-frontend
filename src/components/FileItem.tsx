@@ -23,13 +23,13 @@ const FileItem = ({ file, dirPath }: FileItemProps) => {
 			case "video":
 				return (
 					<video controls src={src} className="h-16 aspect-video">
-						<track src="" kind="captions" />
+						<track kind="captions" />
 					</video>
 				);
 			case "audio":
 				return (
 					<audio controls src={src}>
-						<track src="" kind="captions" />
+						<track kind="captions" />
 					</audio>
 				);
 			case "image":
