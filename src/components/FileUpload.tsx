@@ -28,7 +28,7 @@ const FileUpload = ({ file, onUpload }: FileUploadProps) => {
 				<span className="text-2xl">Upload</span>
 			</div>
 
-			<p className="flex justify-center my-12">{file.name}</p>
+			<p className="flex justify-center my-12 break-all">{file.name}</p>
 
 			<button
 				type="button"

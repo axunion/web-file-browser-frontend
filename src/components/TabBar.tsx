@@ -51,24 +51,22 @@ const TabBar = () => {
 	}, []);
 
 	return (
-		<div className="fixed bottom-0 w-full bg-(--background-color)/50 backdrop-blur-xs">
-			<div className="flex justify-around px-8">
-				<Button
-					isActive={activeTab === "File"}
-					onClick={clickFile}
-					aria-label="File"
-				>
-					<Icon icon="bi:folder-fill" className="w-8 h-8" />
-				</Button>
+		<div className="flex justify-around px-8">
+			<Button
+				isActive={activeTab === "File"}
+				onClick={clickFile}
+				aria-label="File"
+			>
+				<Icon icon="bi:folder-fill" className="w-8 h-8" />
+			</Button>
 
-				<Button
-					isActive={activeTab === "Trash"}
-					onClick={clickTrash}
-					aria-label="Trash"
-				>
-					<Icon icon="bi:trash3-fill" className="w-7 h-7" />
-				</Button>
-			</div>
+			<Button
+				isActive={activeTab === "Trash"}
+				onClick={clickTrash}
+				aria-label="Trash"
+			>
+				<Icon icon="bi:trash3-fill" className="w-7 h-7" />
+			</Button>
 		</div>
 	);
 };
