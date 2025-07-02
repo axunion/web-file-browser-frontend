@@ -33,22 +33,20 @@ const Header = ({ title }: HeaderProps) => {
 
 	return (
 		<>
-			<header className="fixed top-0 w-full z-10 bg-(--background-color)/50 backdrop-blur-lg">
-				<div className="grid grid-cols-[auto_1fr_auto] items-center p-4 gap-3">
-					<span className="w-8 h-8">
-						{title && title !== "trash" && <BackButton />}
-					</span>
+			<header className="grid grid-cols-[auto_1fr_auto] items-center p-4 gap-3">
+				<span className="w-8 h-8">
+					{title && title !== "trash" && <BackButton />}
+				</span>
 
-					<h1 className="text-xl tracking-wider text-center line-clamp-1 break-all">
-						<span>{title ?? "Web File Browser"}</span>
-					</h1>
+				<h1 className="text-xl tracking-wider text-center line-clamp-1 break-all">
+					<span>{title ?? "Web File Browser"}</span>
+				</h1>
 
-					<span className="w-8 h-8">
-						{title !== "trash" && (
-							<FileUploadButton onFilesSelected={onFilesSelected} />
-						)}
-					</span>
-				</div>
+				<span className="w-8 h-8">
+					{title !== "trash" && (
+						<FileUploadButton onFilesSelected={onFilesSelected} />
+					)}
+				</span>
 			</header>
 
 			{isModalOpen && (
