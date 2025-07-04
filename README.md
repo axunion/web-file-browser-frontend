@@ -1,50 +1,116 @@
-# React + TypeScript + Vite
+# Web File Browser Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+[🇯🇵 日本語](README_JA.md) | 🇺🇸 English
 
-Currently, two official plugins are available:
+A modern web file browser frontend application built with **React + TypeScript + Vite**.  
+Features an intuitive and modern UI for browsing and managing files and directories on a server.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+> **⚠️ Note**: This project is frontend-only. A corresponding backend API server is required separately.
 
-## Expanding the ESLint configuration
+## ✨ Key Features
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- 📁 Directory and file listing
+- 🧭 Breadcrumb navigation for hierarchical browsing
+- 📤 File upload functionality
+- ✏️ File and directory renaming
+- ❌ Error handling with modal dialogs
+- ⏳ Loading spinner indicators
+- 📋 Tab-based UI
 
-- Configure the top-level `parserOptions` property like this:
+## 🛠️ Tech Stack
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+- **React 19** - UI framework
+- **TypeScript** - Type-safe development
+- **Vite** - Fast build tool and dev server
+- **SWR** - Data fetching and caching library
+- **Tailwind CSS** - Utility-first CSS framework
+- **@iconify/react** - Icon library
+- **@biomejs/biome** - Fast formatter and linter
+
+## 🚀 Setup
+
+### 1. Install Dependencies
+
+```bash
+npm install
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+### 2. Environment Variables
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+Create a `.env` file in the project root and configure the following environment variables:
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+```env
+VITE_ENDPOINT_API=http://localhost:8000/api/
+VITE_ENDPOINT_DATA=http://localhost:8000/data/
+```
+
+| Variable | Description |
+|----------|-------------|
+| `VITE_ENDPOINT_API` | Backend API base URL |
+| `VITE_ENDPOINT_DATA` | File data retrieval base URL |
+
+### 3. Start Development Server
+
+```bash
+npm run dev
+```
+
+Open your browser and navigate to `http://localhost:5173`.
+
+### 4. Production Build
+
+```bash
+npm run build
+```
+
+Build artifacts will be output to the `dist/` folder.
+
+## 📡 API Specification
+
+API endpoints used by this frontend:
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/list/` | Retrieve file and directory listings |
+| `POST` | `/api/upload/` | Upload files |
+| `POST` | `/api/rename/` | Rename files and directories |
+
+For detailed specifications, please refer to the corresponding backend project documentation.
+
+## 🔧 Development Commands
+
+```bash
+# Code formatting (check only)
+npm run format
+
+# Code formatting (auto-fix)
+npm run format:write
+
+# Linting (check only)
+npm run lint
+
+# Linting (auto-fix)
+npm run lint:write
+
+# Format and lint (auto-fix)
+npm run check:write
+```
+
+## 📁 Directory Structure
+
+```
+src/
+├── components/      # UI components
+├── hooks/          # Custom hooks
+├── constants/      # Constants and configuration
+├── types/          # TypeScript type definitions
+├── utils/          # Utility functions
+└── assets/         # Static assets
+
+public/             # Public static files
+```
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE).
 ```
