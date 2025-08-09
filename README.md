@@ -29,7 +29,7 @@ Features an intuitive and modern UI for browsing and managing files and director
 
 ## 🚀 Setup
 
-### 1. Install Dependencies
+### Installation
 
 ```bash
 npm install
@@ -76,41 +76,3 @@ API endpoints used by this frontend:
 | `POST` | `/api/rename/` | Rename files and directories |
 
 For detailed specifications, please refer to the corresponding backend project documentation.
-
-## 🔧 Development Commands
-
-```bash
-# Code formatting (check only)
-npm run format
-
-# Code formatting (auto-fix)
-npm run format:write
-
-# Linting (check only)
-npm run lint
-
-# Linting (auto-fix)
-npm run lint:write
-
-# Format and lint (auto-fix)
-npm run check:write
-```
-
-## 📁 Directory Structure
-
-```
-src/
-├── components/      # UI components
-├── hooks/          # Custom hooks
-├── constants/      # Constants and configuration
-├── types/          # TypeScript type definitions
-├── utils/          # Utility functions
-└── assets/         # Static assets
-
-public/             # Public static files
-```
-
-## 📄 License
-
-This project is licensed under the [MIT License](LICENSE).
-```
