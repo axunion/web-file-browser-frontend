@@ -43,15 +43,7 @@ const FileItem = ({ file, dirPath }: FileItemProps) => {
 		}
 	};
 
-	return (
-		<span className="max-w-full mx-auto flex flex-col items-center justify-center p-2 cursor-pointer">
-			{renderContent()}
-
-			<div className="line-clamp-2 mt-1 px-2 text-xs break-all">
-				{file.name}
-			</div>
-		</span>
-	);
+	return renderContent();
 };
 
 export default FileItem;
