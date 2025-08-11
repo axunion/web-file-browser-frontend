@@ -1,5 +1,5 @@
 import FileItem from "@/components/FileItem";
-import ContextMenu, { type ContextMenuAction } from "@/components/ContextMenu";
+import ContextMenu from "@/components/ContextMenu";
 import { ENDPOINT_DATA } from "@/constants/config";
 import type { DirectoryItem } from "@/types/api";
 import { appendPath, getPath } from "@/utils/path";
@@ -40,16 +40,6 @@ const FileList = memo(({ list }: FileListProps) => {
 		}
 	};
 
-	const handleContextMenuClose = () => {
-		setContextMenu(null);
-	};
-
-	const handleContextMenuAction = (action: ContextMenuAction) => {
-		if (!contextMenu) return;
-		console.log(`Action: ${action}, Item:`, contextMenu.item);
-		setContextMenu(null);
-	};
-
 	const startLongPress = (
 		item: DirectoryItem,
 		event: React.MouseEvent | React.TouchEvent,
@@ -70,6 +60,15 @@ const FileList = memo(({ list }: FileListProps) => {
 			clearTimeout(timeoutRef.current);
 			timeoutRef.current = null;
 		}
+	};
+
+	const handleContextMenuClose = () => {
+		setContextMenu(null);
+	};
+
+	const handleRename = () => {
+		console.log(contextMenu?.item);
+		setContextMenu(null);
 	};
 
 	useEffect(() => {
@@ -110,9 +109,9 @@ const FileList = memo(({ list }: FileListProps) => {
 
 			{contextMenu && (
 				<ContextMenu
-					onClose={handleContextMenuClose}
-					onAction={handleContextMenuAction}
 					position={contextMenu.position}
+					onClose={handleContextMenuClose}
+					onRename={handleRename}
 				/>
 			)}
 		</div>

@@ -11,14 +11,6 @@ for (const [key, value] of Object.entries(requiredEnvVars)) {
 
 export const ENDPOINT_API = requiredEnvVars.VITE_ENDPOINT_API ?? "";
 export const ENDPOINT_DATA = requiredEnvVars.VITE_ENDPOINT_DATA ?? "";
-
-if (import.meta.env.DEV) {
-	console.log("API Endpoints configured:", {
-		ENDPOINT_API: ENDPOINT_API || "NOT SET",
-		ENDPOINT_DATA: ENDPOINT_DATA || "NOT SET",
-	});
-}
-
 export const ENDPOINT_LIST = `${ENDPOINT_API}list/`;
 export const ENDPOINT_UPLOAD = `${ENDPOINT_API}upload/`;
 export const ENDPOINT_RENAME = `${ENDPOINT_API}rename/`;

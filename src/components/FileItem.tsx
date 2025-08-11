@@ -18,32 +18,28 @@ const FileItem = ({ file, dirPath }: FileItemProps) => {
 	const fileType = getFileType(file.name);
 	const src = `${dirPath}${file.name}`;
 
-	const renderContent = () => {
-		switch (fileType) {
-			case "video":
-				return (
-					<video controls src={src} className="h-16 aspect-video">
-						<track kind="captions" />
-					</video>
-				);
-			case "audio":
-				return (
-					<audio controls src={src}>
-						<track kind="captions" />
-					</audio>
-				);
-			case "image":
-				return <img src={src} className="h-15 pb-1" alt="" />;
-			default:
-				return (
-					<a href={src} target="_blank" rel="noreferrer">
-						{icons[fileType] ?? icons.file}
-					</a>
-				);
-		}
-	};
-
-	return renderContent();
+	switch (fileType) {
+		case "video":
+			return (
+				<video controls src={src} className="h-16 aspect-video">
+					<track kind="captions" />
+				</video>
+			);
+		case "audio":
+			return (
+				<audio controls src={src}>
+					<track kind="captions" />
+				</audio>
+			);
+		case "image":
+			return <img src={src} className="h-15 pb-1" alt="" />;
+		default:
+			return (
+				<a href={src} target="_blank" rel="noreferrer">
+					{icons[fileType] ?? icons.file}
+				</a>
+			);
+	}
 };
 
 export default FileItem;
