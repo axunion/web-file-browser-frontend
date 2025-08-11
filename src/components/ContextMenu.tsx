@@ -1,47 +1,24 @@
 import { Icon } from "@iconify/react";
 import { createPortal } from "react-dom";
 
-export type ContextMenuAction = "rename" | "delete";
-
 export type ContextMenuProps = {
-	onClose: () => void;
-	onAction: (action: ContextMenuAction) => void;
 	position: { x: number; y: number };
+	onClose: () => void;
+	onRename: () => void;
 };
 
-const ContextMenu = ({ onClose, onAction, position }: ContextMenuProps) => {
-	const handleAction = (action: ContextMenuAction) => {
-		onAction(action);
-		onClose();
+const ContextMenu = ({ onClose, onRename, position }: ContextMenuProps) => {
+	const buttonClasses =
+		"w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer";
+	const menuWidth = 140;
+	const windowWidth = typeof window !== "undefined" ? window.innerWidth : 800;
+	const menuPosition = {
+		left: Math.max(
+			8,
+			Math.min(position.x - menuWidth / 2, windowWidth - menuWidth - 8),
+		),
+		top: position.y + 8,
 	};
-
-	const menuItems = [
-		{
-			action: "rename" as const,
-			icon: "mdi:rename-box",
-			label: "リネーム",
-		},
-		{
-			action: "delete" as const,
-			icon: "mdi:delete",
-			label: "削除",
-		},
-	];
-
-	const calculatePosition = () => {
-		const menuWidth = 140;
-		const windowWidth = typeof window !== "undefined" ? window.innerWidth : 800;
-
-		return {
-			left: Math.max(
-				8,
-				Math.min(position.x - menuWidth / 2, windowWidth - menuWidth - 8),
-			),
-			top: position.y + 8,
-		};
-	};
-
-	const menuPosition = calculatePosition();
 
 	return createPortal(
 		<div className="fixed inset-0 z-50" onPointerDown={onClose}>
@@ -53,17 +30,10 @@ const ContextMenu = ({ onClose, onAction, position }: ContextMenuProps) => {
 				}}
 				onPointerDown={(e) => e.stopPropagation()}
 			>
-				{menuItems.map((item) => (
-					<button
-						key={item.action}
-						type="button"
-						className="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-						onClick={() => handleAction(item.action)}
-					>
-						<Icon icon={item.icon} className="w-4 h-4" />
-						<span>{item.label}</span>
-					</button>
-				))}
+				<button type="button" className={buttonClasses} onClick={onRename}>
+					<Icon icon="mdi:rename-box" className="w-4 h-4" />
+					<span>リネーム</span>
+				</button>
 			</div>
 		</div>,
 		document.body,
