@@ -31,7 +31,7 @@ const ContextMenu = ({ onClose, onRename, position }: ContextMenuProps) => {
 				onPointerDown={(e) => e.stopPropagation()}
 			>
 				<button type="button" className={buttonClasses} onClick={onRename}>
-					<Icon icon="mdi:rename-box" className="w-4 h-4" />
+					<Icon icon="mdi:rename-outline" className="w-4 h-4" />
 					<span>リネーム</span>
 				</button>
 			</div>
