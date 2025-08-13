@@ -1,6 +1,6 @@
+import { Icon } from "@iconify/react";
 import type { DirectoryItem } from "@/types/api";
 import { getFileType } from "@/utils/fileType";
-import { Icon } from "@iconify/react";
 
 export type FileItemProps = {
 	file: DirectoryItem;

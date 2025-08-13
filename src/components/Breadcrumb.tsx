@@ -1,6 +1,6 @@
-import { setPaths } from "@/utils/path";
 import { Icon } from "@iconify/react";
 import { useCallback } from "react";
+import { setPaths } from "@/utils/path";
 
 export type PagePathProps = {
 	paths: string[];
@@ -15,7 +15,10 @@ const PagePath = ({ paths }: PagePathProps) => {
 	const Button = ({
 		children,
 		index,
-	}: { children: React.ReactNode; index: number }) => (
+	}: {
+		children: React.ReactNode;
+		index: number;
+	}) => (
 		<button
 			type="button"
 			className="text-sm font-medium cursor-pointer"

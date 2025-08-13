@@ -21,7 +21,7 @@
 		"swr": "^2.3.3"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "1.9.4",
+		"@biomejs/biome": "2.1.4",
 		"@iconify/react": "^6.0.0",
 		"@tailwindcss/vite": "^4.1.8",
 		"@types/node": "^24.0.0",

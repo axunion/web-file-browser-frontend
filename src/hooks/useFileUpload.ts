@@ -1,6 +1,6 @@
+import { useCallback, useState } from "react";
 import { ENDPOINT_UPLOAD } from "@/constants/config";
 import type { UploadFileResponse } from "@/types/api";
-import { useCallback, useState } from "react";
 
 const useFileUpload = () => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);

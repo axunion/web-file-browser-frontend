@@ -16,7 +16,6 @@ const FileUploadButton = ({ onFilesSelected }: FileUploadButtonProps) => {
 			<input
 				type="file"
 				aria-label="Click to upload files"
-				role="button"
 				tabIndex={0}
 				className="hidden"
 				onChange={onFileChange}

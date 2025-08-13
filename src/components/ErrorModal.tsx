@@ -1,5 +1,5 @@
-import Modal from "@/components/Modal";
 import { Icon } from "@iconify/react";
+import Modal from "@/components/Modal";
 
 export type ErrorProps = {
 	onClose: () => void;

@@ -1,8 +1,8 @@
+import { Icon } from "@iconify/react";
+import { useCallback } from "react";
 import ErrorModal from "@/components/ErrorModal";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import useFileUpload from "@/hooks/useFileUpload";
-import { Icon } from "@iconify/react";
-import { useCallback } from "react";
 
 export type FileUploadProps = {
 	file: File;
