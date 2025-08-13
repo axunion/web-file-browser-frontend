@@ -1,3 +1,5 @@
+import { Icon } from "@iconify/react";
+import { useEffect, useState } from "react";
 import ErrorModal from "@/components/ErrorModal";
 import FileList from "@/components/FileList";
 import Header from "@/components/Header";
@@ -5,8 +7,6 @@ import TabBar from "@/components/TabBar";
 import { MESSAGES } from "@/constants/messages";
 import useFileList from "@/hooks/useFileList";
 import { getPath } from "@/utils/path";
-import { Icon } from "@iconify/react";
-import { useEffect, useState } from "react";
 
 const App = () => {
 	const [hashResult, setHashResult] = useState(getPath());

@@ -1,6 +1,6 @@
+import { useCallback, useState } from "react";
 import { ENDPOINT_RENAME } from "@/constants/config";
 import type { RenameFileRequest, RenameFileResponse } from "@/types/api";
-import { useCallback, useState } from "react";
 
 const useRenameFile = () => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);

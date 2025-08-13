@@ -1,6 +1,6 @@
-import { getPath, resetPath, setPath } from "@/utils/path";
 import { Icon } from "@iconify/react";
 import { useEffect, useState } from "react";
+import { getPath, resetPath, setPath } from "@/utils/path";
 
 type TabName = "File" | "Trash";
 type ButtonProps = {

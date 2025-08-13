@@ -1,11 +1,11 @@
+import { Icon } from "@iconify/react";
+import { memo, useState } from "react";
 import ContextMenu from "@/components/ContextMenu";
 import FileItem from "@/components/FileItem";
 import { ENDPOINT_DATA } from "@/constants/config";
 import useLongPress from "@/hooks/useLongPress";
 import type { DirectoryItem } from "@/types/api";
 import { appendPath, getPath } from "@/utils/path";
-import { Icon } from "@iconify/react";
-import { memo, useState } from "react";
 
 export type FileListProps = {
 	list: DirectoryItem[];

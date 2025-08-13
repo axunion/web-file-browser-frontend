@@ -1,7 +1,7 @@
-import { ENDPOINT_LIST } from "@/constants/config";
-import type { DirectoryItem, FileListResponse } from "@/types/api";
 import { useCallback, useEffect, useState } from "react";
 import useSWR, { mutate } from "swr";
+import { ENDPOINT_LIST } from "@/constants/config";
+import type { DirectoryItem, FileListResponse } from "@/types/api";
 
 type Fetcher = (
 	...args: [RequestInfo, RequestInit?]
