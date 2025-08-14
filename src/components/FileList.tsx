@@ -2,6 +2,7 @@ import { Icon } from "@iconify/react";
 import { memo, useState } from "react";
 import ContextMenu from "@/components/ContextMenu";
 import FileItem from "@/components/FileItem";
+import RenameModal from "@/components/RenameModal";
 import { ENDPOINT_DATA } from "@/constants/config";
 import useLongPress from "@/hooks/useLongPress";
 import type { DirectoryItem } from "@/types/api";
@@ -9,9 +10,10 @@ import { appendPath, getPath } from "@/utils/path";
 
 export type FileListProps = {
 	list: DirectoryItem[];
+	onFileListUpdate?: () => void;
 };
 
-const FileList = memo(({ list }: FileListProps) => {
+const FileList = memo(({ list, onFileListUpdate }: FileListProps) => {
 	const dirPath = `${ENDPOINT_DATA}${getPath().path}/`;
 	const gridClasses =
 		"grid gap-x-2 gap-y-4 grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10";
@@ -20,6 +22,8 @@ const FileList = memo(({ list }: FileListProps) => {
 		item: DirectoryItem;
 		position: { x: number; y: number };
 	} | null>(null);
+
+	const [renameItem, setRenameItem] = useState<DirectoryItem | null>(null);
 
 	const handleLongPress = (item: DirectoryItem, element: HTMLElement) => {
 		try {
@@ -49,8 +53,19 @@ const FileList = memo(({ list }: FileListProps) => {
 	};
 
 	const handleRename = () => {
-		console.log(contextMenu?.item);
+		if (contextMenu?.item) {
+			setRenameItem(contextMenu.item);
+		}
 		setContextMenu(null);
+	};
+
+	const handleRenameModalClose = () => {
+		setRenameItem(null);
+	};
+
+	const handleRenameSuccess = () => {
+		setRenameItem(null);
+		onFileListUpdate?.();
 	};
 
 	return (
@@ -85,6 +100,14 @@ const FileList = memo(({ list }: FileListProps) => {
 					position={contextMenu.position}
 					onClose={handleContextMenuClose}
 					onRename={handleRename}
+				/>
+			)}
+
+			{renameItem && (
+				<RenameModal
+					item={renameItem}
+					onClose={handleRenameModalClose}
+					onSuccess={handleRenameSuccess}
 				/>
 			)}
 		</div>
