@@ -10,9 +10,8 @@ import { getPath } from "@/utils/path";
 
 const App = () => {
 	const [hashResult, setHashResult] = useState(getPath());
-	const { fileList, isLoading, error, fetchFileList } = useFileList(
-		hashResult.path,
-	);
+	const { fileList, isLoading, error, fetchFileList, refreshFileList } =
+		useFileList(hashResult.path);
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
 	useEffect(() => {
@@ -37,6 +36,10 @@ const App = () => {
 		fetchFileList(hashResult.path);
 	};
 
+	const handleFileListUpdate = () => {
+		refreshFileList();
+	};
+
 	return (
 		<>
 			<div className="fixed top-0 inset-x-0 z-10 bg-(--background-color)/50 backdrop-blur-lg">
@@ -49,7 +52,7 @@ const App = () => {
 						<Icon icon="eos-icons:loading" className="h-6 w-6" />
 					</div>
 				) : fileList ? (
-					<FileList list={fileList} />
+					<FileList list={fileList} onFileListUpdate={handleFileListUpdate} />
 				) : (
 					<div>{MESSAGES.NO_DATA}</div>
 				)}

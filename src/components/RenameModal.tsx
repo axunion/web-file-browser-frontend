@@ -103,7 +103,7 @@ const RenameModal = ({ item, onClose, onSuccess }: RenameModalProps) => {
 								setError(null);
 							}}
 							disabled={isLoading}
-							className="w-full px-3 py-2 border rounded-md focus:outline-none disabled:bg-gray-100"
+							className="w-full px-3 py-2 border rounded-md focus:outline-none disabled:bg-gray-200"
 						/>
 						{error && <p className="mt-1 text-sm text-red-600">{error}</p>}
 					</div>
@@ -116,14 +116,8 @@ const RenameModal = ({ item, onClose, onSuccess }: RenameModalProps) => {
 								!newName.trim() ||
 								newName.trim() === nameWithoutExt
 							}
-							className="block bg-(--primary-color) rounded-full m-auto py-2 px-12 cursor-pointer text-xl text-(--background-color)"
+							className="block bg-(--primary-color) rounded-full m-auto py-2 px-12 cursor-pointer text-xl text-(--background-color) disabled:bg-(--text-color)"
 						>
-							{isLoading && (
-								<Icon
-									icon="eos-icons:loading"
-									className="w-4 h-4 animate-spin"
-								/>
-							)}
 							OK
 						</button>
 					</div>

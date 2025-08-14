@@ -35,11 +35,16 @@ const useFileList = (initPath: string) => {
 		mutate(buildUrl(newPath));
 	}, []);
 
+	const refreshFileList = useCallback(() => {
+		mutate(buildUrl(path));
+	}, [path]);
+
 	return {
 		fileList,
 		isLoading: isValidating,
 		error,
 		fetchFileList,
+		refreshFileList,
 	};
 };
 
