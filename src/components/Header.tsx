@@ -1,7 +1,6 @@
 import { useCallback, useState } from "react";
-import FileUpload from "@/components/FileUpload";
 import FileUploadButton from "@/components/FileUploadButton";
-import Modal from "@/components/Modal";
+import FileUploadModal from "@/components/FileUploadModal";
 import BackButton from "./BackButton";
 
 export type HeaderProps = {
@@ -9,7 +8,6 @@ export type HeaderProps = {
 };
 
 const Header = ({ title }: HeaderProps) => {
-	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
 	const onFilesSelected = useCallback((files: File[]): void => {
@@ -19,16 +17,10 @@ const Header = ({ title }: HeaderProps) => {
 		}
 
 		setSelectedFiles(files);
-		setIsModalOpen(true);
 	}, []);
 
 	const onClosed = useCallback(() => {
-		setIsModalOpen(false);
-	}, []);
-
-	const onUpload = useCallback(() => {
 		setSelectedFiles([]);
-		setIsModalOpen(false);
 	}, []);
 
 	return (
@@ -49,10 +41,8 @@ const Header = ({ title }: HeaderProps) => {
 				</span>
 			</header>
 
-			{isModalOpen && (
-				<Modal onClose={onClosed}>
-					<FileUpload file={selectedFiles[0]} onUpload={onUpload} />
-				</Modal>
+			{selectedFiles.length > 0 && (
+				<FileUploadModal file={selectedFiles[0]} onClose={onClosed} />
 			)}
 		</>
 	);
