@@ -25,7 +25,7 @@ const useLongPress = <T>(
 	options: LongPressOptions = {},
 ): LongPressResult<T> => {
 	const { delay = 300 } = options;
-	const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+	const timeoutRef = useRef<number | null>(null);
 
 	const clearLongPress = useCallback(() => {
 		if (timeoutRef.current) {
