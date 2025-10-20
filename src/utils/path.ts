@@ -6,7 +6,12 @@ export type PathResult = {
 export const getPath = (): PathResult => {
 	const hash = window?.location.hash || "";
 	const path = hash.slice(1);
-	const paths = path ? path.split("/").filter(Boolean) : [];
+	const paths = path
+		? path
+			.split("/")
+			.filter(Boolean)
+			.map((segment) => decodeURIComponent(segment))
+		: [];
 	return { path, paths };
 };
 
@@ -18,7 +23,8 @@ export const setPaths = (paths: string[]) => {
 	if (!paths.length) {
 		resetPath();
 	} else {
-		setPath(`/${paths.join("/")}`);
+		const encodedPaths = paths.map((segment) => encodeURIComponent(segment));
+		setPath(`/${encodedPaths.join("/")}`);
 	}
 };
 
