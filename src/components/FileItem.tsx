@@ -21,18 +21,18 @@ const FileItem = ({ file, dirPath }: FileItemProps) => {
 	switch (fileType) {
 		case "video":
 			return (
-				<video controls src={src} className="h-16 aspect-video">
+				<video controls src={src} className="h-16 aspect-video" preload="none">
 					<track kind="captions" />
 				</video>
 			);
 		case "audio":
 			return (
-				<audio controls src={src}>
+				<audio controls src={src} preload="none">
 					<track kind="captions" />
 				</audio>
 			);
 		case "image":
-			return <img src={src} className="h-15 pb-1" alt="" />;
+			return <img src={src} className="h-15 pb-1" alt="" loading="lazy" />;
 		default:
 			return (
 				<a href={src} target="_blank" rel="noreferrer">
