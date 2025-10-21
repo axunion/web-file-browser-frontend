@@ -1,4 +1,3 @@
-import { Icon } from "@iconify/react";
 import { memo, useState } from "react";
 import ContextMenu from "@/components/ContextMenu";
 import FileItem from "@/components/FileItem";
@@ -74,7 +73,7 @@ const FileList = memo(({ list, onFileListUpdate }: FileListProps) => {
 				<button
 					key={`${item.name}-${index}`}
 					type="button"
-					className="max-w-full mx-auto flex flex-col items-center justify-center p-2 cursor-pointer"
+					className="max-w-full mx-auto flex flex-col items-center justify-start cursor-pointer"
 					aria-label={`File type is ${item.type}`}
 					onClick={() => handleClick(item)}
 					onMouseDown={longPressHandlers.onMouseDown(item)}
@@ -83,15 +82,7 @@ const FileList = memo(({ list, onFileListUpdate }: FileListProps) => {
 					onTouchStart={longPressHandlers.onTouchStart(item)}
 					onTouchEnd={longPressHandlers.onTouchEnd}
 				>
-					{item.type === "directory" ? (
-						<Icon icon="flat-color-icons:folder" className="w-16 h-16" />
-					) : (
-						<FileItem file={item} dirPath={dirPath} />
-					)}
-
-					<div className="line-clamp-2 px-2 text-xs text-left break-all">
-						{item.name}
-					</div>
+					<FileItem file={item} dirPath={dirPath} />
 				</button>
 			))}
 
