@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ErrorModal from "@/components/ErrorModal";
 import FileList from "@/components/FileList";
 import Header from "@/components/Header";
@@ -13,6 +13,7 @@ const App = () => {
 	const { fileList, isLoading, error, fetchFileList, refreshFileList } =
 		useFileList(hashResult.path);
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
+	const isNavigatingRef = useRef(false);
 
 	useEffect(() => {
 		const handleHashChange = () => {
@@ -52,7 +53,11 @@ const App = () => {
 						<Icon icon="eos-icons:loading" className="h-6 w-6" />
 					</div>
 				) : fileList ? (
-					<FileList list={fileList} onFileListUpdate={handleFileListUpdate} />
+					<FileList
+						list={fileList}
+						onFileListUpdate={handleFileListUpdate}
+						isNavigatingRef={isNavigatingRef}
+					/>
 				) : (
 					<div>{MESSAGES.NO_DATA}</div>
 				)}

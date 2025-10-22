@@ -8,9 +8,9 @@ export const getPath = (): PathResult => {
 	const path = hash.slice(1);
 	const paths = path
 		? path
-			.split("/")
-			.filter(Boolean)
-			.map((segment) => decodeURIComponent(segment))
+				.split("/")
+				.filter(Boolean)
+				.map((segment) => decodeURIComponent(segment))
 		: [];
 	return { path, paths };
 };
