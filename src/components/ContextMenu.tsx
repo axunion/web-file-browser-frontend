@@ -5,9 +5,15 @@ export type ContextMenuProps = {
 	position: { x: number; y: number };
 	onClose: () => void;
 	onRename: () => void;
+	onTrash: () => void;
 };
 
-const ContextMenu = ({ onClose, onRename, position }: ContextMenuProps) => {
+const ContextMenu = ({
+	onClose,
+	onRename,
+	onTrash,
+	position,
+}: ContextMenuProps) => {
 	const buttonClasses =
 		"w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer";
 	const menuWidth = 140;
@@ -31,8 +37,12 @@ const ContextMenu = ({ onClose, onRename, position }: ContextMenuProps) => {
 				onPointerDown={(e) => e.stopPropagation()}
 			>
 				<button type="button" className={buttonClasses} onClick={onRename}>
-					<Icon icon="mdi:rename-outline" className="w-4 h-4" />
+					<Icon icon="mdi:rename-outline" className="w-5 h-5" />
 					<span>リネーム</span>
+				</button>
+				<button type="button" className={buttonClasses} onClick={onTrash}>
+					<Icon icon="mdi:trash-can-outline" className="w-5 h-5" />
+					<span>削除</span>
 				</button>
 			</div>
 		</div>,

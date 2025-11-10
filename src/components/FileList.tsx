@@ -1,6 +1,7 @@
 import { memo, type RefObject, useState } from "react";
 import ContextMenu from "@/components/ContextMenu";
 import FileItem from "@/components/FileItem";
+import MoveToTrashModal from "@/components/MoveToTrashModal";
 import RenameModal from "@/components/RenameModal";
 import { ENDPOINT_DATA } from "@/constants/config";
 import useLongPress from "@/hooks/useLongPress";
@@ -25,6 +26,7 @@ const FileList = memo(
 		} | null>(null);
 
 		const [renameItem, setRenameItem] = useState<DirectoryItem | null>(null);
+		const [trashItem, setTrashItem] = useState<DirectoryItem | null>(null);
 
 		const handleLongPress = (item: DirectoryItem, element: HTMLElement) => {
 			try {
@@ -69,12 +71,28 @@ const FileList = memo(
 			setContextMenu(null);
 		};
 
+		const handleTrash = () => {
+			if (contextMenu?.item) {
+				setTrashItem(contextMenu.item);
+			}
+			setContextMenu(null);
+		};
+
 		const handleRenameModalClose = () => {
 			setRenameItem(null);
 		};
 
+		const handleTrashModalClose = () => {
+			setTrashItem(null);
+		};
+
 		const handleRenameSuccess = () => {
 			setRenameItem(null);
+			onFileListUpdate?.();
+		};
+
+		const handleTrashSuccess = () => {
+			setTrashItem(null);
 			onFileListUpdate?.();
 		};
 
@@ -102,6 +120,7 @@ const FileList = memo(
 						position={contextMenu.position}
 						onClose={handleContextMenuClose}
 						onRename={handleRename}
+						onTrash={handleTrash}
 					/>
 				)}
 
@@ -110,6 +129,14 @@ const FileList = memo(
 						item={renameItem}
 						onClose={handleRenameModalClose}
 						onSuccess={handleRenameSuccess}
+					/>
+				)}
+
+				{trashItem && (
+					<MoveToTrashModal
+						item={trashItem}
+						onClose={handleTrashModalClose}
+						onSuccess={handleTrashSuccess}
 					/>
 				)}
 			</div>
