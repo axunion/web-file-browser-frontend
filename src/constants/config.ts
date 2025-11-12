@@ -14,3 +14,4 @@ export const ENDPOINT_DATA = requiredEnvVars.VITE_ENDPOINT_DATA ?? "";
 export const ENDPOINT_LIST = `${ENDPOINT_API}list/`;
 export const ENDPOINT_UPLOAD = `${ENDPOINT_API}upload/`;
 export const ENDPOINT_RENAME = `${ENDPOINT_API}rename/`;
+export const ENDPOINT_DELETE = `${ENDPOINT_API}delete/`;

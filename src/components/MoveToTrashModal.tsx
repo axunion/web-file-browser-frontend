@@ -1,9 +1,8 @@
 import { Icon } from "@iconify/react";
 import { useState } from "react";
 import Modal from "@/components/Modal";
-import useFileRename from "@/hooks/useFileRename";
+import useDelete from "@/hooks/useDelete";
 import type { DirectoryItem } from "@/types/api";
-import { getPath } from "@/utils/path";
 
 export type MoveToTrashModalProps = {
 	item: DirectoryItem;
@@ -17,20 +16,19 @@ const MoveToTrashModal = ({
 	onSuccess,
 }: MoveToTrashModalProps) => {
 	const [error, setError] = useState<string | null>(null);
-	const { renameFile, isLoading, error: renameError } = useFileRename();
+	const { deleteFile, isLoading, error: deleteError } = useDelete();
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 
 		try {
-			await renameFile({
-				path: getPath().path,
+			await deleteFile({
+				path: "",
 				name: item.name,
-				newName: "trash",
 			});
 			onSuccess();
 		} catch {
-			setError(renameError || "削除に失敗しました");
+			setError(deleteError || "削除に失敗しました");
 		}
 	};
 
