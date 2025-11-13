@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from "react";
 import ErrorModal from "@/components/ErrorModal";
 import FileList from "@/components/FileList";
 import Header from "@/components/Header";
-import TabBar from "@/components/TabBar";
 import { MESSAGES } from "@/constants/messages";
 import useFileList from "@/hooks/useFileList";
 import { getPath } from "@/utils/path";
@@ -47,7 +46,7 @@ const App = () => {
 				<Header title={hashResult.paths.slice(-1).pop()} />
 			</div>
 
-			<main className="min-h-dvh px-4 py-16">
+			<main className="min-h-dvh px-4 py-20">
 				{isLoading ? (
 					<div className="absolute inset-0 flex items-center justify-center">
 						<Icon icon="eos-icons:loading" className="h-6 w-6" />
@@ -62,10 +61,6 @@ const App = () => {
 					<div>{MESSAGES.NO_DATA}</div>
 				)}
 			</main>
-
-			<div className="fixed bottom-0 inset-x-0 z-10 bg-(--background-color)/50 backdrop-blur-lg">
-				<TabBar />
-			</div>
 
 			{errorMessage && (
 				<ErrorModal onClose={handleErrorClose}>{errorMessage}</ErrorModal>
