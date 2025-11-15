@@ -2,7 +2,7 @@ import { Icon } from "@iconify/react";
 import { useCallback } from "react";
 import { setPaths } from "@/utils/path";
 
-export type PagePathProps = {
+export type BreadcrumbProps = {
 	paths: string[];
 };
 
@@ -22,7 +22,7 @@ const Button = ({
 	</button>
 );
 
-const PagePath = ({ paths }: PagePathProps) => {
+const Breadcrumb = ({ paths }: BreadcrumbProps) => {
 	const getKey = useCallback(
 		(index: number) => paths.slice(0, index + 1).join(),
 		[paths],
@@ -52,4 +52,4 @@ const PagePath = ({ paths }: PagePathProps) => {
 	);
 };
 
-export default PagePath;
+export default Breadcrumb;

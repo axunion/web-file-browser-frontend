@@ -1,5 +1,6 @@
 import { Icon } from "@iconify/react";
 import { useEffect, useRef, useState } from "react";
+import Breadcrumb from "@/components/Breadcrumb";
 import ErrorModal from "@/components/ErrorModal";
 import FileList from "@/components/FileList";
 import Header from "@/components/Header";
@@ -46,7 +47,11 @@ const App = () => {
 				<Header title={hashResult.paths.slice(-1).pop()} />
 			</div>
 
-			<main className="min-h-dvh px-4 py-20">
+			<div className="pt-20 pb-4">
+				<Breadcrumb paths={hashResult.paths} />
+			</div>
+
+			<main className="px-4 pb-20">
 				{isLoading ? (
 					<div className="absolute inset-0 flex items-center justify-center">
 						<Icon icon="eos-icons:loading" className="h-6 w-6" />
