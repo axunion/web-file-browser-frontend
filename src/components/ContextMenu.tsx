@@ -38,7 +38,7 @@ const ContextMenu = ({
 			>
 				<button type="button" className={buttonClasses} onClick={onRename}>
 					<Icon icon="mdi:rename-outline" className="w-5 h-5" />
-					<span>リネーム</span>
+					<span>名前を変更</span>
 				</button>
 				<button type="button" className={buttonClasses} onClick={onTrash}>
 					<Icon icon="mdi:trash-can-outline" className="w-5 h-5" />

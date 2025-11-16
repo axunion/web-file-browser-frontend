@@ -47,8 +47,8 @@ const App = () => {
 				<Header title={hashResult.paths.slice(-1).pop()} />
 			</div>
 
-			<div className="pt-20 pb-4">
-				<Breadcrumb paths={hashResult.paths} />
+			<div className="min-h-6 mt-16 mb-4">
+				{hashResult.paths.length > 0 && <Breadcrumb paths={hashResult.paths} />}
 			</div>
 
 			<main className="px-4 pb-20">
