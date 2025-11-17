@@ -16,6 +16,7 @@ const ContextMenu = ({
 }: ContextMenuProps) => {
 	const buttonClasses =
 		"w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer";
+	const iconClasses = "w-5 h-5 text-[var(--primary-color)]";
 	const menuWidth = 140;
 	const windowWidth = typeof window !== "undefined" ? window.innerWidth : 800;
 	const menuPosition = {
@@ -37,11 +38,11 @@ const ContextMenu = ({
 				onPointerDown={(e) => e.stopPropagation()}
 			>
 				<button type="button" className={buttonClasses} onClick={onRename}>
-					<Icon icon="mdi:rename-outline" className="w-5 h-5" />
+					<Icon icon="mdi:rename-outline" className={iconClasses} />
 					<span>名前を変更</span>
 				</button>
 				<button type="button" className={buttonClasses} onClick={onTrash}>
-					<Icon icon="mdi:trash-can-outline" className="w-5 h-5" />
+					<Icon icon="mdi:trash-can-outline" className={iconClasses} />
 					<span>削除</span>
 				</button>
 			</div>

@@ -60,39 +60,26 @@ const FileList = memo(
 			}
 		};
 
-		const handleContextMenuClose = () => {
-			setContextMenu(null);
-		};
+
+		const handleContextMenuClose = () => setContextMenu(null);
 
 		const handleRename = () => {
-			if (contextMenu?.item) {
-				setRenameItem(contextMenu.item);
-			}
+			if (contextMenu?.item) setRenameItem(contextMenu.item);
 			setContextMenu(null);
 		};
 
 		const handleTrash = () => {
-			if (contextMenu?.item) {
-				setTrashItem(contextMenu.item);
-			}
+			if (contextMenu?.item) setTrashItem(contextMenu.item);
 			setContextMenu(null);
 		};
 
-		const handleRenameModalClose = () => {
+		const handleModalClose = () => {
 			setRenameItem(null);
-		};
-
-		const handleTrashModalClose = () => {
 			setTrashItem(null);
 		};
 
-		const handleRenameSuccess = () => {
-			setRenameItem(null);
-			onFileListUpdate?.();
-		};
-
-		const handleTrashSuccess = () => {
-			setTrashItem(null);
+		const handleActionSuccess = () => {
+			handleModalClose();
 			onFileListUpdate?.();
 		};
 
@@ -127,16 +114,16 @@ const FileList = memo(
 				{renameItem && (
 					<RenameModal
 						item={renameItem}
-						onClose={handleRenameModalClose}
-						onSuccess={handleRenameSuccess}
+						onClose={handleModalClose}
+						onSuccess={handleActionSuccess}
 					/>
 				)}
 
 				{trashItem && (
 					<MoveToTrashModal
 						item={trashItem}
-						onClose={handleTrashModalClose}
-						onSuccess={handleTrashSuccess}
+						onClose={handleModalClose}
+						onSuccess={handleActionSuccess}
 					/>
 				)}
 			</div>
