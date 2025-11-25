@@ -60,7 +60,6 @@ const FileList = memo(
 			}
 		};
 
-
 		const handleContextMenuClose = () => setContextMenu(null);
 
 		const handleRename = () => {
