@@ -11,8 +11,10 @@ export const getPath = (): PathResult => {
 				.split("/")
 				.filter(Boolean)
 				.map((segment) => decodeURIComponent(segment))
+				.filter((segment) => segment !== ".." && segment !== ".")
 		: [];
-	return { path, paths };
+	const sanitizedPath = paths.map((s) => encodeURIComponent(s)).join("/");
+	return { path: sanitizedPath, paths };
 };
 
 export const setPath = (path: string) => {

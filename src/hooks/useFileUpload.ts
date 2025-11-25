@@ -1,48 +1,24 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { ENDPOINT_UPLOAD } from "@/constants/config";
 import type { UploadFileResponse } from "@/types/api";
+import useApiRequest from "./useApiRequest";
 
 const useFileUpload = () => {
-	const [isLoading, setIsLoading] = useState<boolean>(false);
-	const [error, setError] = useState<string | null>(null);
-
-	const uploadFile = useCallback(
-		async (file: File): Promise<UploadFileResponse> => {
-			setIsLoading(true);
-			setError(null);
-
-			const formData = new FormData();
-			formData.append("file", file);
-
-			try {
-				const response = await fetch(ENDPOINT_UPLOAD, {
-					method: "POST",
-					body: formData,
-				});
-
-				if (!response.ok) {
-					const errorText = await response.text();
-					throw new Error(errorText || "Upload failed");
-				}
-
-				return await response.json();
-			} catch (err) {
-				const errorMessage =
-					err instanceof Error ? err.message : "An unknown error occurred";
-				setError(errorMessage);
-				throw err;
-			} finally {
-				setIsLoading(false);
-			}
-		},
-		[],
+	const { isLoading, error, execute } = useApiRequest<File, UploadFileResponse>(
+		{ endpoint: ENDPOINT_UPLOAD },
 	);
 
-	return {
-		isLoading,
-		error,
-		uploadFile,
-	};
+	const uploadFile = useCallback(
+		(file: File) =>
+			execute(file, (f) => {
+				const formData = new FormData();
+				formData.append("file", f);
+				return formData;
+			}),
+		[execute],
+	);
+
+	return { isLoading, error, uploadFile };
 };
 
 export default useFileUpload;
