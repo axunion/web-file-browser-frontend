@@ -5,12 +5,14 @@ export type ContextMenuProps = {
 	position: { x: number; y: number };
 	onClose: () => void;
 	onRename: () => void;
+	onMove?: () => void;
 	onTrash: () => void;
 };
 
 const ContextMenu = ({
 	onClose,
 	onRename,
+	onMove,
 	onTrash,
 	position,
 }: ContextMenuProps) => {
@@ -41,6 +43,14 @@ const ContextMenu = ({
 					<Icon icon="mdi:rename-outline" className={iconClasses} />
 					<span>名前を変更</span>
 				</button>
+
+				{onMove && (
+					<button type="button" className={buttonClasses} onClick={onMove}>
+						<Icon icon="mdi:folder-move-outline" className={iconClasses} />
+						<span>移動</span>
+					</button>
+				)}
+
 				<button type="button" className={buttonClasses} onClick={onTrash}>
 					<Icon icon="mdi:trash-can-outline" className={iconClasses} />
 					<span>削除</span>
@@ -52,3 +62,4 @@ const ContextMenu = ({
 };
 
 export default ContextMenu;
+``;
