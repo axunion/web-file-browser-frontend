@@ -1,6 +1,7 @@
 import { memo, type RefObject, useState } from "react";
 import ContextMenu from "@/components/ContextMenu";
 import FileItem from "@/components/FileItem";
+import MoveModal from "@/components/MoveModal";
 import MoveToTrashModal from "@/components/MoveToTrashModal";
 import RenameModal from "@/components/RenameModal";
 import { ENDPOINT_DATA } from "@/constants/config";
@@ -26,6 +27,7 @@ const FileList = memo(
 		} | null>(null);
 
 		const [renameItem, setRenameItem] = useState<DirectoryItem | null>(null);
+		const [moveItem, setMoveItem] = useState<DirectoryItem | null>(null);
 		const [trashItem, setTrashItem] = useState<DirectoryItem | null>(null);
 
 		const handleLongPress = (item: DirectoryItem, element: HTMLElement) => {
@@ -67,6 +69,11 @@ const FileList = memo(
 			setContextMenu(null);
 		};
 
+		const handleMove = () => {
+			if (contextMenu?.item) setMoveItem(contextMenu.item);
+			setContextMenu(null);
+		};
+
 		const handleTrash = () => {
 			if (contextMenu?.item) setTrashItem(contextMenu.item);
 			setContextMenu(null);
@@ -74,6 +81,7 @@ const FileList = memo(
 
 		const handleModalClose = () => {
 			setRenameItem(null);
+			setMoveItem(null);
 			setTrashItem(null);
 		};
 
@@ -106,6 +114,7 @@ const FileList = memo(
 						position={contextMenu.position}
 						onClose={handleContextMenuClose}
 						onRename={handleRename}
+						onMove={contextMenu.item.type === "file" ? handleMove : undefined}
 						onTrash={handleTrash}
 					/>
 				)}
@@ -113,6 +122,14 @@ const FileList = memo(
 				{renameItem && (
 					<RenameModal
 						item={renameItem}
+						onClose={handleModalClose}
+						onSuccess={handleActionSuccess}
+					/>
+				)}
+
+				{moveItem && (
+					<MoveModal
+						item={moveItem}
 						onClose={handleModalClose}
 						onSuccess={handleActionSuccess}
 					/>

@@ -39,6 +39,7 @@ export type RenameFileRequest = {
 
 export type RenameFileSuccessResponse = {
 	status: "success";
+	path: string;
 	filename: string;
 };
 
@@ -48,6 +49,22 @@ export type RenameFileResponse =
 	| RenameFileSuccessResponse
 	| RenameFileErrorResponse;
 
+export type MoveFileRequest = {
+	path: string;
+	name: string;
+	destinationPath: string;
+};
+
+export type MoveFileSuccessResponse = {
+	status: "success";
+	path: string;
+	filename: string;
+};
+
+export type MoveFileErrorResponse = ErrorResponse;
+
+export type MoveFileResponse = MoveFileSuccessResponse | MoveFileErrorResponse;
+
 export type DeleteFileRequest = {
 	path: string;
 	name: string;
@@ -55,6 +72,7 @@ export type DeleteFileRequest = {
 
 export type DeleteFileSuccessResponse = {
 	status: "success";
+	path: string;
 	filename: string;
 };
 
