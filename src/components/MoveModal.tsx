@@ -17,7 +17,11 @@ const MoveModal = ({ item, onClose, onSuccess }: MoveModalProps) => {
 	const [browsePath, setBrowsePath] = useState("");
 	const [error, setError] = useState<string | null>(null);
 	const { moveFile, isLoading, error: moveError } = useFileMove();
-	const { fileList, isLoading: isLoadingDirs, fetchFileList } = useFileList("");
+	const {
+		fileList,
+		isLoading: isLoadingDirs,
+		fetchFileList,
+	} = useFileList("", { isolated: true });
 
 	const directories = useMemo(
 		() => fileList.filter((item) => item.type === "directory"),
@@ -43,7 +47,7 @@ const MoveModal = ({ item, onClose, onSuccess }: MoveModalProps) => {
 			await moveFile({
 				path: currentPath,
 				name: item.name,
-				destinationPath: browsePath,
+				destinationPath: browsePath || "/",
 			});
 			onSuccess();
 		} catch {

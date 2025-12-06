@@ -36,5 +36,5 @@ export const appendPath = (path: string) => {
 };
 
 export const resetPath = () => {
-	window.location.href = "";
+	window.location.hash = "";
 };
