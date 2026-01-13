@@ -1,20 +1,46 @@
 import { Icon } from "@iconify/react";
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 export type ModalProps = {
 	onClose: () => void;
 	children: React.ReactNode;
+	title?: string;
 };
 
-const Modal = ({ onClose, children }: ModalProps) => {
+const Modal = ({ onClose, children, title }: ModalProps) => {
 	const [isClosing, setIsClosing] = useState(false);
-	const close = () => setIsClosing(true);
+	const modalRef = useRef<HTMLDivElement>(null);
+	const previousActiveElement = useRef<Element | null>(null);
+
+	const close = useCallback(() => setIsClosing(true), []);
+
 	const handleAnimationEnd = () => {
 		if (isClosing) {
 			onClose();
 		}
 	};
+
+	useEffect(() => {
+		previousActiveElement.current = document.activeElement;
+
+		modalRef.current?.focus();
+
+		const handleKeyDown = (e: KeyboardEvent) => {
+			if (e.key === "Escape") {
+				close();
+			}
+		};
+
+		document.addEventListener("keydown", handleKeyDown);
+
+		return () => {
+			document.removeEventListener("keydown", handleKeyDown);
+			if (previousActiveElement.current instanceof HTMLElement) {
+				previousActiveElement.current.focus();
+			}
+		};
+	}, [close]);
 
 	return createPortal(
 		<div
@@ -23,11 +49,21 @@ const Modal = ({ onClose, children }: ModalProps) => {
 			}`}
 			onPointerDown={close}
 			onAnimationEnd={handleAnimationEnd}
+			role="dialog"
+			aria-modal="true"
+			aria-labelledby={title ? "modal-title" : undefined}
 		>
 			<div
-				className="relative w-4/5 max-w-xs max-h-80vh p-6 rounded-sm bg-(--background-color) shadow-lg"
+				ref={modalRef}
+				tabIndex={-1}
+				className="relative w-4/5 max-w-xs max-h-80vh p-6 rounded-sm bg-(--background-color) shadow-lg focus:outline-none"
 				onPointerDown={(e) => e.stopPropagation()}
 			>
+				{title && (
+					<h2 id="modal-title" className="sr-only">
+						{title}
+					</h2>
+				)}
 				{children}
 
 				<button

@@ -4,7 +4,7 @@ import type { RenameFileRequest, RenameFileResponse } from "@/types/api";
 import useApiRequest from "./useApiRequest";
 
 const useRenameFile = () => {
-	const { isLoading, error, execute } = useApiRequest<
+	const { isLoading, error, execute, abort } = useApiRequest<
 		RenameFileRequest,
 		RenameFileResponse
 	>({ endpoint: ENDPOINT_RENAME });
@@ -21,7 +21,7 @@ const useRenameFile = () => {
 		[execute],
 	);
 
-	return { isLoading, error, renameFile };
+	return { isLoading, error, renameFile, abort };
 };
 
 export default useRenameFile;

@@ -4,7 +4,7 @@ import type { DeleteFileRequest, DeleteFileResponse } from "@/types/api";
 import useApiRequest from "./useApiRequest";
 
 const useDelete = () => {
-	const { isLoading, error, execute } = useApiRequest<
+	const { isLoading, error, execute, abort } = useApiRequest<
 		DeleteFileRequest,
 		DeleteFileResponse
 	>({ endpoint: ENDPOINT_DELETE });
@@ -20,7 +20,7 @@ const useDelete = () => {
 		[execute],
 	);
 
-	return { isLoading, error, deleteFile };
+	return { isLoading, error, deleteFile, abort };
 };
 
 export default useDelete;

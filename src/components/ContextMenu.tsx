@@ -30,7 +30,11 @@ const ContextMenu = ({
 	};
 
 	return createPortal(
-		<div className="fixed inset-0 z-50" onPointerDown={onClose}>
+		<div
+			className="fixed inset-0 z-50"
+			onPointerDown={onClose}
+			role="presentation"
+		>
 			<div
 				className="absolute overflow-hidden bg-white/80 backdrop-blur-md border border-gray-200 rounded-lg shadow-md py-2"
 				style={{
@@ -38,20 +42,37 @@ const ContextMenu = ({
 					top: `${menuPosition.top}px`,
 				}}
 				onPointerDown={(e) => e.stopPropagation()}
+				role="menu"
+				aria-label="File actions"
 			>
-				<button type="button" className={buttonClasses} onClick={onRename}>
+				<button
+					type="button"
+					className={buttonClasses}
+					onClick={onRename}
+					role="menuitem"
+				>
 					<Icon icon="mdi:rename-outline" className={iconClasses} />
 					<span>名前を変更</span>
 				</button>
 
 				{onMove && (
-					<button type="button" className={buttonClasses} onClick={onMove}>
+					<button
+						type="button"
+						className={buttonClasses}
+						onClick={onMove}
+						role="menuitem"
+					>
 						<Icon icon="mdi:folder-move-outline" className={iconClasses} />
 						<span>移動</span>
 					</button>
 				)}
 
-				<button type="button" className={buttonClasses} onClick={onTrash}>
+				<button
+					type="button"
+					className={buttonClasses}
+					onClick={onTrash}
+					role="menuitem"
+				>
 					<Icon icon="mdi:trash-can-outline" className={iconClasses} />
 					<span>削除</span>
 				</button>
@@ -62,4 +83,3 @@ const ContextMenu = ({
 };
 
 export default ContextMenu;
-``;
