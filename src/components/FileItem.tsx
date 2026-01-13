@@ -1,4 +1,5 @@
 import { Icon } from "@iconify/react";
+import { memo } from "react";
 import type { DirectoryItem } from "@/types/api";
 import { getFileType } from "@/utils/fileType";
 
@@ -17,7 +18,7 @@ const icons = {
 };
 const nameStyle = "line-clamp-2 p-1 text-xs break-all";
 
-const FileItem = ({ file, dirPath }: FileItemProps) => {
+const FileItem = memo(({ file, dirPath }: FileItemProps) => {
 	if (file.type === "directory") {
 		return (
 			<>
@@ -33,7 +34,12 @@ const FileItem = ({ file, dirPath }: FileItemProps) => {
 	if (fileType === "image") {
 		return (
 			<>
-				<img src={src} className="h-16" alt="" loading="lazy" />
+				<img
+					src={src}
+					className="h-16"
+					alt={`Preview of ${file.name}`}
+					loading="lazy"
+				/>
 				<div className={nameStyle}>{file.name}</div>
 			</>
 		);
@@ -46,11 +52,12 @@ const FileItem = ({ file, dirPath }: FileItemProps) => {
 			rel="noreferrer"
 			className="flex flex-col items-center"
 			onClick={(e) => e.stopPropagation()}
+			aria-label={`Open ${file.name} in new tab`}
 		>
 			{icons[fileType] ?? icons.file}
 			<div className={nameStyle}>{file.name}</div>
 		</a>
 	);
-};
+});
 
 export default FileItem;

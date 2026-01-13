@@ -43,7 +43,7 @@ const useLongPress = <T>(
 			const element = event.currentTarget as HTMLElement;
 			if (!element) return;
 
-			timeoutRef.current = setTimeout(() => {
+			timeoutRef.current = window.setTimeout(() => {
 				callback(data, element);
 			}, delay);
 		},

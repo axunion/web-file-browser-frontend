@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 type ApiRequestOptions = {
 	endpoint: string;
@@ -15,6 +15,7 @@ type UseApiRequestReturn<TParams, TResponse> = ApiRequestState & {
 		params: TParams,
 		prepareBody: (params: TParams) => FormData | URLSearchParams,
 	) => Promise<TResponse>;
+	abort: () => void;
 };
 
 const useApiRequest = <TParams, TResponse>(
@@ -23,13 +24,36 @@ const useApiRequest = <TParams, TResponse>(
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
+	const isMountedRef = useRef(true);
+	const abortControllerRef = useRef<AbortController | null>(null);
+
+	useEffect(() => {
+		isMountedRef.current = true;
+
+		return () => {
+			isMountedRef.current = false;
+			abortControllerRef.current?.abort();
+		};
+	}, []);
+
+	const abort = useCallback(() => {
+		abortControllerRef.current?.abort();
+	}, []);
+
 	const execute = useCallback(
 		async (
 			params: TParams,
 			prepareBody: (params: TParams) => FormData | URLSearchParams,
 		): Promise<TResponse> => {
-			setIsLoading(true);
-			setError(null);
+			abortControllerRef.current?.abort();
+
+			const abortController = new AbortController();
+			abortControllerRef.current = abortController;
+
+			if (isMountedRef.current) {
+				setIsLoading(true);
+				setError(null);
+			}
 
 			try {
 				const body = prepareBody(params);
@@ -44,6 +68,7 @@ const useApiRequest = <TParams, TResponse>(
 									options.contentType ?? "application/x-www-form-urlencoded",
 							},
 					body: isFormData ? body : body.toString(),
+					signal: abortController.signal,
 				});
 
 				if (!response.ok) {
@@ -51,20 +76,38 @@ const useApiRequest = <TParams, TResponse>(
 					throw new Error(errorText || "Request failed");
 				}
 
-				return await response.json();
+				const text = await response.text();
+				let data: TResponse;
+
+				try {
+					data = JSON.parse(text) as TResponse;
+				} catch {
+					throw new Error("Invalid JSON response from server");
+				}
+
+				return data;
 			} catch (err) {
+				if (err instanceof Error && err.name === "AbortError") {
+					throw err;
+				}
+
 				const errorMessage =
 					err instanceof Error ? err.message : "An unknown error occurred";
-				setError(errorMessage);
+
+				if (isMountedRef.current) {
+					setError(errorMessage);
+				}
 				throw err;
 			} finally {
-				setIsLoading(false);
+				if (isMountedRef.current) {
+					setIsLoading(false);
+				}
 			}
 		},
 		[options.endpoint, options.contentType],
 	);
 
-	return { isLoading, error, execute };
+	return { isLoading, error, execute, abort };
 };
 
 export default useApiRequest;

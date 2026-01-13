@@ -4,7 +4,7 @@ import type { MoveFileRequest, MoveFileResponse } from "@/types/api";
 import useApiRequest from "./useApiRequest";
 
 const useFileMove = () => {
-	const { isLoading, error, execute } = useApiRequest<
+	const { isLoading, error, execute, abort } = useApiRequest<
 		MoveFileRequest,
 		MoveFileResponse
 	>({ endpoint: ENDPOINT_MOVE });
@@ -21,7 +21,7 @@ const useFileMove = () => {
 		[execute],
 	);
 
-	return { isLoading, error, moveFile };
+	return { isLoading, error, moveFile, abort };
 };
 
 export default useFileMove;

@@ -4,9 +4,10 @@ import type { UploadFileResponse } from "@/types/api";
 import useApiRequest from "./useApiRequest";
 
 const useFileUpload = () => {
-	const { isLoading, error, execute } = useApiRequest<File, UploadFileResponse>(
-		{ endpoint: ENDPOINT_UPLOAD },
-	);
+	const { isLoading, error, execute, abort } = useApiRequest<
+		File,
+		UploadFileResponse
+	>({ endpoint: ENDPOINT_UPLOAD });
 
 	const uploadFile = useCallback(
 		(file: File) =>
@@ -18,7 +19,7 @@ const useFileUpload = () => {
 		[execute],
 	);
 
-	return { isLoading, error, uploadFile };
+	return { isLoading, error, uploadFile, abort };
 };
 
 export default useFileUpload;

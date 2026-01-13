@@ -1,4 +1,4 @@
-import { memo, type RefObject, useState } from "react";
+import { memo, type RefObject, useCallback, useReducer } from "react";
 import ContextMenu from "@/components/ContextMenu";
 import FileItem from "@/components/FileItem";
 import MoveModal from "@/components/MoveModal";
@@ -15,90 +15,160 @@ export type FileListProps = {
 	isNavigatingRef: RefObject<boolean>;
 };
 
+type FileListState = {
+	contextMenu: {
+		item: DirectoryItem;
+		position: { x: number; y: number };
+	} | null;
+	activeModal: {
+		type: "rename" | "move" | "trash";
+		item: DirectoryItem;
+	} | null;
+};
+
+type FileListAction =
+	| {
+			type: "OPEN_CONTEXT_MENU";
+			item: DirectoryItem;
+			position: { x: number; y: number };
+	  }
+	| { type: "CLOSE_CONTEXT_MENU" }
+	| { type: "OPEN_RENAME_MODAL" }
+	| { type: "OPEN_MOVE_MODAL" }
+	| { type: "OPEN_TRASH_MODAL" }
+	| { type: "CLOSE_MODAL" };
+
+const initialState: FileListState = {
+	contextMenu: null,
+	activeModal: null,
+};
+
+const fileListReducer = (
+	state: FileListState,
+	action: FileListAction,
+): FileListState => {
+	switch (action.type) {
+		case "OPEN_CONTEXT_MENU":
+			return {
+				...state,
+				contextMenu: { item: action.item, position: action.position },
+			};
+		case "CLOSE_CONTEXT_MENU":
+			return { ...state, contextMenu: null };
+		case "OPEN_RENAME_MODAL":
+			if (!state.contextMenu) return state;
+			return {
+				contextMenu: null,
+				activeModal: { type: "rename", item: state.contextMenu.item },
+			};
+		case "OPEN_MOVE_MODAL":
+			if (!state.contextMenu) return state;
+			return {
+				contextMenu: null,
+				activeModal: { type: "move", item: state.contextMenu.item },
+			};
+		case "OPEN_TRASH_MODAL":
+			if (!state.contextMenu) return state;
+			return {
+				contextMenu: null,
+				activeModal: { type: "trash", item: state.contextMenu.item },
+			};
+		case "CLOSE_MODAL":
+			return { ...state, activeModal: null };
+		default:
+			return state;
+	}
+};
+
 const FileList = memo(
 	({ list, onFileListUpdate, isNavigatingRef }: FileListProps) => {
+		const [state, dispatch] = useReducer(fileListReducer, initialState);
+		const { contextMenu, activeModal } = state;
+
 		const dirPath = `${ENDPOINT_DATA}${getPath().path}/`;
 		const gridClasses =
 			"grid gap-x-2 gap-y-4 grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10";
 
-		const [contextMenu, setContextMenu] = useState<{
-			item: DirectoryItem;
-			position: { x: number; y: number };
-		} | null>(null);
-
-		const [renameItem, setRenameItem] = useState<DirectoryItem | null>(null);
-		const [moveItem, setMoveItem] = useState<DirectoryItem | null>(null);
-		const [trashItem, setTrashItem] = useState<DirectoryItem | null>(null);
-
-		const handleLongPress = (item: DirectoryItem, element: HTMLElement) => {
-			try {
-				const rect = element.getBoundingClientRect();
-				const position = {
-					x: rect.left + rect.width / 2,
-					y: rect.top + rect.height / 2,
-				};
-				setContextMenu({ item, position });
-			} catch (error) {
-				console.error("Error getting element position:", error);
-			}
-		};
+		const handleLongPress = useCallback(
+			(item: DirectoryItem, element: HTMLElement) => {
+				try {
+					const rect = element.getBoundingClientRect();
+					const position = {
+						x: rect.left + rect.width / 2,
+						y: rect.top + rect.height / 2,
+					};
+					dispatch({ type: "OPEN_CONTEXT_MENU", item, position });
+				} catch (error) {
+					console.error("Error getting element position:", error);
+				}
+			},
+			[],
+		);
 
 		const longPressHandlers = useLongPress<DirectoryItem>(handleLongPress, {
 			delay: 300,
 		});
 
-		const handleClick = (item: DirectoryItem) => {
-			if (isNavigatingRef.current) {
-				return;
-			}
+		const handleClick = useCallback(
+			(item: DirectoryItem) => {
+				if (isNavigatingRef.current) {
+					return;
+				}
 
-			if (item.type === "directory") {
-				isNavigatingRef.current = true;
-				appendPath(item.name);
+				if (item.type === "directory") {
+					isNavigatingRef.current = true;
+					appendPath(item.name);
 
-				setTimeout(() => {
-					isNavigatingRef.current = false;
-				}, 500);
-			}
-		};
+					requestAnimationFrame(() => {
+						requestAnimationFrame(() => {
+							isNavigatingRef.current = false;
+						});
+					});
+				}
+			},
+			[isNavigatingRef],
+		);
 
-		const handleContextMenuClose = () => setContextMenu(null);
+		const handleContextMenuClose = useCallback(() => {
+			dispatch({ type: "CLOSE_CONTEXT_MENU" });
+		}, []);
 
-		const handleRename = () => {
-			if (contextMenu?.item) setRenameItem(contextMenu.item);
-			setContextMenu(null);
-		};
+		const handleRename = useCallback(() => {
+			dispatch({ type: "OPEN_RENAME_MODAL" });
+		}, []);
 
-		const handleMove = () => {
-			if (contextMenu?.item) setMoveItem(contextMenu.item);
-			setContextMenu(null);
-		};
+		const handleMove = useCallback(() => {
+			dispatch({ type: "OPEN_MOVE_MODAL" });
+		}, []);
 
-		const handleTrash = () => {
-			if (contextMenu?.item) setTrashItem(contextMenu.item);
-			setContextMenu(null);
-		};
+		const handleTrash = useCallback(() => {
+			dispatch({ type: "OPEN_TRASH_MODAL" });
+		}, []);
 
-		const handleModalClose = () => {
-			setRenameItem(null);
-			setMoveItem(null);
-			setTrashItem(null);
-		};
+		const handleModalClose = useCallback(() => {
+			dispatch({ type: "CLOSE_MODAL" });
+		}, []);
 
-		const handleActionSuccess = () => {
-			handleModalClose();
+		const handleActionSuccess = useCallback(() => {
+			dispatch({ type: "CLOSE_MODAL" });
 			onFileListUpdate?.();
-		};
+		}, [onFileListUpdate]);
 
 		return (
 			<div className={`fade-in ${gridClasses}`}>
-				{list.map((item, index) => (
+				{list.map((item) => (
 					<button
-						key={`${item.name}-${index}`}
+						key={item.name}
 						type="button"
-						className="max-w-full mx-auto flex flex-col items-center justify-start cursor-pointer"
-						aria-label={`File type is ${item.type}`}
+						className="max-w-full mx-auto flex flex-col items-center justify-start cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+						aria-label={`${item.name}, ${item.type === "directory" ? "folder" : "file"}`}
 						onClick={() => handleClick(item)}
+						onKeyDown={(e) => {
+							if (e.key === "Enter" || e.key === " ") {
+								e.preventDefault();
+								handleClick(item);
+							}
+						}}
 						onMouseDown={longPressHandlers.onMouseDown(item)}
 						onMouseUp={longPressHandlers.onMouseUp}
 						onMouseLeave={longPressHandlers.onMouseLeave}
@@ -119,25 +189,25 @@ const FileList = memo(
 					/>
 				)}
 
-				{renameItem && (
+				{activeModal?.type === "rename" && (
 					<RenameModal
-						item={renameItem}
+						item={activeModal.item}
 						onClose={handleModalClose}
 						onSuccess={handleActionSuccess}
 					/>
 				)}
 
-				{moveItem && (
+				{activeModal?.type === "move" && (
 					<MoveModal
-						item={moveItem}
+						item={activeModal.item}
 						onClose={handleModalClose}
 						onSuccess={handleActionSuccess}
 					/>
 				)}
 
-				{trashItem && (
+				{activeModal?.type === "trash" && (
 					<MoveToTrashModal
-						item={trashItem}
+						item={activeModal.item}
 						onClose={handleModalClose}
 						onSuccess={handleActionSuccess}
 					/>
