@@ -5,12 +5,14 @@ import MoveModal from "@/components/MoveModal";
 import MoveToTrashModal from "@/components/MoveToTrashModal";
 import RenameModal from "@/components/RenameModal";
 import { ENDPOINT_DATA } from "@/constants/config";
+import { getFileItemAriaLabel } from "@/constants/messages";
 import useLongPress from "@/hooks/useLongPress";
 import type { DirectoryItem } from "@/types/api";
-import { appendPath, getPath } from "@/utils/path";
+import { appendPath } from "@/utils/path";
 
 export type FileListProps = {
 	list: DirectoryItem[];
+	currentPath: string;
 	onFileListUpdate?: () => void;
 	isNavigatingRef: RefObject<boolean>;
 };
@@ -81,11 +83,13 @@ const fileListReducer = (
 };
 
 const FileList = memo(
-	({ list, onFileListUpdate, isNavigatingRef }: FileListProps) => {
+	({ list, currentPath, onFileListUpdate, isNavigatingRef }: FileListProps) => {
 		const [state, dispatch] = useReducer(fileListReducer, initialState);
 		const { contextMenu, activeModal } = state;
 
-		const dirPath = `${ENDPOINT_DATA}${getPath().path}/`;
+		const dirPath = currentPath
+			? `${ENDPOINT_DATA}${currentPath}/`
+			: ENDPOINT_DATA;
 		const gridClasses =
 			"grid gap-x-2 gap-y-4 grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10";
 
@@ -161,7 +165,7 @@ const FileList = memo(
 						key={item.name}
 						type="button"
 						className="max-w-full mx-auto flex flex-col items-center justify-start cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-						aria-label={`${item.name}, ${item.type === "directory" ? "folder" : "file"}`}
+						aria-label={getFileItemAriaLabel(item.name, item.type)}
 						onClick={() => handleClick(item)}
 						onKeyDown={(e) => {
 							if (e.key === "Enter" || e.key === " ") {
@@ -192,6 +196,7 @@ const FileList = memo(
 				{activeModal?.type === "rename" && (
 					<RenameModal
 						item={activeModal.item}
+						currentPath={currentPath}
 						onClose={handleModalClose}
 						onSuccess={handleActionSuccess}
 					/>
@@ -200,6 +205,7 @@ const FileList = memo(
 				{activeModal?.type === "move" && (
 					<MoveModal
 						item={activeModal.item}
+						currentPath={currentPath}
 						onClose={handleModalClose}
 						onSuccess={handleActionSuccess}
 					/>
@@ -208,6 +214,7 @@ const FileList = memo(
 				{activeModal?.type === "trash" && (
 					<MoveToTrashModal
 						item={activeModal.item}
+						currentPath={currentPath}
 						onClose={handleModalClose}
 						onSuccess={handleActionSuccess}
 					/>

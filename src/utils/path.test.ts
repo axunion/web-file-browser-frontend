@@ -1,5 +1,13 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { appendPath, getPath, resetPath, setPath, setPaths } from "./path";
+import {
+	appendPath,
+	getParentPaths,
+	getPath,
+	resetPath,
+	setPath,
+	setPaths,
+	toEncodedPath,
+} from "./path";
 
 describe("path utilities", () => {
 	beforeEach(() => {
@@ -50,6 +58,13 @@ describe("path utilities", () => {
 			window.location.hash = "#/folder%40test/file%23name";
 			const result = getPath();
 			expect(result.paths).toEqual(["folder@test", "file#name"]);
+		});
+
+		it("should decode japanese path segments", () => {
+			window.location.hash =
+				"#/%E6%97%A5%E6%9C%AC%E8%AA%9E/%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB";
+			const result = getPath();
+			expect(result.paths).toEqual(["日本語", "ファイル"]);
 		});
 
 		it("should filter empty segments", () => {
@@ -112,6 +127,28 @@ describe("path utilities", () => {
 			window.location.hash = "#/folder1";
 			appendPath("my folder");
 			expect(window.location.hash).toBe("#/folder1/my%20folder");
+		});
+	});
+
+	describe("toEncodedPath", () => {
+		it("should encode spaces, hashes, and japanese characters", () => {
+			expect(toEncodedPath(["日本語", "folder #1", "my file.txt"])).toBe(
+				"%E6%97%A5%E6%9C%AC%E8%AA%9E/folder%20%231/my%20file.txt",
+			);
+		});
+
+		it("should drop traversal segments", () => {
+			expect(toEncodedPath(["safe", "..", ".", "nested"])).toBe("safe/nested");
+		});
+	});
+
+	describe("getParentPaths", () => {
+		it("should return the parent segments", () => {
+			expect(getParentPaths(["a", "b", "c"])).toEqual(["a", "b"]);
+		});
+
+		it("should return an empty array for the root level", () => {
+			expect(getParentPaths(["only"])).toEqual([]);
 		});
 	});
 

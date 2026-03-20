@@ -1,5 +1,6 @@
 import { Icon } from "@iconify/react";
 import { useCallback } from "react";
+import { MESSAGES } from "@/constants/messages";
 import { setPaths } from "@/utils/path";
 
 export type BreadcrumbProps = {
@@ -33,13 +34,13 @@ const Breadcrumb = ({ paths }: BreadcrumbProps) => {
 	};
 
 	return (
-		<nav aria-label="Breadcrumb" className="px-4 opacity-80">
+		<nav aria-label={MESSAGES.BREADCRUMB} className="px-4 opacity-80">
 			<ol className="flex flex-wrap items-center">
 				<li className={itemStyle}>
 					<Button onClick={() => handleClick(-1)}>
 						<span className="flex items-center gap-1">
 							<Icon icon="mdi:folder-open" className="w-5 h-5" />
-							TOP
+							{MESSAGES.BREADCRUMB_ROOT}
 						</span>
 					</Button>
 				</li>

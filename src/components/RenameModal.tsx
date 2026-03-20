@@ -1,17 +1,23 @@
 import { Icon } from "@iconify/react";
 import { useEffect, useRef, useState } from "react";
 import Modal from "@/components/Modal";
+import { MESSAGES } from "@/constants/messages";
 import useFileRename from "@/hooks/useFileRename";
 import type { DirectoryItem } from "@/types/api";
-import { getPath } from "@/utils/path";
 
 export type RenameModalProps = {
 	item: DirectoryItem;
+	currentPath: string;
 	onClose: () => void;
 	onSuccess: () => void;
 };
 
-const RenameModal = ({ item, onClose, onSuccess }: RenameModalProps) => {
+const RenameModal = ({
+	item,
+	currentPath,
+	onClose,
+	onSuccess,
+}: RenameModalProps) => {
 	const originalName = item.name;
 	const dotIndex = item.type === "file" ? originalName.lastIndexOf(".") : -1;
 	const hasExtension = dotIndex > 0;
@@ -23,11 +29,11 @@ const RenameModal = ({ item, onClose, onSuccess }: RenameModalProps) => {
 	const [newName, setNewName] = useState(nameWithoutExt);
 	const [error, setError] = useState<string | null>(null);
 	const inputRef = useRef<HTMLInputElement>(null);
-	const { renameFile, isLoading, error: renameError } = useFileRename();
+	const { renameFile, isLoading } = useFileRename();
 
 	const validateName = (trimmed: string): string | null => {
 		if (trimmed === "." || trimmed === "..") {
-			return "この名前は使用できません";
+			return MESSAGES.INVALID_NAME;
 		}
 
 		// Invalid characters for file systems
@@ -41,7 +47,7 @@ const RenameModal = ({ item, onClose, onSuccess }: RenameModalProps) => {
 		});
 
 		if (hasInvalidChar || hasControlChar) {
-			return "使用できない文字が含まれています";
+			return MESSAGES.INVALID_NAME_CHARACTERS;
 		}
 
 		return null;
@@ -68,13 +74,15 @@ const RenameModal = ({ item, onClose, onSuccess }: RenameModalProps) => {
 
 		try {
 			await renameFile({
-				path: getPath().path,
+				path: currentPath,
 				name: originalName,
 				newName: fullNewName,
 			});
 			onSuccess();
-		} catch {
-			setError(renameError || "リネームに失敗しました");
+		} catch (error) {
+			setError(
+				error instanceof Error ? error.message : MESSAGES.FILE_RENAME_ERROR,
+			);
 		}
 	};
 
@@ -89,7 +97,7 @@ const RenameModal = ({ item, onClose, onSuccess }: RenameModalProps) => {
 			<section>
 				<div className="flex gap-2 items-center text-(--primary-color)">
 					<Icon icon="line-md:edit" className="w-8 h-8" />
-					<span className="text-2xl">Rename</span>
+					<span className="text-2xl">{MESSAGES.RENAME}</span>
 				</div>
 
 				<form onSubmit={handleSubmit}>
@@ -118,7 +126,7 @@ const RenameModal = ({ item, onClose, onSuccess }: RenameModalProps) => {
 							}
 							className="block bg-(--primary-color) rounded-full m-auto py-2 px-12 cursor-pointer text-xl text-(--background-color) disabled:bg-(--text-color)"
 						>
-							OK
+							{MESSAGES.CONFIRM}
 						</button>
 					</div>
 				</form>

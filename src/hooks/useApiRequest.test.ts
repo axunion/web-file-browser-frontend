@@ -53,7 +53,7 @@ describe("useApiRequest", () => {
 	});
 
 	it("should handle successful response", async () => {
-		const mockResponse = { status: "success", data: "test" };
+		const mockResponse = { status: "success", data: "test" } as const;
 		const mockFetch = vi.fn().mockResolvedValue({
 			ok: true,
 			text: () => Promise.resolve(JSON.stringify(mockResponse)),
@@ -74,6 +74,32 @@ describe("useApiRequest", () => {
 		expect(response).toEqual(mockResponse);
 		expect(result.current.isLoading).toBe(false);
 		expect(result.current.error).toBeNull();
+	});
+
+	it("should reject API error responses", async () => {
+		const mockFetch = vi.fn().mockResolvedValue({
+			ok: true,
+			text: () =>
+				Promise.resolve(
+					'{"status":"error","message":"Server validation failed"}',
+				),
+		});
+		global.fetch = mockFetch;
+
+		const { result } = renderHook(() =>
+			useApiRequest({ endpoint: "/api/test" }),
+		);
+
+		await act(async () => {
+			try {
+				await result.current.execute({}, () => new URLSearchParams());
+			} catch {
+				// Expected
+			}
+		});
+
+		expect(result.current.error).toBe("Server validation failed");
+		expect(result.current.isLoading).toBe(false);
 	});
 
 	it("should handle fetch errors", async () => {

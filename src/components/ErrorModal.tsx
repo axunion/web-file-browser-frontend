@@ -1,5 +1,6 @@
 import { Icon } from "@iconify/react";
 import Modal from "@/components/Modal";
+import { MESSAGES } from "@/constants/messages";
 
 export type ErrorProps = {
 	onClose: () => void;
@@ -12,7 +13,7 @@ const ErrorModal = ({ onClose, children }: ErrorProps) => {
 			<section>
 				<div className="flex gap-2 items-center">
 					<Icon icon="flat-color-icons:high-priority" className="w-6 h-6" />
-					<span className="text-xl">Error</span>
+					<span className="text-xl">{MESSAGES.ERROR}</span>
 				</div>
 
 				<p className="my-8 text-sm">{children}</p>
