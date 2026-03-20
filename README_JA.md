@@ -32,7 +32,7 @@
 ### 1. 依存関係のインストール
 
 ```bash
-npm install
+pnpm install
 ```
 
 ### 2. 環境変数の設定
@@ -52,7 +52,7 @@ VITE_ENDPOINT_DATA=http://localhost:8000/data/
 ### 3. 開発サーバーの起動
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 ブラウザで `http://localhost:5173` にアクセスしてください。
@@ -60,7 +60,7 @@ npm run dev
 ### 4. プロダクションビルド
 
 ```bash
-npm run build
+pnpm build
 ```
 
 ビルド成果物は `dist/` フォルダに出力されます。

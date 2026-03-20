@@ -32,7 +32,7 @@ Features an intuitive and modern UI for browsing and managing files and director
 ### Installation
 
 ```bash
-npm install
+pnpm install
 ```
 
 ### 2. Environment Variables
@@ -52,7 +52,7 @@ VITE_ENDPOINT_DATA=http://localhost:8000/data/
 ### 3. Start Development Server
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 Open your browser and navigate to `http://localhost:5173`.
@@ -60,7 +60,7 @@ Open your browser and navigate to `http://localhost:5173`.
 ### 4. Production Build
 
 ```bash
-npm run build
+pnpm build
 ```
 
 Build artifacts will be output to the `dist/` folder.
