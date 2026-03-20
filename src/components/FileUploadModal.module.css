@@ -1,0 +1,18 @@
+.fileName {
+	display: flex;
+	justify-content: center;
+	margin-top: 3rem;
+	margin-bottom: 3rem;
+	word-break: break-all;
+}
+
+.error {
+	margin-bottom: 1rem;
+	color: var(--error-color);
+	font-size: 0.875rem;
+	line-height: 1.25rem;
+}
+
+.submitButton {
+	padding: 0.5rem 3rem;
+}

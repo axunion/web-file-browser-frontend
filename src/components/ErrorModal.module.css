@@ -1,0 +1,22 @@
+.header {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.icon {
+	width: 1.5rem;
+	height: 1.5rem;
+}
+
+.title {
+	font-size: 1.25rem;
+	line-height: 1.75rem;
+}
+
+.message {
+	margin-top: 2rem;
+	margin-bottom: 2rem;
+	font-size: 0.875rem;
+	line-height: 1.25rem;
+}

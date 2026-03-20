@@ -1,6 +1,7 @@
 import { Icon } from "@iconify/react";
 import type { ChangeEvent } from "react";
 import { MESSAGES } from "@/constants/messages";
+import styles from "./FileUploadButton.module.css";
 
 export type FileUploadButtonProps = {
 	onFilesSelected: (files: File[]) => void;
@@ -13,16 +14,16 @@ const FileUploadButton = ({ onFilesSelected }: FileUploadButtonProps) => {
 	};
 
 	return (
-		<label className="cursor-pointer text-(--primary-color)">
+		<label className={styles.label}>
 			<input
 				type="file"
 				aria-label={MESSAGES.FILE_UPLOAD_BUTTON_ARIA_LABEL}
 				tabIndex={0}
-				className="hidden"
+				className={styles.input}
 				onChange={onFileChange}
 			/>
 
-			<Icon icon="line-md:file-upload" className="w-8 h-8" />
+			<Icon icon="line-md:file-upload" className={styles.icon} />
 		</label>
 	);
 };

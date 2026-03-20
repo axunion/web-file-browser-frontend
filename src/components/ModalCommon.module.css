@@ -1,0 +1,42 @@
+.header {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	color: var(--primary-color);
+}
+
+.icon {
+	width: 2rem;
+	height: 2rem;
+}
+
+.title {
+	font-size: 1.5rem;
+	line-height: 2rem;
+}
+
+.error {
+	color: var(--error-color);
+	font-size: 0.875rem;
+	line-height: 1.25rem;
+}
+
+.actions {
+	display: flex;
+	justify-content: center;
+}
+
+.submitButton {
+	display: block;
+	margin: auto;
+	border-radius: 9999px;
+	background: var(--primary-color);
+	color: var(--background-color);
+	font-size: 1.25rem;
+	line-height: 1.75rem;
+	cursor: pointer;
+}
+
+.submitButton:disabled {
+	background: var(--text-color);
+}

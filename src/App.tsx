@@ -7,6 +7,7 @@ import Header from "@/components/Header";
 import { MESSAGES } from "@/constants/messages";
 import useFileList from "@/hooks/useFileList";
 import { getPath } from "@/utils/path";
+import styles from "./App.module.css";
 
 const App = () => {
 	const [hashResult, setHashResult] = useState(() => getPath());
@@ -43,7 +44,7 @@ const App = () => {
 
 	return (
 		<>
-			<div className="fixed top-0 inset-x-0 z-10 bg-(--background-color)/50 backdrop-blur-lg">
+			<div className={styles.header}>
 				<Header
 					title={hashResult.paths.slice(-1).pop()}
 					paths={hashResult.paths}
@@ -51,14 +52,14 @@ const App = () => {
 				/>
 			</div>
 
-			<div className="min-h-6 mt-16 mb-4">
+			<div className={styles.breadcrumb}>
 				{hashResult.paths.length > 0 && <Breadcrumb paths={hashResult.paths} />}
 			</div>
 
-			<main className="px-4 pb-20" aria-busy={isLoading}>
+			<main className={styles.main} aria-busy={isLoading}>
 				{isLoading ? (
-					<div className="absolute inset-0 flex items-center justify-center">
-						<Icon icon="eos-icons:loading" className="h-6 w-6" />
+					<div className={styles.loadingState}>
+						<Icon icon="eos-icons:loading" className={styles.loadingIcon} />
 					</div>
 				) : items.length > 0 ? (
 					<FileList

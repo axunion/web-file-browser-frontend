@@ -2,6 +2,7 @@ import { Icon } from "@iconify/react";
 import { useCallback } from "react";
 import { MESSAGES } from "@/constants/messages";
 import { setPaths } from "@/utils/path";
+import styles from "./Breadcrumb.module.css";
 
 export type BreadcrumbProps = {
 	paths: string[];
@@ -14,17 +15,12 @@ const Button = ({
 	children: React.ReactNode;
 	onClick: () => void;
 }) => (
-	<button
-		type="button"
-		className="text-sm font-medium cursor-pointer"
-		onClick={onClick}
-	>
+	<button type="button" className={styles.button} onClick={onClick}>
 		{children}
 	</button>
 );
 
 const Breadcrumb = ({ paths }: BreadcrumbProps) => {
-	const itemStyle = "my-1 flex items-center cursor-pointer";
 	const getKey = useCallback(
 		(index: number) => paths.slice(0, index + 1).join(),
 		[paths],
@@ -34,20 +30,20 @@ const Breadcrumb = ({ paths }: BreadcrumbProps) => {
 	};
 
 	return (
-		<nav aria-label={MESSAGES.BREADCRUMB} className="px-4 opacity-80">
-			<ol className="flex flex-wrap items-center">
-				<li className={itemStyle}>
+		<nav aria-label={MESSAGES.BREADCRUMB} className={styles.nav}>
+			<ol className={styles.list}>
+				<li className={styles.item}>
 					<Button onClick={() => handleClick(-1)}>
-						<span className="flex items-center gap-1">
-							<Icon icon="mdi:folder-open" className="w-5 h-5" />
+						<span className={styles.root}>
+							<Icon icon="mdi:folder-open" className={styles.folderIcon} />
 							{MESSAGES.BREADCRUMB_ROOT}
 						</span>
 					</Button>
 				</li>
 
 				{paths.map((path, index) => (
-					<li key={getKey(index)} className={itemStyle}>
-						<Icon icon="mdi:chevron-right" className="w-4 h-4" />
+					<li key={getKey(index)} className={styles.item}>
+						<Icon icon="mdi:chevron-right" className={styles.chevronIcon} />
 						<Button onClick={() => handleClick(index)}>{path}</Button>
 					</li>
 				))}

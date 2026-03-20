@@ -23,7 +23,8 @@ Features an intuitive and modern UI for browsing and managing files and director
 - **TypeScript** - Type-safe development
 - **Vite** - Fast build tool and dev server
 - **SWR** - Data fetching and caching library
-- **Tailwind CSS** - Utility-first CSS framework
+- **Lightning CSS** - CSS transformer and minifier
+- **CSS Modules** - Component-scoped styling
 - **@iconify/react** - Icon library
 - **@biomejs/biome** - Fast formatter and linter
 

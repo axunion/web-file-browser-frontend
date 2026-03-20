@@ -1,0 +1,16 @@
+.content {
+	margin-top: 2rem;
+	margin-bottom: 2rem;
+	text-align: center;
+}
+
+.error {
+	margin-top: 0.25rem;
+	color: var(--error-color);
+	font-size: 0.875rem;
+	line-height: 1.25rem;
+}
+
+.submitButton {
+	padding: 0.5rem 3rem;
+}

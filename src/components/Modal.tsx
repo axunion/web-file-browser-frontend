@@ -2,6 +2,7 @@ import { Icon } from "@iconify/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { MESSAGES } from "@/constants/messages";
+import styles from "./Modal.module.css";
 
 export type ModalProps = {
 	onClose: () => void;
@@ -45,9 +46,7 @@ const Modal = ({ onClose, children, title }: ModalProps) => {
 
 	return createPortal(
 		<div
-			className={`fixed inset-0 bg-[#00000080] flex items-center justify-center z-10 ${
-				isClosing ? "fade-out" : "fade-in"
-			}`}
+			className={`${styles.overlay} ${isClosing ? "fade-out" : "fade-in"}`}
 			onPointerDown={close}
 			onAnimationEnd={handleAnimationEnd}
 			role="dialog"
@@ -57,7 +56,7 @@ const Modal = ({ onClose, children, title }: ModalProps) => {
 			<div
 				ref={modalRef}
 				tabIndex={-1}
-				className="relative w-4/5 max-w-xs max-h-80vh p-6 rounded-sm bg-(--background-color) shadow-lg focus:outline-none"
+				className={styles.panel}
 				onPointerDown={(e) => e.stopPropagation()}
 			>
 				{title && (
@@ -69,11 +68,11 @@ const Modal = ({ onClose, children, title }: ModalProps) => {
 
 				<button
 					type="button"
-					className="absolute top-4 right-4 cursor-pointer"
+					className={styles.closeButton}
 					onClick={close}
 					aria-label={MESSAGES.CLOSE_MODAL}
 				>
-					<Icon icon="mdi:close-thick" className="w-6 h-6" />
+					<Icon icon="mdi:close-thick" className={styles.closeIcon} />
 				</button>
 			</div>
 		</div>,

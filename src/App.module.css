@@ -1,0 +1,34 @@
+.header {
+	position: fixed;
+	top: 0;
+	right: 0;
+	left: 0;
+	z-index: 10;
+	background: rgb(255 255 255 / 50%);
+	backdrop-filter: blur(16px);
+}
+
+.breadcrumb {
+	min-height: 1.5rem;
+	margin-top: 4rem;
+	margin-bottom: 1rem;
+}
+
+.main {
+	padding-right: 1rem;
+	padding-bottom: 5rem;
+	padding-left: 1rem;
+}
+
+.loadingState {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.loadingIcon {
+	width: 1.5rem;
+	height: 1.5rem;
+}

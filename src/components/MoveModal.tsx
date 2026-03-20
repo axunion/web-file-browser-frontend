@@ -4,8 +4,10 @@ import Modal from "@/components/Modal";
 import { MESSAGES } from "@/constants/messages";
 import useFileList from "@/hooks/useFileList";
 import useFileMove from "@/hooks/useFileMove";
-import type { DirectoryItem } from "@/types/api";
+import { type DirectoryItem, isErrorResponse } from "@/types/api";
 import { toEncodedPath } from "@/utils/path";
+import commonStyles from "./ModalCommon.module.css";
+import styles from "./MoveModal.module.css";
 
 export type MoveModalProps = {
 	item: DirectoryItem;
@@ -52,11 +54,17 @@ const MoveModal = ({
 
 	const handleMove = async () => {
 		try {
-			await moveFile({
+			const response = await moveFile({
 				path: currentPath,
 				name: item.name,
 				destinationPath: browsePath || "/",
 			});
+
+			if (isErrorResponse(response)) {
+				setError(response.message || MESSAGES.FILE_MOVE_ERROR);
+				return;
+			}
+
 			onSuccess();
 		} catch (moveError) {
 			setError(
@@ -74,43 +82,33 @@ const MoveModal = ({
 	return (
 		<Modal onClose={onClose}>
 			<section>
-				<div className="flex gap-2 items-center text-(--primary-color)">
-					<Icon icon="mdi:folder-move-outline" className="w-8 h-8" />
-					<span className="text-2xl">{MESSAGES.MOVE}</span>
+				<div className={commonStyles.header}>
+					<Icon icon="mdi:folder-move-outline" className={commonStyles.icon} />
+					<span className={commonStyles.title}>{MESSAGES.MOVE}</span>
 				</div>
 
-				<div className="my-4">
-					<p className="text-sm text-gray-600 mb-2">
-						{MESSAGES.SELECT_DESTINATION}
-					</p>
-					<div className="text-sm text-gray-500 bg-gray-100 px-3 py-2 rounded truncate">
-						{displayPath}
-					</div>
+				<div className={styles.pathSection}>
+					<p className={styles.pathLabel}>{MESSAGES.SELECT_DESTINATION}</p>
+					<div className={styles.pathValue}>{displayPath}</div>
 				</div>
 
-				<div className="border rounded-md max-h-48 overflow-y-auto">
+				<div className={styles.directoryList}>
 					{browsePaths.length > 0 && (
 						<button
 							type="button"
-							className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-100 border-b cursor-pointer"
+							className={`${styles.directoryButton} ${styles.navigateUpButton}`}
 							onClick={handleNavigateUp}
+							aria-label={MESSAGES.NAVIGATE_PARENT}
 						>
-							<Icon
-								icon="mdi:folder-open"
-								className="w-5 h-5 text-yellow-500"
-							/>
-							<span>..</span>
+							<Icon icon="mdi:folder-open" className={styles.folderIcon} />
+							<span aria-hidden="true">..</span>
 						</button>
 					)}
 
 					{isLoadingDirs ? (
-						<div className="px-3 py-4 text-center text-gray-500">
-							{MESSAGES.LOADING}
-						</div>
+						<div className={styles.stateMessage}>{MESSAGES.LOADING}</div>
 					) : directories.length === 0 ? (
-						<div className="px-3 py-4 text-center text-gray-500">
-							{MESSAGES.NO_DIRECTORIES}
-						</div>
+						<div className={styles.stateMessage}>{MESSAGES.NO_DIRECTORIES}</div>
 					) : (
 						directories
 							.filter(
@@ -121,24 +119,26 @@ const MoveModal = ({
 								<button
 									key={dir.name}
 									type="button"
-									className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-100 cursor-pointer"
+									className={styles.directoryButton}
 									onClick={() => handleNavigateInto(dir.name)}
 								>
-									<Icon icon="mdi:folder" className="w-5 h-5 text-yellow-500" />
-									<span className="truncate">{dir.name}</span>
+									<Icon icon="mdi:folder" className={styles.folderIcon} />
+									<span className={styles.directoryName}>{dir.name}</span>
 								</button>
 							))
 					)}
 				</div>
 
-				{error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+				{error && (
+					<p className={`${commonStyles.error} ${styles.error}`}>{error}</p>
+				)}
 
-				<div className="flex justify-center mt-6">
+				<div className={`${commonStyles.actions} ${styles.actions}`}>
 					<button
 						type="button"
 						onClick={handleMove}
 						disabled={isLoading || !canMove}
-						className="block bg-(--primary-color) rounded-full m-auto py-2 px-8 cursor-pointer text-xl text-(--background-color) disabled:bg-(--text-color)"
+						className={`${commonStyles.submitButton} ${styles.submitButton}`}
 					>
 						{MESSAGES.CONFIRM}
 					</button>

@@ -27,6 +27,7 @@ export const MESSAGES = {
 	RETRY: "再試行",
 	UPLOAD_FILE_ARIA_LABEL: "ファイルをアップロード",
 	FILE_UPLOAD_BUTTON_ARIA_LABEL: "アップロードするファイルを選択",
+	NAVIGATE_PARENT: "親ディレクトリへ移動",
 } as const;
 
 export const getFileItemAriaLabel = (

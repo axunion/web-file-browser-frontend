@@ -4,6 +4,7 @@ import FileUploadModal from "@/components/FileUploadModal";
 import { MESSAGES } from "@/constants/messages";
 import { getParentPaths, setPaths } from "@/utils/path";
 import BackButton from "./BackButton";
+import styles from "./Header.module.css";
 
 export type HeaderProps = {
 	title?: string;
@@ -37,16 +38,16 @@ const Header = ({ title, paths, onFileListUpdate }: HeaderProps) => {
 
 	return (
 		<>
-			<header className="grid grid-cols-[auto_1fr_auto] items-center p-4 gap-3">
-				<span className="w-8 h-8">
+			<header className={styles.header}>
+				<span className={styles.slot}>
 					{title && title !== "trash" && <BackButton onBack={handleBack} />}
 				</span>
 
-				<h1 className="text-xl tracking-wider text-center line-clamp-1 break-all">
+				<h1 className={styles.title}>
 					<span>{title ?? MESSAGES.APP_TITLE}</span>
 				</h1>
 
-				<span className="w-8 h-8">
+				<span className={styles.slot}>
 					{title !== "trash" && (
 						<FileUploadButton onFilesSelected={onFilesSelected} />
 					)}

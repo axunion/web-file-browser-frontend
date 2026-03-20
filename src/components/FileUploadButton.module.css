@@ -1,0 +1,13 @@
+.label {
+	color: var(--primary-color);
+	cursor: pointer;
+}
+
+.input {
+	display: none;
+}
+
+.icon {
+	width: 2rem;
+	height: 2rem;
+}

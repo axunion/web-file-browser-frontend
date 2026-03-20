@@ -9,6 +9,7 @@ import { getFileItemAriaLabel } from "@/constants/messages";
 import useLongPress from "@/hooks/useLongPress";
 import type { DirectoryItem } from "@/types/api";
 import { appendPath } from "@/utils/path";
+import styles from "./FileList.module.css";
 
 export type FileListProps = {
 	list: DirectoryItem[];
@@ -90,8 +91,6 @@ const FileList = memo(
 		const dirPath = currentPath
 			? `${ENDPOINT_DATA}${currentPath}/`
 			: ENDPOINT_DATA;
-		const gridClasses =
-			"grid gap-x-2 gap-y-4 grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10";
 
 		const handleLongPress = useCallback(
 			(item: DirectoryItem, element: HTMLElement) => {
@@ -159,12 +158,12 @@ const FileList = memo(
 		}, [onFileListUpdate]);
 
 		return (
-			<div className={`fade-in ${gridClasses}`}>
+			<div className={`fade-in ${styles.list}`}>
 				{list.map((item) => (
 					<button
 						key={item.name}
 						type="button"
-						className="max-w-full mx-auto flex flex-col items-center justify-start cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+						className={styles.itemButton}
 						aria-label={getFileItemAriaLabel(item.name, item.type)}
 						onClick={() => handleClick(item)}
 						onKeyDown={(e) => {

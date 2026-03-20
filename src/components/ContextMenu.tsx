@@ -1,6 +1,7 @@
 import { Icon } from "@iconify/react";
 import { createPortal } from "react-dom";
 import { MESSAGES } from "@/constants/messages";
+import styles from "./ContextMenu.module.css";
 
 export type ContextMenuProps = {
 	position: { x: number; y: number };
@@ -17,9 +18,6 @@ const ContextMenu = ({
 	onTrash,
 	position,
 }: ContextMenuProps) => {
-	const buttonClasses =
-		"w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer";
-	const iconClasses = "w-5 h-5 text-[var(--primary-color)]";
 	const menuWidth = 140;
 	const windowWidth = typeof window !== "undefined" ? window.innerWidth : 800;
 	const menuPosition = {
@@ -31,13 +29,9 @@ const ContextMenu = ({
 	};
 
 	return createPortal(
-		<div
-			className="fixed inset-0 z-50"
-			onPointerDown={onClose}
-			role="presentation"
-		>
+		<div className={styles.overlay} onPointerDown={onClose} role="presentation">
 			<div
-				className="absolute overflow-hidden bg-white/80 backdrop-blur-md border border-gray-200 rounded-lg shadow-md py-2"
+				className={styles.menu}
 				style={{
 					left: `${menuPosition.left}px`,
 					top: `${menuPosition.top}px`,
@@ -48,33 +42,33 @@ const ContextMenu = ({
 			>
 				<button
 					type="button"
-					className={buttonClasses}
+					className={styles.button}
 					onClick={onRename}
 					role="menuitem"
 				>
-					<Icon icon="mdi:rename-outline" className={iconClasses} />
+					<Icon icon="mdi:rename-outline" className={styles.icon} />
 					<span>{MESSAGES.RENAME}</span>
 				</button>
 
 				{onMove && (
 					<button
 						type="button"
-						className={buttonClasses}
+						className={styles.button}
 						onClick={onMove}
 						role="menuitem"
 					>
-						<Icon icon="mdi:folder-move-outline" className={iconClasses} />
+						<Icon icon="mdi:folder-move-outline" className={styles.icon} />
 						<span>{MESSAGES.MOVE}</span>
 					</button>
 				)}
 
 				<button
 					type="button"
-					className={buttonClasses}
+					className={styles.button}
 					onClick={onTrash}
 					role="menuitem"
 				>
-					<Icon icon="mdi:trash-can-outline" className={iconClasses} />
+					<Icon icon="mdi:trash-can-outline" className={styles.icon} />
 					<span>{MESSAGES.DELETE}</span>
 				</button>
 			</div>
