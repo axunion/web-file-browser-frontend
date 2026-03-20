@@ -1,5 +1,6 @@
 import { Icon } from "@iconify/react";
 import { memo } from "react";
+import { getImageAlt, getOpenFileAriaLabel } from "@/constants/messages";
 import type { DirectoryItem } from "@/types/api";
 import { getFileType } from "@/utils/fileType";
 
@@ -29,7 +30,7 @@ const FileItem = memo(({ file, dirPath }: FileItemProps) => {
 	}
 
 	const fileType = getFileType(file.name);
-	const src = `${dirPath}${file.name}`;
+	const src = `${dirPath}${encodeURIComponent(file.name)}`;
 
 	if (fileType === "image") {
 		return (
@@ -37,7 +38,7 @@ const FileItem = memo(({ file, dirPath }: FileItemProps) => {
 				<img
 					src={src}
 					className="h-16"
-					alt={`Preview of ${file.name}`}
+					alt={getImageAlt(file.name)}
 					loading="lazy"
 				/>
 				<div className={nameStyle}>{file.name}</div>
@@ -52,7 +53,7 @@ const FileItem = memo(({ file, dirPath }: FileItemProps) => {
 			rel="noreferrer"
 			className="flex flex-col items-center"
 			onClick={(e) => e.stopPropagation()}
-			aria-label={`Open ${file.name} in new tab`}
+			aria-label={getOpenFileAriaLabel(file.name)}
 		>
 			{icons[fileType] ?? icons.file}
 			<div className={nameStyle}>{file.name}</div>

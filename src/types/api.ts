@@ -3,6 +3,13 @@ export type ErrorResponse = {
 	message: string;
 };
 
+export type ApiResponseStatus = "success" | "error";
+
+export type ApiResponse = {
+	status: ApiResponseStatus;
+	message?: string;
+};
+
 export type DirectoryItem = {
 	type: "file" | "directory";
 	name: string;
@@ -81,3 +88,11 @@ export type DeleteFileErrorResponse = ErrorResponse;
 export type DeleteFileResponse =
 	| DeleteFileSuccessResponse
 	| DeleteFileErrorResponse;
+
+export const isErrorResponse = <T extends ApiResponse>(
+	response: T,
+): response is T & ErrorResponse => response.status === "error";
+
+export const isSuccessResponse = <T extends ApiResponse>(
+	response: T,
+): response is Exclude<T, ErrorResponse> => response.status === "success";

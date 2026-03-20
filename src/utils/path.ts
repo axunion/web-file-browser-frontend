@@ -3,18 +3,39 @@ export type PathResult = {
 	paths: string[];
 };
 
+const decodePathSegment = (segment: string) => {
+	try {
+		return decodeURIComponent(segment);
+	} catch {
+		return segment;
+	}
+};
+
+const sanitizePaths = (paths: string[]) =>
+	paths
+		.filter(Boolean)
+		.filter((segment) => segment !== ".." && segment !== ".");
+
+export const toEncodedPath = (paths: string[]) =>
+	sanitizePaths(paths)
+		.map((segment) => encodeURIComponent(segment))
+		.join("/");
+
+export const getParentPaths = (paths: string[]) => paths.slice(0, -1);
+
 export const getPath = (): PathResult => {
 	const hash = window?.location.hash || "";
 	const path = hash.slice(1);
 	const paths = path
-		? path
-				.split("/")
-				.filter(Boolean)
-				.map((segment) => decodeURIComponent(segment))
-				.filter((segment) => segment !== ".." && segment !== ".")
+		? sanitizePaths(
+				path
+					.split("/")
+					.filter(Boolean)
+					.map((segment) => decodePathSegment(segment)),
+			)
 		: [];
-	const sanitizedPath = paths.map((s) => encodeURIComponent(s)).join("/");
-	return { path: sanitizedPath, paths };
+
+	return { path: toEncodedPath(paths), paths };
 };
 
 export const setPath = (path: string) => {
@@ -22,11 +43,12 @@ export const setPath = (path: string) => {
 };
 
 export const setPaths = (paths: string[]) => {
-	if (!paths.length) {
+	const encodedPath = toEncodedPath(paths);
+
+	if (!encodedPath) {
 		resetPath();
 	} else {
-		const encodedPaths = paths.map((segment) => encodeURIComponent(segment));
-		setPath(`/${encodedPaths.join("/")}`);
+		setPath(`/${encodedPath}`);
 	}
 };
 

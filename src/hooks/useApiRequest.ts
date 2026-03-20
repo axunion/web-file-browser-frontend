@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { type ApiResponse, isErrorResponse } from "@/types/api";
 
 type ApiRequestOptions = {
 	endpoint: string;
@@ -18,7 +19,7 @@ type UseApiRequestReturn<TParams, TResponse> = ApiRequestState & {
 	abort: () => void;
 };
 
-const useApiRequest = <TParams, TResponse>(
+const useApiRequest = <TParams, TResponse extends ApiResponse>(
 	options: ApiRequestOptions,
 ): UseApiRequestReturn<TParams, TResponse> => {
 	const [isLoading, setIsLoading] = useState(false);
@@ -83,6 +84,10 @@ const useApiRequest = <TParams, TResponse>(
 					data = JSON.parse(text) as TResponse;
 				} catch {
 					throw new Error("Invalid JSON response from server");
+				}
+
+				if (isErrorResponse(data)) {
+					throw new Error(data.message || "Request failed");
 				}
 
 				return data;

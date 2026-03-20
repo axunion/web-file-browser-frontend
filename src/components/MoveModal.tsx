@@ -1,45 +1,53 @@
 import { Icon } from "@iconify/react";
 import { useMemo, useState } from "react";
 import Modal from "@/components/Modal";
+import { MESSAGES } from "@/constants/messages";
 import useFileList from "@/hooks/useFileList";
 import useFileMove from "@/hooks/useFileMove";
 import type { DirectoryItem } from "@/types/api";
-import { getPath } from "@/utils/path";
+import { toEncodedPath } from "@/utils/path";
 
 export type MoveModalProps = {
 	item: DirectoryItem;
+	currentPath: string;
 	onClose: () => void;
 	onSuccess: () => void;
 };
 
-const MoveModal = ({ item, onClose, onSuccess }: MoveModalProps) => {
-	const currentPath = getPath().path;
-	const [browsePath, setBrowsePath] = useState("");
+const MoveModal = ({
+	item,
+	currentPath,
+	onClose,
+	onSuccess,
+}: MoveModalProps) => {
+	const [browsePaths, setBrowsePaths] = useState<string[]>([]);
 	const [error, setError] = useState<string | null>(null);
-	const { moveFile, isLoading, error: moveError } = useFileMove();
+	const { moveFile, isLoading } = useFileMove();
 	const {
-		fileList,
+		items,
 		isLoading: isLoadingDirs,
-		fetchFileList,
-	} = useFileList("", { isolated: true });
+		setPath,
+	} = useFileList("", {
+		isolated: true,
+	});
+
+	const browsePath = useMemo(() => toEncodedPath(browsePaths), [browsePaths]);
 
 	const directories = useMemo(
-		() => fileList.filter((item) => item.type === "directory"),
-		[fileList],
+		() => items.filter((listItem) => listItem.type === "directory"),
+		[items],
 	);
 
 	const handleNavigateUp = () => {
-		const parts = browsePath.split("/").filter(Boolean);
-		parts.pop();
-		const newPath = parts.join("/");
-		setBrowsePath(newPath);
-		fetchFileList(newPath);
+		const newPaths = browsePaths.slice(0, -1);
+		setBrowsePaths(newPaths);
+		setPath(toEncodedPath(newPaths));
 	};
 
 	const handleNavigateInto = (dirName: string) => {
-		const newPath = browsePath ? `${browsePath}/${dirName}` : dirName;
-		setBrowsePath(newPath);
-		fetchFileList(newPath);
+		const newPaths = [...browsePaths, dirName];
+		setBrowsePaths(newPaths);
+		setPath(toEncodedPath(newPaths));
 	};
 
 	const handleMove = async () => {
@@ -50,34 +58,38 @@ const MoveModal = ({ item, onClose, onSuccess }: MoveModalProps) => {
 				destinationPath: browsePath || "/",
 			});
 			onSuccess();
-		} catch {
-			setError(moveError || "移動に失敗しました");
+		} catch (moveError) {
+			setError(
+				moveError instanceof Error
+					? moveError.message
+					: MESSAGES.FILE_MOVE_ERROR,
+			);
 		}
 	};
 
-	const canMove = useMemo(() => {
-		return browsePath !== currentPath;
-	}, [browsePath, currentPath]);
-
-	const displayPath = browsePath || "/";
+	const canMove = browsePath !== currentPath;
+	const displayPath =
+		browsePaths.length > 0 ? `/${browsePaths.join("/")}` : "/";
 
 	return (
 		<Modal onClose={onClose}>
 			<section>
 				<div className="flex gap-2 items-center text-(--primary-color)">
 					<Icon icon="mdi:folder-move-outline" className="w-8 h-8" />
-					<span className="text-2xl">Move</span>
+					<span className="text-2xl">{MESSAGES.MOVE}</span>
 				</div>
 
 				<div className="my-4">
-					<p className="text-sm text-gray-600 mb-2">移動先を選択</p>
+					<p className="text-sm text-gray-600 mb-2">
+						{MESSAGES.SELECT_DESTINATION}
+					</p>
 					<div className="text-sm text-gray-500 bg-gray-100 px-3 py-2 rounded truncate">
 						{displayPath}
 					</div>
 				</div>
 
 				<div className="border rounded-md max-h-48 overflow-y-auto">
-					{browsePath && (
+					{browsePaths.length > 0 && (
 						<button
 							type="button"
 							className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-100 border-b cursor-pointer"
@@ -93,11 +105,11 @@ const MoveModal = ({ item, onClose, onSuccess }: MoveModalProps) => {
 
 					{isLoadingDirs ? (
 						<div className="px-3 py-4 text-center text-gray-500">
-							読み込み中...
+							{MESSAGES.LOADING}
 						</div>
 					) : directories.length === 0 ? (
 						<div className="px-3 py-4 text-center text-gray-500">
-							ディレクトリがありません
+							{MESSAGES.NO_DIRECTORIES}
 						</div>
 					) : (
 						directories
@@ -128,7 +140,7 @@ const MoveModal = ({ item, onClose, onSuccess }: MoveModalProps) => {
 						disabled={isLoading || !canMove}
 						className="block bg-(--primary-color) rounded-full m-auto py-2 px-8 cursor-pointer text-xl text-(--background-color) disabled:bg-(--text-color)"
 					>
-						OK
+						{MESSAGES.CONFIRM}
 					</button>
 				</div>
 			</section>

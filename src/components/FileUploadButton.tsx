@@ -1,5 +1,6 @@
 import { Icon } from "@iconify/react";
 import type { ChangeEvent } from "react";
+import { MESSAGES } from "@/constants/messages";
 
 export type FileUploadButtonProps = {
 	onFilesSelected: (files: File[]) => void;
@@ -15,7 +16,7 @@ const FileUploadButton = ({ onFilesSelected }: FileUploadButtonProps) => {
 		<label className="cursor-pointer text-(--primary-color)">
 			<input
 				type="file"
-				aria-label="Click to upload files"
+				aria-label={MESSAGES.FILE_UPLOAD_BUTTON_ARIA_LABEL}
 				tabIndex={0}
 				className="hidden"
 				onChange={onFileChange}

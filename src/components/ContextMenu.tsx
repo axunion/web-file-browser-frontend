@@ -1,5 +1,6 @@
 import { Icon } from "@iconify/react";
 import { createPortal } from "react-dom";
+import { MESSAGES } from "@/constants/messages";
 
 export type ContextMenuProps = {
 	position: { x: number; y: number };
@@ -43,7 +44,7 @@ const ContextMenu = ({
 				}}
 				onPointerDown={(e) => e.stopPropagation()}
 				role="menu"
-				aria-label="File actions"
+				aria-label={MESSAGES.FILE_ACTIONS}
 			>
 				<button
 					type="button"
@@ -52,7 +53,7 @@ const ContextMenu = ({
 					role="menuitem"
 				>
 					<Icon icon="mdi:rename-outline" className={iconClasses} />
-					<span>名前を変更</span>
+					<span>{MESSAGES.RENAME}</span>
 				</button>
 
 				{onMove && (
@@ -63,7 +64,7 @@ const ContextMenu = ({
 						role="menuitem"
 					>
 						<Icon icon="mdi:folder-move-outline" className={iconClasses} />
-						<span>移動</span>
+						<span>{MESSAGES.MOVE}</span>
 					</button>
 				)}
 
@@ -74,7 +75,7 @@ const ContextMenu = ({
 					role="menuitem"
 				>
 					<Icon icon="mdi:trash-can-outline" className={iconClasses} />
-					<span>削除</span>
+					<span>{MESSAGES.DELETE}</span>
 				</button>
 			</div>
 		</div>,

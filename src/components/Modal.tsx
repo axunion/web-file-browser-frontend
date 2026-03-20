@@ -1,6 +1,7 @@
 import { Icon } from "@iconify/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { MESSAGES } from "@/constants/messages";
 
 export type ModalProps = {
 	onClose: () => void;
@@ -70,7 +71,7 @@ const Modal = ({ onClose, children, title }: ModalProps) => {
 					type="button"
 					className="absolute top-4 right-4 cursor-pointer"
 					onClick={close}
-					aria-label="Close Modal"
+					aria-label={MESSAGES.CLOSE_MODAL}
 				>
 					<Icon icon="mdi:close-thick" className="w-6 h-6" />
 				</button>

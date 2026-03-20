@@ -1,54 +1,59 @@
 import { Icon } from "@iconify/react";
-import ErrorModal from "@/components/ErrorModal";
+import { useCallback, useState } from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import Modal from "@/components/Modal";
+import { MESSAGES } from "@/constants/messages";
 import useFileUpload from "@/hooks/useFileUpload";
 
 export type FileUploadProps = {
 	file: File;
 	onClose: () => void;
+	onSuccess: () => void;
 };
 
-const FileUpload = ({ file, onClose }: FileUploadProps) => {
-	const { isLoading, error, uploadFile } = useFileUpload();
+const FileUploadModal = ({ file, onClose, onSuccess }: FileUploadProps) => {
+	const [errorMessage, setErrorMessage] = useState<string | null>(null);
+	const { isLoading, uploadFile } = useFileUpload();
 
-	const reload = () => {
-		window.location.reload();
-	};
-
-	const upload = async () => {
-		await uploadFile(file);
-		reload();
-	};
+	const handleUpload = useCallback(async () => {
+		try {
+			await uploadFile(file);
+			onSuccess();
+		} catch (error) {
+			setErrorMessage(
+				error instanceof Error ? error.message : MESSAGES.FILE_UPLOAD_ERROR,
+			);
+		}
+	}, [file, onSuccess, uploadFile]);
 
 	return (
 		<Modal onClose={onClose}>
 			<section>
 				<div className="flex gap-2 items-center text-(--primary-color)">
 					<Icon icon="line-md:upload-loop" className="w-8 h-8" />
-					<span className="text-2xl">Upload</span>
+					<span className="text-2xl">{MESSAGES.UPLOAD}</span>
 				</div>
 
 				<p className="flex justify-center my-12 break-all">{file.name}</p>
 
+				{errorMessage && (
+					<p className="mb-4 text-sm text-red-600">{errorMessage}</p>
+				)}
+
 				<button
 					type="button"
 					disabled={isLoading}
-					aria-label="Upload file"
-					className="block bg-(--primary-color) rounded-full m-auto py-2 px-12 cursor-pointer text-xl text-(--background-color)"
-					onClick={upload}
+					aria-label={MESSAGES.UPLOAD_FILE_ARIA_LABEL}
+					className="block bg-(--primary-color) rounded-full m-auto py-2 px-12 cursor-pointer text-xl text-(--background-color) disabled:bg-(--text-color)"
+					onClick={handleUpload}
 				>
-					OK
+					{MESSAGES.CONFIRM}
 				</button>
 
 				{isLoading && <LoadingSpinner />}
-
-				{error && (
-					<ErrorModal onClose={reload}>エラーが発生しました。</ErrorModal>
-				)}
 			</section>
 		</Modal>
 	);
 };
 
-export default FileUpload;
+export default FileUploadModal;
