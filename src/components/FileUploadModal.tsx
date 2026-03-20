@@ -4,6 +4,9 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import Modal from "@/components/Modal";
 import { MESSAGES } from "@/constants/messages";
 import useFileUpload from "@/hooks/useFileUpload";
+import { isErrorResponse } from "@/types/api";
+import styles from "./FileUploadModal.module.css";
+import commonStyles from "./ModalCommon.module.css";
 
 export type FileUploadProps = {
 	file: File;
@@ -17,7 +20,13 @@ const FileUploadModal = ({ file, onClose, onSuccess }: FileUploadProps) => {
 
 	const handleUpload = useCallback(async () => {
 		try {
-			await uploadFile(file);
+			const response = await uploadFile(file);
+
+			if (isErrorResponse(response)) {
+				setErrorMessage(response.message || MESSAGES.FILE_UPLOAD_ERROR);
+				return;
+			}
+
 			onSuccess();
 		} catch (error) {
 			setErrorMessage(
@@ -29,22 +38,24 @@ const FileUploadModal = ({ file, onClose, onSuccess }: FileUploadProps) => {
 	return (
 		<Modal onClose={onClose}>
 			<section>
-				<div className="flex gap-2 items-center text-(--primary-color)">
-					<Icon icon="line-md:upload-loop" className="w-8 h-8" />
-					<span className="text-2xl">{MESSAGES.UPLOAD}</span>
+				<div className={commonStyles.header}>
+					<Icon icon="line-md:upload-loop" className={commonStyles.icon} />
+					<span className={commonStyles.title}>{MESSAGES.UPLOAD}</span>
 				</div>
 
-				<p className="flex justify-center my-12 break-all">{file.name}</p>
+				<p className={styles.fileName}>{file.name}</p>
 
 				{errorMessage && (
-					<p className="mb-4 text-sm text-red-600">{errorMessage}</p>
+					<p className={`${commonStyles.error} ${styles.error}`}>
+						{errorMessage}
+					</p>
 				)}
 
 				<button
 					type="button"
 					disabled={isLoading}
 					aria-label={MESSAGES.UPLOAD_FILE_ARIA_LABEL}
-					className="block bg-(--primary-color) rounded-full m-auto py-2 px-12 cursor-pointer text-xl text-(--background-color) disabled:bg-(--text-color)"
+					className={`${commonStyles.submitButton} ${styles.submitButton}`}
 					onClick={handleUpload}
 				>
 					{MESSAGES.CONFIRM}

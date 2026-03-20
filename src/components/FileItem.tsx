@@ -3,28 +3,27 @@ import { memo } from "react";
 import { getImageAlt, getOpenFileAriaLabel } from "@/constants/messages";
 import type { DirectoryItem } from "@/types/api";
 import { getFileType } from "@/utils/fileType";
+import styles from "./FileItem.module.css";
 
 export type FileItemProps = {
 	file: DirectoryItem;
 	dirPath: string;
 };
 
-const iconSize = "w-16 h-16";
 const icons = {
-	video: <Icon icon="flat-color-icons:video-file" className={iconSize} />,
-	audio: <Icon icon="flat-color-icons:audio-file" className={iconSize} />,
-	text: <Icon icon="flat-color-icons:document" className={iconSize} />,
-	pdf: <Icon icon="vscode-icons:file-type-pdf2" className={iconSize} />,
-	file: <Icon icon="flat-color-icons:file" className={iconSize} />,
+	video: <Icon icon="flat-color-icons:video-file" className={styles.icon} />,
+	audio: <Icon icon="flat-color-icons:audio-file" className={styles.icon} />,
+	text: <Icon icon="flat-color-icons:document" className={styles.icon} />,
+	pdf: <Icon icon="vscode-icons:file-type-pdf2" className={styles.icon} />,
+	file: <Icon icon="flat-color-icons:file" className={styles.icon} />,
 };
-const nameStyle = "line-clamp-2 p-1 text-xs break-all";
 
 const FileItem = memo(({ file, dirPath }: FileItemProps) => {
 	if (file.type === "directory") {
 		return (
 			<>
-				<Icon icon="flat-color-icons:folder" className={iconSize} />
-				<div className={nameStyle}>{file.name}</div>
+				<Icon icon="flat-color-icons:folder" className={styles.icon} />
+				<div className={styles.name}>{file.name}</div>
 			</>
 		);
 	}
@@ -37,11 +36,11 @@ const FileItem = memo(({ file, dirPath }: FileItemProps) => {
 			<>
 				<img
 					src={src}
-					className="h-16"
+					className={styles.image}
 					alt={getImageAlt(file.name)}
 					loading="lazy"
 				/>
-				<div className={nameStyle}>{file.name}</div>
+				<div className={styles.name}>{file.name}</div>
 			</>
 		);
 	}
@@ -51,12 +50,12 @@ const FileItem = memo(({ file, dirPath }: FileItemProps) => {
 			href={src}
 			target="_blank"
 			rel="noreferrer"
-			className="flex flex-col items-center"
+			className={styles.link}
 			onClick={(e) => e.stopPropagation()}
 			aria-label={getOpenFileAriaLabel(file.name)}
 		>
 			{icons[fileType] ?? icons.file}
-			<div className={nameStyle}>{file.name}</div>
+			<div className={styles.name}>{file.name}</div>
 		</a>
 	);
 });

@@ -1,0 +1,8 @@
+.button {
+	color: var(--primary-color);
+}
+
+.icon {
+	width: 2rem;
+	height: 2rem;
+}

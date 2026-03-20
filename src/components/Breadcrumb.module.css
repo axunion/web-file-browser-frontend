@@ -1,0 +1,42 @@
+.nav {
+	padding-right: 1rem;
+	padding-left: 1rem;
+	opacity: 0.8;
+}
+
+.list {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+}
+
+.item {
+	display: flex;
+	align-items: center;
+	margin-top: 0.25rem;
+	margin-bottom: 0.25rem;
+	cursor: pointer;
+}
+
+.button {
+	font-size: 0.875rem;
+	font-weight: 500;
+	line-height: 1.25rem;
+	cursor: pointer;
+}
+
+.root {
+	display: flex;
+	align-items: center;
+	gap: 0.25rem;
+}
+
+.folderIcon {
+	width: 1.25rem;
+	height: 1.25rem;
+}
+
+.chevronIcon {
+	width: 1rem;
+	height: 1rem;
+}

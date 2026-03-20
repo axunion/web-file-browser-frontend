@@ -3,7 +3,9 @@ import { useState } from "react";
 import Modal from "@/components/Modal";
 import { MESSAGES } from "@/constants/messages";
 import useDelete from "@/hooks/useDelete";
-import type { DirectoryItem } from "@/types/api";
+import { type DirectoryItem, isErrorResponse } from "@/types/api";
+import commonStyles from "./ModalCommon.module.css";
+import styles from "./MoveToTrashModal.module.css";
 
 export type MoveToTrashModalProps = {
 	item: DirectoryItem;
@@ -25,10 +27,16 @@ const MoveToTrashModal = ({
 		e.preventDefault();
 
 		try {
-			await deleteFile({
+			const response = await deleteFile({
 				path: currentPath,
 				name: item.name,
 			});
+
+			if (isErrorResponse(response)) {
+				setError(response.message || MESSAGES.FILE_DELETE_ERROR);
+				return;
+			}
+
 			onSuccess();
 		} catch (error) {
 			setError(
@@ -40,22 +48,24 @@ const MoveToTrashModal = ({
 	return (
 		<Modal onClose={onClose}>
 			<section>
-				<div className="flex gap-2 items-center text-(--primary-color)">
-					<Icon icon="line-md:trash" className="w-8 h-8" />
-					<span className="text-2xl">{MESSAGES.DELETE}</span>
+				<div className={commonStyles.header}>
+					<Icon icon="line-md:trash" className={commonStyles.icon} />
+					<span className={commonStyles.title}>{MESSAGES.DELETE}</span>
 				</div>
 
 				<form onSubmit={handleSubmit}>
-					<div className="my-8 text-center">
+					<div className={styles.content}>
 						<p>{MESSAGES.CONFIRM_DELETE}</p>
-						{error && <p className="mt-1 text-sm text-red-600">{error}</p>}
+						{error && (
+							<p className={`${commonStyles.error} ${styles.error}`}>{error}</p>
+						)}
 					</div>
 
-					<div className="flex justify-center">
+					<div className={commonStyles.actions}>
 						<button
 							type="submit"
 							disabled={isLoading}
-							className="block bg-(--primary-color) rounded-full m-auto py-2 px-12 cursor-pointer text-xl text-(--background-color) disabled:bg-(--text-color)"
+							className={`${commonStyles.submitButton} ${styles.submitButton}`}
 						>
 							{MESSAGES.CONFIRM}
 						</button>

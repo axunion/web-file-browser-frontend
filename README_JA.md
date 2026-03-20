@@ -23,7 +23,8 @@
 - **TypeScript** - 型安全な開発
 - **Vite** - 高速なビルドツール・開発サーバー
 - **SWR** - データフェッチ・キャッシュライブラリ
-- **Tailwind CSS** - ユーティリティファーストCSSフレームワーク
+- **Lightning CSS** - CSS 変換・圧縮
+- **CSS Modules** - コンポーネント単位のスタイリング
 - **@iconify/react** - アイコンライブラリ
 - **@biomejs/biome** - 高速なフォーマッター・リンター
 

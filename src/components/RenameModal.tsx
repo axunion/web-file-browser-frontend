@@ -3,7 +3,9 @@ import { useEffect, useRef, useState } from "react";
 import Modal from "@/components/Modal";
 import { MESSAGES } from "@/constants/messages";
 import useFileRename from "@/hooks/useFileRename";
-import type { DirectoryItem } from "@/types/api";
+import { type DirectoryItem, isErrorResponse } from "@/types/api";
+import commonStyles from "./ModalCommon.module.css";
+import styles from "./RenameModal.module.css";
 
 export type RenameModalProps = {
 	item: DirectoryItem;
@@ -36,11 +38,9 @@ const RenameModal = ({
 			return MESSAGES.INVALID_NAME;
 		}
 
-		// Invalid characters for file systems
 		const invalidChars = ["<", ">", ":", '"', "/", "\\", "|", "?", "*"];
 		const hasInvalidChar = invalidChars.some((char) => trimmed.includes(char));
 
-		// Check for control characters
 		const hasControlChar = trimmed.split("").some((char) => {
 			const code = char.charCodeAt(0);
 			return code < 32 || (code >= 127 && code <= 159);
@@ -64,7 +64,6 @@ const RenameModal = ({
 			return;
 		}
 
-		// Create full filename with extension for files
 		const fullNewName = trimmed + extension;
 
 		if (trimmed === nameWithoutExt) {
@@ -73,11 +72,17 @@ const RenameModal = ({
 		}
 
 		try {
-			await renameFile({
+			const response = await renameFile({
 				path: currentPath,
 				name: originalName,
 				newName: fullNewName,
 			});
+
+			if (isErrorResponse(response)) {
+				setError(response.message || MESSAGES.FILE_RENAME_ERROR);
+				return;
+			}
+
 			onSuccess();
 		} catch (error) {
 			setError(
@@ -95,13 +100,13 @@ const RenameModal = ({
 	return (
 		<Modal onClose={onClose}>
 			<section>
-				<div className="flex gap-2 items-center text-(--primary-color)">
-					<Icon icon="line-md:edit" className="w-8 h-8" />
-					<span className="text-2xl">{MESSAGES.RENAME}</span>
+				<div className={commonStyles.header}>
+					<Icon icon="line-md:edit" className={commonStyles.icon} />
+					<span className={commonStyles.title}>{MESSAGES.RENAME}</span>
 				</div>
 
 				<form onSubmit={handleSubmit}>
-					<div className="my-8">
+					<div className={styles.formGroup}>
 						<input
 							ref={inputRef}
 							type="text"
@@ -111,12 +116,14 @@ const RenameModal = ({
 								setError(null);
 							}}
 							disabled={isLoading}
-							className="w-full px-3 py-2 border rounded-md focus:outline-none disabled:bg-gray-200"
+							className={styles.input}
 						/>
-						{error && <p className="mt-1 text-sm text-red-600">{error}</p>}
+						{error && (
+							<p className={`${commonStyles.error} ${styles.error}`}>{error}</p>
+						)}
 					</div>
 
-					<div className="flex justify-center">
+					<div className={commonStyles.actions}>
 						<button
 							type="submit"
 							disabled={
@@ -124,7 +131,7 @@ const RenameModal = ({
 								!newName.trim() ||
 								newName.trim() === nameWithoutExt
 							}
-							className="block bg-(--primary-color) rounded-full m-auto py-2 px-12 cursor-pointer text-xl text-(--background-color) disabled:bg-(--text-color)"
+							className={`${commonStyles.submitButton} ${styles.submitButton}`}
 						>
 							{MESSAGES.CONFIRM}
 						</button>

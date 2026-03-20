@@ -1,12 +1,86 @@
-@import "tailwindcss";
-
 :root {
 	--background-color: #ffffff;
 	--text-color: #4d4945;
 	--primary-color: #f57e00;
 	--accent-color: #7e00f5;
+	--error-color: #dc2626;
 	background: var(--background-color);
 	color: var(--text-color);
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+html {
+	line-height: 1.5;
+	-webkit-text-size-adjust: 100%;
+	tab-size: 4;
+	font-family:
+		ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+		"Segoe UI Symbol", "Noto Color Emoji";
+	font-feature-settings: normal;
+	font-variation-settings: normal;
+	-webkit-tap-highlight-color: transparent;
+}
+
+html,
+body,
+#root {
+	min-height: 100%;
+}
+
+body {
+	margin: 0;
+	background: var(--background-color);
+	color: var(--text-color);
+	line-height: inherit;
+}
+
+button,
+input,
+textarea,
+select {
+	font: inherit;
+}
+
+button {
+	padding: 0;
+	border: 0;
+	background: transparent;
+	color: inherit;
+}
+
+a {
+	color: inherit;
+	text-decoration: inherit;
+}
+
+img,
+svg,
+video {
+	display: block;
+	max-width: 100%;
+}
+
+ol,
+ul,
+menu {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+	margin: 0;
 }
 
 @keyframes fadeIn {
@@ -33,4 +107,16 @@
 
 .fade-out {
 	animation: fadeOut 0.2s ease-in-out forwards;
+}
+
+.sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
 }
