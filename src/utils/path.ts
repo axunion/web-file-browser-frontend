@@ -35,7 +35,7 @@ export const getPath = (): PathResult => {
 			)
 		: [];
 
-	return { path: toEncodedPath(paths), paths };
+	return { path: paths.join("/"), paths };
 };
 
 export const setPath = (path: string) => {

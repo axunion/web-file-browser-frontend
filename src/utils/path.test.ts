@@ -73,10 +73,10 @@ describe("path utilities", () => {
 			expect(result.paths).toEqual(["folder", "file"]);
 		});
 
-		it("should return encoded path string", () => {
+		it("should return decoded path string for API use", () => {
 			window.location.hash = "#/my%20folder/file%20name";
 			const result = getPath();
-			expect(result.path).toBe("my%20folder/file%20name");
+			expect(result.path).toBe("my folder/file name");
 		});
 	});
 

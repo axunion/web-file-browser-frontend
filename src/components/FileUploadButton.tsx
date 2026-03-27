@@ -17,6 +17,7 @@ const FileUploadButton = ({ onFilesSelected }: FileUploadButtonProps) => {
 		<label className={styles.label}>
 			<input
 				type="file"
+				multiple
 				aria-label={MESSAGES.FILE_UPLOAD_BUTTON_ARIA_LABEL}
 				tabIndex={0}
 				className={styles.input}

@@ -1,6 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import FileUploadModal from "@/components/FileUploadModal";
+import ImageUploadModal from "@/components/ImageUploadModal";
 import MoveModal from "@/components/MoveModal";
 import MoveToTrashModal from "@/components/MoveToTrashModal";
 import RenameModal from "@/components/RenameModal";
@@ -10,14 +11,17 @@ import useFileList from "@/hooks/useFileList";
 import useFileMove from "@/hooks/useFileMove";
 import useFileRename from "@/hooks/useFileRename";
 import useFileUpload from "@/hooks/useFileUpload";
+import useImageUpload from "@/hooks/useImageUpload";
 
 vi.mock("@/hooks/useFileUpload", () => ({ default: vi.fn() }));
+vi.mock("@/hooks/useImageUpload", () => ({ default: vi.fn() }));
 vi.mock("@/hooks/useFileRename", () => ({ default: vi.fn() }));
 vi.mock("@/hooks/useFileMove", () => ({ default: vi.fn() }));
 vi.mock("@/hooks/useDelete", () => ({ default: vi.fn() }));
 vi.mock("@/hooks/useFileList", () => ({ default: vi.fn() }));
 
 const mockedUseFileUpload = vi.mocked(useFileUpload);
+const mockedUseImageUpload = vi.mocked(useImageUpload);
 const mockedUseFileRename = vi.mocked(useFileRename);
 const mockedUseFileMove = vi.mocked(useFileMove);
 const mockedUseDelete = vi.mocked(useDelete);
@@ -33,6 +37,49 @@ describe("file mutation modals", () => {
 			setPath: vi.fn(),
 			refresh: vi.fn().mockResolvedValue(undefined),
 		});
+		mockedUseImageUpload.mockReturnValue({
+			isLoading: false,
+			error: null,
+			uploadImages: vi.fn().mockResolvedValue({ status: "success", files: [] }),
+			abort: vi.fn(),
+		});
+	});
+
+	it("should not treat image upload API error payloads as success", async () => {
+		const uploadImages = vi.fn().mockResolvedValue({
+			status: "error",
+			message: "画像アップロード失敗",
+		});
+		const onSuccess = vi.fn();
+
+		mockedUseImageUpload.mockReturnValue({
+			isLoading: false,
+			error: null,
+			uploadImages,
+			abort: vi.fn(),
+		});
+
+		render(
+			<ImageUploadModal
+				files={[
+					new File(["a"], "a.jpg", { type: "image/jpeg" }),
+					new File(["b"], "b.jpg", { type: "image/jpeg" }),
+				]}
+				currentPath="photos"
+				onClose={vi.fn()}
+				onSuccess={onSuccess}
+			/>,
+		);
+
+		fireEvent.click(
+			screen.getByRole("button", { name: MESSAGES.UPLOAD_IMAGES_ARIA_LABEL }),
+		);
+
+		await waitFor(() => {
+			expect(onSuccess).not.toHaveBeenCalled();
+		});
+
+		expect(await screen.findByText("画像アップロード失敗")).toBeInTheDocument();
 	});
 
 	it("should not treat upload API error payloads as success", async () => {
@@ -52,6 +99,7 @@ describe("file mutation modals", () => {
 		render(
 			<FileUploadModal
 				file={new File(["file"], "sample.txt")}
+				currentPath="documents"
 				onClose={vi.fn()}
 				onSuccess={onSuccess}
 			/>,

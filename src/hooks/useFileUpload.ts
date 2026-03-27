@@ -1,19 +1,20 @@
 import { useCallback } from "react";
 import { ENDPOINT_UPLOAD } from "@/constants/config";
-import type { UploadFileResponse } from "@/types/api";
+import type { UploadFileRequest, UploadFileResponse } from "@/types/api";
 import useApiRequest from "./useApiRequest";
 
 const useFileUpload = () => {
 	const { isLoading, error, execute, abort } = useApiRequest<
-		File,
+		UploadFileRequest,
 		UploadFileResponse
 	>({ endpoint: ENDPOINT_UPLOAD });
 
 	const uploadFile = useCallback(
-		(file: File) =>
-			execute(file, (f) => {
+		(file: File, path: string) =>
+			execute({ file, path }, (params) => {
 				const formData = new FormData();
-				formData.append("file", f);
+				formData.append("file", params.file);
+				formData.append("path", params.path);
 				return formData;
 			}),
 		[execute],

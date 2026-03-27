@@ -28,6 +28,13 @@ export const MESSAGES = {
 	UPLOAD_FILE_ARIA_LABEL: "ファイルをアップロード",
 	FILE_UPLOAD_BUTTON_ARIA_LABEL: "アップロードするファイルを選択",
 	NAVIGATE_PARENT: "親ディレクトリへ移動",
+	UPLOAD_IMAGES: "画像をアップロード",
+	UPLOAD_IMAGES_ARIA_LABEL: "画像をアップロード",
+	IMAGE_UPLOAD_ERROR: "画像のアップロードに失敗しました。",
+	IMAGE_UPLOAD_INVALID_TYPE: "JPEG または PNG のみアップロードできます",
+	IMAGE_UPLOAD_TOO_MANY: "アップロードできるのは10件までです",
+	IMAGE_UPLOAD_FILE_TOO_LARGE: "1ファイルあたり10MB以下にしてください",
+	IMAGE_UPLOAD_TOTAL_TOO_LARGE: "合計サイズが30MBを超えています",
 } as const;
 
 export const getFileItemAriaLabel = (
@@ -39,5 +46,7 @@ export const getOpenFileAriaLabel = (name: string) =>
 	`${name} を新しいタブで開く`;
 
 export const getImageAlt = (name: string) => `${name} のプレビュー`;
+
+export const getImageUploadCountLabel = (count: number) => `${count} 件の画像`;
 
 export type MessageKey = keyof typeof MESSAGES;
