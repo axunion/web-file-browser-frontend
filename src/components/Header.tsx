@@ -2,7 +2,9 @@ import { useCallback, useState } from "react";
 import FileUploadButton from "@/components/FileUploadButton";
 import FileUploadModal from "@/components/FileUploadModal";
 import ImageUploadModal from "@/components/ImageUploadModal";
+import MultiFileUploadModal from "@/components/MultiFileUploadModal";
 import { MESSAGES } from "@/constants/messages";
+import type { ToastType } from "@/hooks/useToast";
 import { getParentPaths, setPaths } from "@/utils/path";
 import BackButton from "./BackButton";
 import styles from "./Header.module.css";
@@ -12,47 +14,60 @@ const MAX_IMAGE_COUNT = 10;
 const MAX_IMAGE_SIZE = 10 * 1024 * 1024;
 const MAX_TOTAL_SIZE = 30 * 1024 * 1024;
 
+type UploadMode = "idle" | "single" | "images" | "multi";
+
 export type HeaderProps = {
 	title?: string;
 	paths: string[];
 	onFileListUpdate: () => void;
+	showToast: (type: ToastType, message: string) => void;
 };
 
-const Header = ({ title, paths, onFileListUpdate }: HeaderProps) => {
+const Header = ({ title, paths, onFileListUpdate, showToast }: HeaderProps) => {
 	const currentPath = paths.join("/");
 	const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-	const [validationError, setValidationError] = useState<string | null>(null);
+	const [uploadMode, setUploadMode] = useState<UploadMode>("idle");
 
-	const onFilesSelected = useCallback((files: File[]): void => {
-		if (files.length === 0) {
-			return;
-		}
+	const onFilesSelected = useCallback(
+		(files: File[]): void => {
+			if (files.length === 0) {
+				return;
+			}
 
-		if (files.length > 1) {
-			if (!files.every((f) => IMAGE_TYPES.has(f.type))) {
-				setValidationError(MESSAGES.IMAGE_UPLOAD_INVALID_TYPE);
+			if (files.length === 1) {
+				setSelectedFiles(files);
+				setUploadMode("single");
 				return;
 			}
-			if (files.length > MAX_IMAGE_COUNT) {
-				setValidationError(MESSAGES.IMAGE_UPLOAD_TOO_MANY);
-				return;
-			}
-			if (files.some((f) => f.size > MAX_IMAGE_SIZE)) {
-				setValidationError(MESSAGES.IMAGE_UPLOAD_FILE_TOO_LARGE);
-				return;
-			}
-			if (files.reduce((sum, f) => sum + f.size, 0) > MAX_TOTAL_SIZE) {
-				setValidationError(MESSAGES.IMAGE_UPLOAD_TOTAL_TOO_LARGE);
-				return;
-			}
-		}
 
-		setValidationError(null);
-		setSelectedFiles(files);
-	}, []);
+			const allImages = files.every((f) => IMAGE_TYPES.has(f.type));
+
+			if (allImages) {
+				if (files.length > MAX_IMAGE_COUNT) {
+					showToast("error", MESSAGES.IMAGE_UPLOAD_TOO_MANY);
+					return;
+				}
+				if (files.some((f) => f.size > MAX_IMAGE_SIZE)) {
+					showToast("error", MESSAGES.IMAGE_UPLOAD_FILE_TOO_LARGE);
+					return;
+				}
+				if (files.reduce((sum, f) => sum + f.size, 0) > MAX_TOTAL_SIZE) {
+					showToast("error", MESSAGES.IMAGE_UPLOAD_TOTAL_TOO_LARGE);
+					return;
+				}
+				setSelectedFiles(files);
+				setUploadMode("images");
+			} else {
+				setSelectedFiles(files);
+				setUploadMode("multi");
+			}
+		},
+		[showToast],
+	);
 
 	const onClosed = useCallback(() => {
 		setSelectedFiles([]);
+		setUploadMode("idle");
 	}, []);
 
 	const handleBack = useCallback(() => {
@@ -61,6 +76,7 @@ const Header = ({ title, paths, onFileListUpdate }: HeaderProps) => {
 
 	const handleUploadSuccess = useCallback(() => {
 		setSelectedFiles([]);
+		setUploadMode("idle");
 		onFileListUpdate();
 	}, [onFileListUpdate]);
 
@@ -82,13 +98,7 @@ const Header = ({ title, paths, onFileListUpdate }: HeaderProps) => {
 				</span>
 			</header>
 
-			{validationError && (
-				<p role="alert" className={styles.validationError}>
-					{validationError}
-				</p>
-			)}
-
-			{selectedFiles.length === 1 && (
+			{uploadMode === "single" && selectedFiles[0] && (
 				<FileUploadModal
 					file={selectedFiles[0]}
 					currentPath={currentPath}
@@ -97,12 +107,22 @@ const Header = ({ title, paths, onFileListUpdate }: HeaderProps) => {
 				/>
 			)}
 
-			{selectedFiles.length > 1 && (
+			{uploadMode === "images" && (
 				<ImageUploadModal
 					files={selectedFiles}
 					currentPath={currentPath}
 					onClose={onClosed}
 					onSuccess={handleUploadSuccess}
+				/>
+			)}
+
+			{uploadMode === "multi" && (
+				<MultiFileUploadModal
+					files={selectedFiles}
+					currentPath={currentPath}
+					onClose={onClosed}
+					onSuccess={handleUploadSuccess}
+					showToast={showToast}
 				/>
 			)}
 		</>

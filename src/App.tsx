@@ -4,8 +4,10 @@ import Breadcrumb from "@/components/Breadcrumb";
 import ErrorModal from "@/components/ErrorModal";
 import FileList from "@/components/FileList";
 import Header from "@/components/Header";
+import Toast from "@/components/Toast";
 import { MESSAGES } from "@/constants/messages";
 import useFileList from "@/hooks/useFileList";
+import useToast from "@/hooks/useToast";
 import { getPath } from "@/utils/path";
 import styles from "./App.module.css";
 
@@ -19,6 +21,7 @@ const App = () => {
 	} = useFileList(hashResult.path);
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const isNavigatingRef = useRef(false);
+	const { toasts, showToast, dismissToast } = useToast();
 
 	useEffect(() => {
 		const handleHashChange = () => {
@@ -49,6 +52,7 @@ const App = () => {
 					title={hashResult.paths.slice(-1).pop()}
 					paths={hashResult.paths}
 					onFileListUpdate={handleFileListUpdate}
+					showToast={showToast}
 				/>
 			</div>
 
@@ -76,6 +80,8 @@ const App = () => {
 			{errorMessage && (
 				<ErrorModal onClose={handleErrorClose}>{errorMessage}</ErrorModal>
 			)}
+
+			<Toast toasts={toasts} onDismiss={dismissToast} />
 		</>
 	);
 };
