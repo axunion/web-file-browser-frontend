@@ -1,10 +1,64 @@
 :root {
-	--background-color: #ffffff;
+	/* --- Base Colors --- */
+	--background-color: #fafaf9;
 	--text-color: #4d4945;
 	--primary-color: #f57e00;
-	--accent-color: #7e00f5;
 	--error-color: #dc2626;
-	background: var(--background-color);
+
+	/* --- Gray Scale (warm stone) --- */
+	--gray-100: #f5f5f4;
+	--gray-200: #e7e5e4;
+	--gray-300: #d6d3d1;
+	--gray-500: #78716c;
+	--gray-600: #57534e;
+	--gray-700: #44403c;
+
+	/* --- Semantic Colors --- */
+	--folder-color: #eab308;
+	--focus-ring-color: #3b82f6;
+
+	/* --- Glass --- */
+	--glass-bg-heavy: rgb(255 255 255 / 72%);
+	--glass-bg-light: rgb(255 255 255 / 45%);
+	--glass-border: rgb(255 255 255 / 50%);
+	--glass-blur-lg: blur(24px);
+	--glass-blur-md: blur(16px);
+	--glass-blur-sm: blur(12px);
+	--glass-blur-xs: blur(8px);
+	--glass-shadow: 0 8px 32px rgb(0 0 0 / 8%);
+	--overlay-bg: rgb(0 0 0 / 30%);
+	--overlay-blur: blur(12px);
+
+	/* --- Border Radius --- */
+	--radius-sm: 0.5rem;
+	--radius-md: 0.75rem;
+	--radius-lg: 1rem;
+	--radius-full: 9999px;
+
+	/* --- Shadow --- */
+	--shadow-md: 0 4px 16px rgb(0 0 0 / 8%);
+
+	/* --- Focus Ring --- */
+	--focus-ring:
+		0 0 0 2px var(--background-color), 0 0 0 4px var(--focus-ring-color);
+
+	background:
+		radial-gradient(
+			ellipse 70% 50% at 0% 0%,
+			rgb(245 126 0 / 28%),
+			transparent 60%
+		),
+		radial-gradient(
+			ellipse 50% 60% at 100% 30%,
+			rgb(244 114 182 / 22%),
+			transparent 60%
+		),
+		radial-gradient(
+			ellipse 60% 50% at 50% 80%,
+			rgb(96 165 250 / 22%),
+			transparent 60%
+		), #fafaf9;
+	background-attachment: fixed;
 	color: var(--text-color);
 }
 
@@ -34,7 +88,6 @@ body,
 
 body {
 	margin: 0;
-	background: var(--background-color);
 	color: var(--text-color);
 	line-height: inherit;
 }

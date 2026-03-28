@@ -5,7 +5,8 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background: rgb(0 0 0 / 50%);
+	background: var(--overlay-bg);
+	backdrop-filter: var(--overlay-blur);
 }
 
 .panel {
@@ -14,11 +15,11 @@
 	max-width: 20rem;
 	max-height: 80vh;
 	padding: 1.5rem;
-	border-radius: 0.125rem;
-	background: var(--background-color);
-	box-shadow:
-		0 10px 15px -3px rgb(0 0 0 / 10%),
-		0 4px 6px -4px rgb(0 0 0 / 10%);
+	border: 1px solid var(--glass-border);
+	border-radius: var(--radius-lg);
+	background: var(--glass-bg-heavy);
+	backdrop-filter: var(--glass-blur-lg);
+	box-shadow: var(--glass-shadow);
 	outline: none;
 }
 

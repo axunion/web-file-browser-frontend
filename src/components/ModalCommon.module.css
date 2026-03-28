@@ -29,7 +29,7 @@
 .submitButton {
 	display: block;
 	margin: auto;
-	border-radius: 9999px;
+	border-radius: var(--radius-full);
 	background: var(--primary-color);
 	color: var(--background-color);
 	font-size: 1.25rem;
