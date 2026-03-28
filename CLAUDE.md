@@ -49,5 +49,4 @@ pnpm test:run     # テスト実行（ウォッチなし）
 - Biome のデフォルトルールに従う
 
 ## 詳細ガイドライン
-詳細なパターン・規則は `.github/copilot-instructions.md` を参照。
 コンテキスト別のルールは `.claude/rules/` 以下を参照。

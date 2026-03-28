@@ -57,7 +57,8 @@
 			ellipse 60% 50% at 50% 80%,
 			rgb(96 165 250 / 22%),
 			transparent 60%
-		), #fafaf9;
+		),
+		#fafaf9;
 	background-attachment: fixed;
 	color: var(--text-color);
 }

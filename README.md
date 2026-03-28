@@ -1,7 +1,5 @@
 # Web File Browser Frontend
 
-[🇯🇵 日本語](README_JA.md) | 🇺🇸 English
-
 A modern web file browser frontend application built with **React + TypeScript + Vite**.  
 Features an intuitive and modern UI for browsing and managing files and directories on a server.
 

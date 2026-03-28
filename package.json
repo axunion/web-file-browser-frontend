@@ -7,10 +7,6 @@
 		"dev": "vite",
 		"build": "tsc -b && vite build",
 		"preview": "vite preview",
-		"format": "biome format src",
-		"format:write": "biome format --write src",
-		"lint": "biome lint src",
-		"lint:write": "biome lint --write src",
 		"check": "biome check src",
 		"check:write": "biome check --write src",
 		"test": "vitest",
@@ -23,7 +19,7 @@
 		"swr": "^2.3.8"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.3.9",
+		"@biomejs/biome": "2.4.9",
 		"@testing-library/jest-dom": "^6.6.0",
 		"@testing-library/react": "^16.0.0",
 		"@iconify/react": "^6.0.2",
