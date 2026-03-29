@@ -158,12 +158,13 @@ const FileList = memo(
 		}, [onFileListUpdate]);
 
 		return (
-			<div className={`fade-in ${styles.list}`}>
-				{list.map((item) => (
+			<div className={styles.list}>
+				{list.map((item, index) => (
 					<button
 						key={item.name}
 						type="button"
-						className={styles.itemButton}
+						style={{ animationDelay: `${Math.min(index * 0.03, 0.15)}s` }}
+						className={`content-reveal ${styles.itemButton}`}
 						aria-label={getFileItemAriaLabel(item.name, item.type)}
 						onClick={() => handleClick(item)}
 						onKeyDown={(e) => {

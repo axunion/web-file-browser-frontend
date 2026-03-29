@@ -44,8 +44,7 @@
 	--focus-ring:
 		0 0 0 2px var(--background-color), 0 0 0 4px var(--focus-ring-color);
 
-	background: linear-gradient(170deg, rgb(245 126 0 / 15%) 0%, #fafaf9 50%);
-	background-attachment: fixed;
+	background: var(--background-color);
 	color: var(--text-color);
 }
 
@@ -134,6 +133,29 @@ p {
 
 .fade-in {
 	animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes contentReveal {
+	from {
+		opacity: 0;
+		transform: scale(0.97);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+.content-reveal {
+	animation: contentReveal 0.2s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.fade-in,
+	.fade-out,
+	.content-reveal {
+		animation: none;
+	}
 }
 
 @keyframes fadeOut {
