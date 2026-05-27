@@ -1,52 +1,53 @@
 # CLAUDE.md — Web File Browser Frontend
 
-## 言語ポリシー
-- **会話**: 日本語
-- **コード・コメント・コミットメッセージ**: 英語（Conventional Commits 形式）
-- **UI ユーザー向けメッセージ**: 日本語（`src/constants/messages.ts` の `MESSAGES` 定数を使用）
+## Language Policy
+- **Conversation**: Japanese
+- **Code, comments, and commit messages**: English (Conventional Commits format)
+- **User-facing UI messages**: Japanese (use the `MESSAGES` constant in `src/constants/messages.ts`)
+- **Config files** (`.claude/`): English
 
-## プロジェクト概要
-Web ファイルブラウザのフロントエンド（React 19 + TypeScript 5.9 + Vite 7）。
+## Project Overview
+Web file browser frontend (React 19 + TypeScript 5.9 + Vite 7).
 
-- **パッケージマネージャ**: pnpm（npm / yarn は使用不可）
-- **Node バージョン**: Volta で 24.12.0 に固定
+- **Package manager**: pnpm (do not use npm or yarn)
+- **Node version**: Pinned to 24.12.0 via Volta
 
-## 必須コマンド
+## Essential Commands
 
 ```bash
-pnpm dev          # 開発サーバー起動
-pnpm build        # 型チェック + ビルド
-pnpm check:write  # Biome フォーマット & Lint 修正
-pnpm test:run     # テスト実行（ウォッチなし）
+pnpm dev          # Start development server
+pnpm build        # Type check + build
+pnpm check:write  # Biome format & lint fix
+pnpm test:run     # Run tests (no watch)
 ```
 
-## アーキテクチャ上の決定事項（変更・提案しないこと）
+## Architectural Decisions (do not change or suggest alternatives)
 
-| 決定事項 | 詳細 |
+| Decision | Details |
 |---|---|
-| ルーティング | ハッシュベース（`window.location.hash`）。React Router は不要 — 提案しないこと |
-| サーバー状態管理 | SWR を使用。Redux / Zustand は不要 — 提案しないこと |
-| コンポーネント構造 | フラット（`src/components/` 直下）。サブフォルダへのネストは行わない |
-| Biome 設定 | デフォルト設定を使用。`biome.json` は存在しない — 作成しないこと |
-| パスエイリアス | `@/` → `src/` |
+| Routing | Hash-based (`window.location.hash`). React Router is not needed — do not suggest it |
+| Server state | SWR. Redux / Zustand are not needed — do not suggest them |
+| Component structure | Flat (`src/components/` root). Do not nest into subdirectories |
+| Biome config | Use default settings. `biome.json` does not exist — do not create it |
+| Path alias | `@/` → `src/` |
 
-## コード規約
+## Code Conventions
 
 ### TypeScript
-- `interface` 禁止 — `type` のみ使用
-- `any` 型禁止
-- Props は `export type XxxProps = { ... }` で定義
+- No `interface` — use `type` only
+- No `any` type
+- Props defined as `export type XxxProps = { ... }`
 
-### コンポーネント
-- アロー関数 + `React.memo` パターン
-- default export（コンポーネント・フック）、named export（型・定数）
+### Components
+- Arrow function + `React.memo` pattern
+- default export (components and hooks), named export (types and constants)
 
-### エラーメッセージ
-- ユーザー向け表示は `src/constants/messages.ts` の `MESSAGES` 定数から参照
+### Error Messages
+- User-facing messages must reference the `MESSAGES` constant in `src/constants/messages.ts`
 
-### フォーマット
-- インデント: タブ（`.editorconfig` 準拠）
-- Biome のデフォルトルールに従う
+### Formatting
+- Indent with tabs (per `.editorconfig`)
+- Follow Biome default rules
 
-## 詳細ガイドライン
-コンテキスト別のルールは `.claude/rules/` 以下を参照。
+## Detailed Guidelines
+Context-specific rules are in `.claude/rules/`.

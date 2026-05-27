@@ -1,42 +1,48 @@
 # Web File Browser Frontend
 
-A modern web file browser frontend application built with **React + TypeScript + Vite**.  
-Features an intuitive and modern UI for browsing and managing files and directories on a server.
+A modern web file browser frontend built with **React + TypeScript + Vite**.  
+Provides an intuitive UI for browsing and managing files and directories on a server.
 
-> **⚠️ Note**: This project is frontend-only. A corresponding backend API server is required separately.
+> **⚠️ Note**: This project is frontend-only. A separate backend API server is required.
 
-## ✨ Key Features
+## ✨ Features
 
-- 📁 Directory and file listing
-- 🧭 Breadcrumb navigation for hierarchical browsing
-- 📤 File upload functionality
+- 📁 Directory and file listing with breadcrumb navigation
+- 📤 File upload — single file, multi-file with per-file progress, and image upload
 - ✏️ File and directory renaming
+- 🗑️ Move to trash and permanent deletion
+- 📂 Move files and directories
+- 🖱️ Context menu with right-click / long-press support
+- 🔔 Toast notifications for operation feedback
 - ❌ Error handling with modal dialogs
-- ⏳ Loading spinner indicators
-- 📋 Tab-based UI
+- ⏳ Loading indicators
 
 ## 🛠️ Tech Stack
 
-- **React 19** - UI framework
-- **TypeScript** - Type-safe development
-- **Vite** - Fast build tool and dev server
-- **SWR** - Data fetching and caching library
-- **Lightning CSS** - CSS transformer and minifier
-- **CSS Modules** - Component-scoped styling
-- **@iconify/react** - Icon library
-- **@biomejs/biome** - Fast formatter and linter
+| Package | Version | Purpose |
+|---------|---------|---------|
+| React | 19 | UI framework |
+| TypeScript | 5.9 | Type-safe development |
+| Vite | 7 | Build tool and dev server |
+| SWR | 2 | Data fetching and caching |
+| Lightning CSS | 1 | CSS transformer and minifier |
+| CSS Modules | — | Component-scoped styling |
+| @iconify/react | 6 | Icon library |
+| @biomejs/biome | 2 | Formatter and linter |
+| Vitest | 3 | Unit testing framework |
+| @testing-library/react | 16 | Component testing utilities |
 
 ## 🚀 Setup
 
-### Installation
+### 1. Install dependencies
 
 ```bash
 pnpm install
 ```
 
-### 2. Environment Variables
+### 2. Configure environment variables
 
-Create a `.env` file in the project root and configure the following environment variables:
+Create a `.env` file in the project root:
 
 ```env
 VITE_ENDPOINT_API=http://localhost:8000/api/
@@ -48,30 +54,38 @@ VITE_ENDPOINT_DATA=http://localhost:8000/data/
 | `VITE_ENDPOINT_API` | Backend API base URL |
 | `VITE_ENDPOINT_DATA` | File data retrieval base URL |
 
-### 3. Start Development Server
+### 3. Start the development server
 
 ```bash
 pnpm dev
 ```
 
-Open your browser and navigate to `http://localhost:5173`.
+Open `http://localhost:5173` in your browser.
 
-### 4. Production Build
+### 4. Build for production
 
 ```bash
 pnpm build
 ```
 
-Build artifacts will be output to the `dist/` folder.
+Output is written to the `dist/` directory.
 
-## 📡 API Specification
+## 🧪 Testing
 
-API endpoints used by this frontend:
+```bash
+pnpm test:run       # Run tests once
+pnpm test:coverage  # Run with coverage report
+```
+
+## 📡 API Endpoints
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `GET` | `/api/list/` | Retrieve file and directory listings |
+| `GET` | `/api/list/` | Retrieve file and directory listing |
 | `POST` | `/api/upload/` | Upload files |
-| `POST` | `/api/rename/` | Rename files and directories |
+| `POST` | `/api/upload-images/` | Upload image files |
+| `POST` | `/api/rename/` | Rename a file or directory |
+| `POST` | `/api/move/` | Move a file or directory |
+| `POST` | `/api/delete/` | Delete a file or directory |
 
-For detailed specifications, please refer to the corresponding backend project documentation.
+For detailed specifications, refer to the backend project documentation.

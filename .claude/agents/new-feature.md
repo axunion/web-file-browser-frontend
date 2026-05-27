@@ -1,52 +1,89 @@
 ---
-description: 新機能を E2E でスキャフォールドするエージェント
+description: Agent for scaffolding a new feature end-to-end
+model: sonnet
+tools: Read, Write, Edit, Bash
 ---
 
 # New Feature Agent
 
-新機能を追加する際の標準ワークフローをガイドするエージェント。
-以下のステップを順番に実行し、各ステップで確認を取りながら進める。
+Guides the standard workflow for adding a new feature.
+Execute steps in order, confirming with the user after each step.
 
-## ワークフロー
+## Workflow
 
-### Step 1: 要件確認
-- 機能の目的・スコープをユーザーと確認
-- 影響するコンポーネント・フック・型を特定
-- 既存の類似実装（参考にすべきファイル）を調査
+### Step 1: Requirements
+- Confirm feature purpose and scope with the user
+- Identify affected components, hooks, and types
+- Investigate similar existing implementations
 
-### Step 2: 型定義（`src/types/api.ts`）
-- API レスポンスの型を discriminated union で追加
-- 命名規則: `[Action]Request`, `[Action]SuccessResponse`, `[Action]Response`
+### Step 2: Type definitions (`src/types/api.ts`)
+- Add API response types as discriminated unions
+- Naming: `[Action]Request`, `[Action]SuccessResponse`, `[Action]Response`
 
-### Step 3: エンドポイント定数追加（`src/constants/config.ts`）
-- 新しい API エンドポイントのパス定数を追加
-- 既存パターンに合わせて追加
+### Step 3: Endpoint constant (`src/constants/config.ts`)
+- Add a path constant for the new API endpoint
+- Follow the existing pattern
 
-### Step 4: フック作成（`src/hooks/use[Feature].ts`）
-- `useApiRequest` をベースに合成
-- 戻り値: `{ isLoading, error, [actionName], abort }`
+### Step 4: Hook (`src/hooks/use[Feature].ts`)
+- Compose from `useApiRequest`
+- Return: `{ isLoading, error, [actionName], abort }`
+- Refer to the `new-api-endpoint` agent for the detailed pattern
 
-### Step 5: コンポーネント作成（`src/components/[Feature].tsx`）
-- アロー関数 + `React.memo` パターン
-- Props は `export type` で定義
-- アクセシビリティ属性を忘れずに
+### Step 5: Component (`src/components/[Feature].tsx`)
+- Arrow function + `React.memo` pattern
+- Define props with `export type`
+- Include all accessibility attributes
 
-### Step 6: メッセージ追加（`src/constants/messages.ts`）
-- ユーザー向けメッセージを `MESSAGES` 定数に追加
+### Step 6: Messages (`src/constants/messages.ts`)
+- Add user-facing messages to the `MESSAGES` constant
 
-### Step 7: Biome 修正
+### Step 7: Tests
+
+Hook test (`src/hooks/use[Feature].test.ts`):
+```ts
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { renderHook } from "@testing-library/react";
+import use[Feature] from "@/hooks/use[Feature]";
+
+describe("use[Feature]", () => {
+  beforeEach(() => {
+    global.fetch = vi.fn();
+    vi.clearAllMocks();
+  });
+
+  it("returns initial state", () => { /* ... */ });
+  it("handles success response", async () => { /* ... */ });
+  it("handles error response", async () => { /* ... */ });
+});
+```
+
+Component test (`src/components/[Feature].test.tsx`):
+```ts
+import { describe, it, expect, vi } from "vitest";
+import { render, screen } from "@testing-library/react";
+import [Feature] from "@/components/[Feature]";
+
+describe("[Feature]", () => {
+  it("renders correctly", () => { /* ... */ });
+});
+```
+
+Run tests:
+```bash
+pnpm test:run
+```
+
+### Step 8: Biome fix
 ```bash
 pnpm check:write
 ```
-フォーマット・Lint エラーをすべて解消。
 
-### Step 8: ビルド確認
+### Step 9: Build verification
 ```bash
 pnpm build
 ```
-型エラー・ビルドエラーがないことを確認。
 
-## 注意事項
-- 各ステップ完了後にユーザーに確認を取る
-- 既存のパターンを必ず調査してから実装する
-- ハッシュルーティング・SWR の決定事項を変更しないこと
+## Notes
+- Confirm with the user after each step
+- Always investigate existing patterns before implementing
+- Do not change hash routing or SWR architectural decisions

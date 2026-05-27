@@ -1,11 +1,11 @@
 ---
-description: コンポーネント作成・編集のガイドライン
+description: Guidelines for creating and editing components
 globs: src/components/**
 ---
 
-# コンポーネントルール
+# Component Rules
 
-## 基本パターン
+## Base Pattern
 
 ```tsx
 import { memo } from "react";
@@ -22,23 +22,23 @@ const Xxx = memo(({ foo, bar }: XxxProps) => {
 export default Xxx;
 ```
 
-- アロー関数 + `React.memo` を使用
-- Props は `export type` で定義（`interface` 禁止）
-- default export で export
+- Use arrow function + `React.memo`
+- Define props with `export type` — no `interface`
+- Export as default export
 
-## モーダル
-- `src/components/Modal.tsx` のベースコンポーネントを使用
-- 独自の overlay / backdrop を実装しないこと
+## Modals
+- Use the base component at `src/components/Modal.tsx`
+- Do not implement custom overlay / backdrop
 
-## 状態管理
-- 複雑な UI 状態（複数の状態が連動する場合）: `useReducer` + discriminated union を使用
-- シンプルな状態: `useState` で十分
+## State Management
+- Complex UI state (multiple interdependent states): use `useReducer` + discriminated union
+- Simple state: `useState` is sufficient
 
-## アイコン
-- `@iconify/react` の `Icon` コンポーネントで統一
-- 他のアイコンライブラリを追加しないこと
+## Icons
+- Use the `Icon` component from `@iconify/react` exclusively
+- Do not add other icon libraries
 
-## アクセシビリティ
-- インタラクティブ要素には `aria-label` を付与
-- キーボードハンドラ（`onKeyDown`）を必ず実装
-- `role` 属性を適切に設定
+## Accessibility
+- Add `aria-label` to all interactive elements
+- Always implement keyboard handlers (`onKeyDown`)
+- Set `role` attributes appropriately

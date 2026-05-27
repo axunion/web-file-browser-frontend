@@ -28,8 +28,6 @@
 			"Bash(git stash clear)",
 			"Bash(git worktree remove *)",
 			"Bash(git submodule deinit *)",
-			"Bash(git config --global *)",
-			"Bash(git config --system *)",
 			"Bash(gh repo delete *)",
 			"Bash(gh ssh-key add *)",
 			"Bash(gh auth logout *)",
@@ -46,6 +44,7 @@
 			"Bash(xargs rm *)",
 			"Bash(dd *)",
 			"Bash(mkfs *)",
+			"Bash(git config *)",
 			"Bash(npm publish *)",
 			"Bash(pnpm publish *)",
 			"Bash(cargo publish *)",
@@ -60,12 +59,48 @@
 			"Bash(cat ~/.ssh/*)",
 			"Bash(cat ~/.aws/*)",
 			"Bash(cat ~/.gnupg/*)",
+			"Bash(head ~/.ssh/*)",
+			"Bash(head ~/.aws/*)",
+			"Bash(head ~/.gnupg/*)",
+			"Bash(tail ~/.ssh/*)",
+			"Bash(tail ~/.aws/*)",
+			"Bash(tail ~/.gnupg/*)",
+			"Bash(less ~/.ssh/*)",
+			"Bash(less ~/.aws/*)",
+			"Bash(less ~/.gnupg/*)",
+			"Bash(more ~/.ssh/*)",
+			"Bash(more ~/.aws/*)",
+			"Bash(more ~/.gnupg/*)",
 			"Bash(cat ~/.netrc)",
 			"Bash(cat ~/.npmrc)",
 			"Bash(cat ~/.pypirc)",
 			"Bash(cat ~/.kube/*)",
 			"Bash(cat ~/.docker/*)",
 			"Bash(cat ~/.config/gcloud/*)",
+			"Bash(head ~/.netrc)",
+			"Bash(head ~/.npmrc)",
+			"Bash(head ~/.pypirc)",
+			"Bash(head ~/.kube/*)",
+			"Bash(head ~/.docker/*)",
+			"Bash(head ~/.config/gcloud/*)",
+			"Bash(tail ~/.netrc)",
+			"Bash(tail ~/.npmrc)",
+			"Bash(tail ~/.pypirc)",
+			"Bash(tail ~/.kube/*)",
+			"Bash(tail ~/.docker/*)",
+			"Bash(tail ~/.config/gcloud/*)",
+			"Bash(less ~/.netrc)",
+			"Bash(less ~/.npmrc)",
+			"Bash(less ~/.pypirc)",
+			"Bash(less ~/.kube/*)",
+			"Bash(less ~/.docker/*)",
+			"Bash(less ~/.config/gcloud/*)",
+			"Bash(more ~/.netrc)",
+			"Bash(more ~/.npmrc)",
+			"Bash(more ~/.pypirc)",
+			"Bash(more ~/.kube/*)",
+			"Bash(more ~/.docker/*)",
+			"Bash(more ~/.config/gcloud/*)",
 			"Read(~/.ssh/*)",
 			"Read(~/.aws/*)",
 			"Read(~/.gnupg/*)",
@@ -97,6 +132,30 @@
 			"Write(~/.zprofile)",
 			"Write(~/.zshenv)",
 			"Write(~/.profile)"
+		]
+	},
+	"hooks": {
+		"PostToolUse": [
+			{
+				"matcher": "Edit",
+				"hooks": [
+					{
+						"type": "command",
+						"if": "Edit(**/src/**)",
+						"command": "f=$(jq -r '.tool_input.file_path // empty'); pnpm exec biome check --write \"${f#$PWD/}\" 2>/dev/null || true"
+					}
+				]
+			},
+			{
+				"matcher": "Write",
+				"hooks": [
+					{
+						"type": "command",
+						"if": "Write(**/src/**)",
+						"command": "f=$(jq -r '.tool_input.file_path // empty'); pnpm exec biome check --write \"${f#$PWD/}\" 2>/dev/null || true"
+					}
+				]
+			}
 		]
 	}
 }

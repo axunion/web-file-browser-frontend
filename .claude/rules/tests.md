@@ -1,15 +1,15 @@
 ---
-description: テスト作成・編集のガイドライン
+description: Guidelines for creating and editing tests
 globs: src/**/*.test.*
 ---
 
-# テストルール
+# Test Rules
 
-## フレームワーク
+## Framework
 - **Vitest** + **@testing-library/react**
-- テストファイルはソースファイルと同じディレクトリに配置（例: `src/components/Foo.tsx` → `src/components/Foo.test.tsx`）
+- Place test files in the same directory as source files (e.g., `src/components/Foo.tsx` → `src/components/Foo.test.tsx`)
 
-## 記述パターン
+## Pattern
 
 ```ts
 import { describe, it, expect, vi, beforeEach } from "vitest";
@@ -29,10 +29,10 @@ describe("ComponentName", () => {
 });
 ```
 
-- `describe` / `it` パターンを使用（`test()` は使用しない）
-- ネストした `describe` で状態・条件を整理する
+- Use `describe` / `it` pattern — never `test()`
+- Organize conditions and states with nested `describe`
 
-## fetch のモック
+## Mocking fetch
 
 ```ts
 beforeEach(() => {
@@ -47,9 +47,9 @@ it("calls API", async () => {
 });
 ```
 
-- `global.fetch` を `vi.fn()` でモック
-- `mockResolvedValueOnce` で個別のレスポンスを設定
+- Mock `global.fetch` with `vi.fn()`
+- Set individual responses with `mockResolvedValueOnce`
 
-## アサーション
-- `@testing-library` のクエリ（`getByRole`, `getByText` 等）を優先
-- `getByTestId` は最終手段
+## Assertions
+- Prefer `@testing-library` queries (`getByRole`, `getByText`, etc.)
+- Use `getByTestId` only as a last resort

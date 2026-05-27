@@ -1,23 +1,23 @@
 ---
-description: 型定義作成・編集のガイドライン
+description: Guidelines for creating and editing type definitions
 globs: src/types/**
 ---
 
-# 型定義ルール
+# Type Rules
 
-## 基本方針
-- `interface` 禁止 — `type` のみ使用
-- `any` 型禁止（`unknown` を使用し、型ガードで絞る）
-- named export で export
+## Principles
+- No `interface` — use `type` only
+- No `any` (use `unknown` and narrow with type guards)
+- Export with named exports
 
-## API レスポンスの型パターン
+## API Response Type Pattern
 
-API レスポンスは `status` フィールドによる discriminated union で定義する。
+Define API responses as discriminated unions based on the `status` field.
 
 ```ts
 export type XxxSuccessResponse = {
   status: "success";
-  // ... 成功時のデータ
+  // ... success data
 };
 
 export type XxxErrorResponse = {
@@ -28,21 +28,21 @@ export type XxxErrorResponse = {
 export type XxxResponse = XxxSuccessResponse | XxxErrorResponse;
 ```
 
-## リクエスト型の命名規則
+## Request Type Naming
 
 ```
-[Action]Request         → リクエストボディ（例: UploadRequest）
-[Action]SuccessResponse → 成功レスポンス（例: UploadSuccessResponse）
-[Action]Response        → ユニオン型（例: UploadResponse）
+[Action]Request         → request body          (e.g., UploadRequest)
+[Action]SuccessResponse → success response       (e.g., UploadSuccessResponse)
+[Action]Response        → union type             (e.g., UploadResponse)
 ```
 
-## 型ガードの実装
+## Type Guard Implementation
 
 ```ts
 export const isSuccess = (res: XxxResponse): res is XxxSuccessResponse =>
   res.status === "success";
 ```
 
-## その他
-- `src/types/api.ts` に API 関連の型をまとめる
-- コンポーネント固有の型はコンポーネントファイル内で定義して export
+## Other
+- Consolidate API-related types in `src/types/api.ts`
+- Component-specific types can be defined and exported within the component file

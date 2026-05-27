@@ -1,13 +1,13 @@
 ---
-description: カスタムフック作成・編集のガイドライン
+description: Guidelines for creating and editing custom hooks
 globs: src/hooks/**
 ---
 
-# フックルール
+# Hook Rules
 
-## API フックのパターン
+## API Hook Pattern
 
-API 操作フックは `useApiRequest` をベースに合成する。
+Compose API operation hooks on top of `useApiRequest`.
 
 ```ts
 import { useApiRequest } from "@/hooks/useApiRequest";
@@ -25,22 +25,22 @@ const useXxx = () => {
 export default useXxx;
 ```
 
-## 戻り値の規約
+## Return Value Convention
 
 ```ts
 return {
   isLoading,    // boolean
   error,        // string | null
-  [actionName], // 主要な操作関数
-  abort,        // AbortController の abort
+  [actionName], // primary action function
+  abort,        // AbortController abort
 };
 ```
 
-## SWR の使用
-- SWR を直接使用するのは `src/hooks/useFileList.ts` のみ
-- 一覧取得以外の操作（upload / rename / delete 等）は `useApiRequest` を使用
+## SWR Usage
+- Use SWR directly only in `src/hooks/useFileList.ts`
+- All other operations (upload / rename / delete, etc.) must use `useApiRequest`
 
-## その他
-- フックファイルは `use` プレフィックスで命名
-- default export（フック本体）
-- 副作用のクリーンアップ（`abort` 等）を忘れずに実装
+## Other
+- Hook files must be prefixed with `use`
+- Default export (hook body)
+- Always implement side effect cleanup (`abort`, etc.)

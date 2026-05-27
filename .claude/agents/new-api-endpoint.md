@@ -1,45 +1,47 @@
 ---
-description: 新しい API エンドポイントを統合するエージェント
+description: Agent for integrating a new API endpoint into the frontend
+model: sonnet
+tools: Read, Write, Edit, Bash
 ---
 
 # New API Endpoint Agent
 
-バックエンドに新しい API エンドポイントを追加した際のフロントエンド統合を自動化するエージェント。
+Automates frontend integration when a new backend API endpoint is added.
 
-## 前提情報の収集
+## Prerequisites
 
-実装前に以下を確認する:
-1. エンドポイント URL（例: `/api/delete/`）
-2. HTTP メソッド（GET / POST / PUT / DELETE）
-3. リクエストボディのスキーマ
-4. レスポンスのスキーマ（成功・エラー）
+Confirm the following before implementation:
+1. Endpoint URL (e.g., `/api/delete/`)
+2. HTTP method (GET / POST / PUT / DELETE)
+3. Request body schema
+4. Response schema (success and error)
 
-## ワークフロー
+## Workflow
 
-### Step 1: 型定義（`src/types/api.ts`）
+### Step 1: Type definitions (`src/types/api.ts`)
 
-既存のパターンを参照して追加:
+Add following the existing pattern:
 
 ```ts
 export type [Action]Request = {
-  // リクエストボディ
+  // request body
 };
 
 export type [Action]SuccessResponse = {
   status: "success";
-  // 成功時のデータ
+  // success data
 };
 
 export type [Action]Response = [Action]SuccessResponse | ApiErrorResponse;
 ```
 
-### Step 2: エンドポイント定数（`src/constants/config.ts`）
+### Step 2: Endpoint constant (`src/constants/config.ts`)
 
 ```ts
 export const ENDPOINT_[ACTION] = `${API_BASE}/[path]/`;
 ```
 
-### Step 3: フック作成（`src/hooks/use[Action].ts`）
+### Step 3: Hook (`src/hooks/use[Action].ts`)
 
 ```ts
 import { useApiRequest } from "@/hooks/useApiRequest";
@@ -61,13 +63,56 @@ const use[Action] = () => {
 export default use[Action];
 ```
 
-### Step 4: 検証
+### Step 4: Tests (`src/hooks/use[Action].test.ts`)
 
-```bash
-pnpm check:write  # Biome 修正
-pnpm build        # 型チェック + ビルド
+Refer to `useApiRequest.test.ts` for patterns:
+
+```ts
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { renderHook, act } from "@testing-library/react";
+import use[Action] from "@/hooks/use[Action]";
+
+describe("use[Action]", () => {
+  beforeEach(() => {
+    global.fetch = vi.fn();
+    vi.clearAllMocks();
+  });
+
+  it("returns initial state", () => {
+    const { result } = renderHook(() => use[Action]());
+    expect(result.current.isLoading).toBe(false);
+    expect(result.current.error).toBeNull();
+  });
+
+  it("handles success response", async () => {
+    vi.mocked(global.fetch).mockResolvedValueOnce(
+      new Response(JSON.stringify({ status: "success" }), { status: 200 })
+    );
+    // act + assert
+  });
+
+  it("handles error response", async () => {
+    vi.mocked(global.fetch).mockResolvedValueOnce(
+      new Response(JSON.stringify({ status: "error", message: "..." }), { status: 400 })
+    );
+    // act + assert
+  });
+});
 ```
 
-## 注意事項
-- `useApiRequest` を必ずベースにすること（直接 `fetch` を呼ばない）
-- エラーメッセージは `src/constants/messages.ts` に追加
+Run tests:
+```bash
+pnpm test:run
+```
+
+### Step 5: Verify
+
+```bash
+pnpm check:write  # Biome fix
+pnpm build        # Type check + build
+```
+
+## Notes
+- Always base hooks on `useApiRequest` — never call `fetch` directly
+- Add error messages to `src/constants/messages.ts`
+- Place test files in the same directory as the hook
