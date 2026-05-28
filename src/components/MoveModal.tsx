@@ -5,7 +5,6 @@ import { MESSAGES } from "@/constants/messages";
 import useFileList from "@/hooks/useFileList";
 import useFileMove from "@/hooks/useFileMove";
 import { type DirectoryItem, isErrorResponse } from "@/types/api";
-import { toEncodedPath } from "@/utils/path";
 import commonStyles from "./ModalCommon.module.css";
 import styles from "./MoveModal.module.css";
 
@@ -33,7 +32,7 @@ const MoveModal = ({
 		isolated: true,
 	});
 
-	const browsePath = useMemo(() => toEncodedPath(browsePaths), [browsePaths]);
+	const browsePath = useMemo(() => browsePaths.join("/"), [browsePaths]);
 
 	const directories = useMemo(
 		() => items.filter((listItem) => listItem.type === "directory"),
@@ -43,13 +42,13 @@ const MoveModal = ({
 	const handleNavigateUp = () => {
 		const newPaths = browsePaths.slice(0, -1);
 		setBrowsePaths(newPaths);
-		setPath(toEncodedPath(newPaths));
+		setPath(newPaths.join("/"));
 	};
 
 	const handleNavigateInto = (dirName: string) => {
 		const newPaths = [...browsePaths, dirName];
 		setBrowsePaths(newPaths);
-		setPath(toEncodedPath(newPaths));
+		setPath(newPaths.join("/"));
 	};
 
 	const handleMove = async () => {

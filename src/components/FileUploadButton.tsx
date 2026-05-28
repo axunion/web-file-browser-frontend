@@ -11,6 +11,7 @@ const FileUploadButton = ({ onFilesSelected }: FileUploadButtonProps) => {
 	const onFileChange = (event: ChangeEvent<HTMLInputElement>) => {
 		const files = event.target.files ? Array.from(event.target.files) : [];
 		onFilesSelected(files);
+		event.target.value = "";
 	};
 
 	return (

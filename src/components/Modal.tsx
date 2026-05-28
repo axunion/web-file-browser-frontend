@@ -10,6 +10,9 @@ export type ModalProps = {
 	title?: string;
 };
 
+const FOCUSABLE_SELECTOR =
+	'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
 const Modal = ({ onClose, children, title }: ModalProps) => {
 	const [isClosing, setIsClosing] = useState(false);
 	const modalRef = useRef<HTMLDivElement>(null);
@@ -31,6 +34,36 @@ const Modal = ({ onClose, children, title }: ModalProps) => {
 		const handleKeyDown = (e: KeyboardEvent) => {
 			if (e.key === "Escape") {
 				close();
+				return;
+			}
+
+			if (e.key === "Tab" && modalRef.current) {
+				const focusable = Array.from(
+					modalRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR),
+				);
+
+				if (focusable.length === 0) return;
+
+				const first = focusable[0];
+				const last = focusable[focusable.length - 1];
+
+				if (e.shiftKey) {
+					if (
+						document.activeElement === first ||
+						document.activeElement === modalRef.current
+					) {
+						e.preventDefault();
+						last.focus();
+					}
+				} else {
+					if (
+						document.activeElement === last ||
+						document.activeElement === modalRef.current
+					) {
+						e.preventDefault();
+						first.focus();
+					}
+				}
 			}
 		};
 
@@ -49,13 +82,13 @@ const Modal = ({ onClose, children, title }: ModalProps) => {
 			className={`${styles.overlay} ${isClosing ? "fade-out" : "fade-in"}`}
 			onPointerDown={close}
 			onAnimationEnd={handleAnimationEnd}
-			role="dialog"
-			aria-modal="true"
-			aria-labelledby={title ? "modal-title" : undefined}
 		>
 			<div
 				ref={modalRef}
 				tabIndex={-1}
+				role="dialog"
+				aria-modal="true"
+				aria-labelledby={title ? "modal-title" : undefined}
 				className={styles.panel}
 				onPointerDown={(e) => e.stopPropagation()}
 			>

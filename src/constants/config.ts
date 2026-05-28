@@ -10,6 +10,9 @@ class ConfigurationError extends Error {
 	}
 }
 
+const ensureTrailingSlash = (url: string) =>
+	url.endsWith("/") ? url : `${url}/`;
+
 const validateEnv = (): EnvConfig => {
 	const requiredEnvVars = {
 		VITE_ENDPOINT_API: import.meta.env.VITE_ENDPOINT_API,
@@ -25,18 +28,14 @@ const validateEnv = (): EnvConfig => {
 	}
 
 	if (missingVars.length > 0) {
-		const message = `Missing required environment variables: ${missingVars.join(", ")}. Please check your .env file.`;
-
-		if (import.meta.env.DEV) {
-			throw new ConfigurationError(message);
-		}
-
-		console.error(message);
+		throw new ConfigurationError(
+			`Missing required environment variables: ${missingVars.join(", ")}. Please check your .env file.`,
+		);
 	}
 
 	return {
-		VITE_ENDPOINT_API: requiredEnvVars.VITE_ENDPOINT_API ?? "",
-		VITE_ENDPOINT_DATA: requiredEnvVars.VITE_ENDPOINT_DATA ?? "",
+		VITE_ENDPOINT_API: ensureTrailingSlash(requiredEnvVars.VITE_ENDPOINT_API),
+		VITE_ENDPOINT_DATA: ensureTrailingSlash(requiredEnvVars.VITE_ENDPOINT_DATA),
 	};
 };
 
@@ -50,3 +49,5 @@ export const ENDPOINT_UPLOAD_IMAGES = `${ENDPOINT_API}upload-images/`;
 export const ENDPOINT_RENAME = `${ENDPOINT_API}rename/`;
 export const ENDPOINT_MOVE = `${ENDPOINT_API}move/`;
 export const ENDPOINT_DELETE = `${ENDPOINT_API}delete/`;
+
+export const TRASH_FOLDER_NAME = "trash";

@@ -3,6 +3,7 @@ import FileUploadButton from "@/components/FileUploadButton";
 import FileUploadModal from "@/components/FileUploadModal";
 import ImageUploadModal from "@/components/ImageUploadModal";
 import MultiFileUploadModal from "@/components/MultiFileUploadModal";
+import { TRASH_FOLDER_NAME } from "@/constants/config";
 import { MESSAGES } from "@/constants/messages";
 import type { ToastType } from "@/hooks/useToast";
 import { getParentPaths, setPaths } from "@/utils/path";
@@ -25,6 +26,7 @@ export type HeaderProps = {
 
 const Header = ({ title, paths, onFileListUpdate, showToast }: HeaderProps) => {
 	const currentPath = paths.join("/");
+	const isTrashFolder = paths.length === 1 && paths[0] === TRASH_FOLDER_NAME;
 	const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 	const [uploadMode, setUploadMode] = useState<UploadMode>("idle");
 
@@ -84,7 +86,7 @@ const Header = ({ title, paths, onFileListUpdate, showToast }: HeaderProps) => {
 		<>
 			<header className={styles.header}>
 				<span className={styles.slot}>
-					{title && title !== "trash" && <BackButton onBack={handleBack} />}
+					{title && !isTrashFolder && <BackButton onBack={handleBack} />}
 				</span>
 
 				<h1 className={styles.title}>
@@ -92,7 +94,7 @@ const Header = ({ title, paths, onFileListUpdate, showToast }: HeaderProps) => {
 				</h1>
 
 				<span className={styles.slot}>
-					{title !== "trash" && (
+					{!isTrashFolder && (
 						<FileUploadButton onFilesSelected={onFilesSelected} />
 					)}
 				</span>

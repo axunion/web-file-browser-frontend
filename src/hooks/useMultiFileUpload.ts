@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ENDPOINT_UPLOAD } from "@/constants/config";
 import type { UploadFileResponse } from "@/types/api";
 
@@ -16,11 +16,30 @@ type UseMultiFileUploadReturn = {
 	abort: () => void;
 };
 
+const markAbortedFromIndex = (
+	prev: FileUploadProgress[],
+	fromIndex: number,
+): FileUploadProgress[] =>
+	prev.map((p, idx) =>
+		idx >= fromIndex && (p.status === "pending" || p.status === "uploading")
+			? { ...p, status: "error" }
+			: p,
+	);
+
 const useMultiFileUpload = (): UseMultiFileUploadReturn => {
 	const [isUploading, setIsUploading] = useState(false);
 	const [progress, setProgress] = useState<FileUploadProgress[]>([]);
 
+	const isMountedRef = useRef(true);
 	const abortControllerRef = useRef<AbortController | null>(null);
+
+	useEffect(() => {
+		isMountedRef.current = true;
+		return () => {
+			isMountedRef.current = false;
+			abortControllerRef.current?.abort();
+		};
+	}, []);
 
 	const abort = useCallback(() => {
 		abortControllerRef.current?.abort();
@@ -36,15 +55,24 @@ const useMultiFileUpload = (): UseMultiFileUploadReturn => {
 			status: "pending",
 		}));
 
-		setProgress(initial);
-		setIsUploading(true);
+		if (isMountedRef.current) {
+			setProgress(initial);
+			setIsUploading(true);
+		}
 
 		for (let i = 0; i < files.length; i++) {
-			if (abortController.signal.aborted) break;
+			if (abortController.signal.aborted) {
+				if (isMountedRef.current) {
+					setProgress((prev) => markAbortedFromIndex(prev, i));
+				}
+				break;
+			}
 
-			setProgress((prev) =>
-				prev.map((p, idx) => (idx === i ? { ...p, status: "uploading" } : p)),
-			);
+			if (isMountedRef.current) {
+				setProgress((prev) =>
+					prev.map((p, idx) => (idx === i ? { ...p, status: "uploading" } : p)),
+				);
+			}
 
 			try {
 				const formData = new FormData();
@@ -65,19 +93,30 @@ const useMultiFileUpload = (): UseMultiFileUploadReturn => {
 				const status: FileUploadStatus =
 					data.status === "success" ? "success" : "error";
 
-				setProgress((prev) =>
-					prev.map((p, idx) => (idx === i ? { ...p, status } : p)),
-				);
+				if (isMountedRef.current) {
+					setProgress((prev) =>
+						prev.map((p, idx) => (idx === i ? { ...p, status } : p)),
+					);
+				}
 			} catch (err) {
-				if (err instanceof Error && err.name === "AbortError") break;
+				if (err instanceof Error && err.name === "AbortError") {
+					if (isMountedRef.current) {
+						setProgress((prev) => markAbortedFromIndex(prev, i));
+					}
+					break;
+				}
 
-				setProgress((prev) =>
-					prev.map((p, idx) => (idx === i ? { ...p, status: "error" } : p)),
-				);
+				if (isMountedRef.current) {
+					setProgress((prev) =>
+						prev.map((p, idx) => (idx === i ? { ...p, status: "error" } : p)),
+					);
+				}
 			}
 		}
 
-		setIsUploading(false);
+		if (isMountedRef.current) {
+			setIsUploading(false);
+		}
 	}, []);
 
 	return { isUploading, progress, uploadFiles, abort };

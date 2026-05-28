@@ -1,4 +1,5 @@
 import { Icon } from "@iconify/react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { MESSAGES } from "@/constants/messages";
 import styles from "./ContextMenu.module.css";
@@ -11,6 +12,10 @@ export type ContextMenuProps = {
 	onTrash: () => void;
 };
 
+const MENU_WIDTH = 140;
+const MENU_ESTIMATED_HEIGHT = 160;
+const MENU_MARGIN = 8;
+
 const ContextMenu = ({
 	onClose,
 	onRename,
@@ -18,19 +23,38 @@ const ContextMenu = ({
 	onTrash,
 	position,
 }: ContextMenuProps) => {
-	const menuWidth = 140;
-	const windowWidth = typeof window !== "undefined" ? window.innerWidth : 800;
+	const menuRef = useRef<HTMLDivElement>(null);
+	const [menuHeight, setMenuHeight] = useState(MENU_ESTIMATED_HEIGHT);
+
+	useLayoutEffect(() => {
+		if (menuRef.current) {
+			setMenuHeight(menuRef.current.offsetHeight);
+		}
+	}, []);
+
+	const windowWidth = window.innerWidth;
+	const windowHeight = window.innerHeight;
 	const menuPosition = {
 		left: Math.max(
-			8,
-			Math.min(position.x - menuWidth / 2, windowWidth - menuWidth - 8),
+			MENU_MARGIN,
+			Math.min(
+				position.x - MENU_WIDTH / 2,
+				windowWidth - MENU_WIDTH - MENU_MARGIN,
+			),
 		),
-		top: position.y + 8,
+		top: Math.max(
+			MENU_MARGIN,
+			Math.min(
+				position.y + MENU_MARGIN,
+				windowHeight - menuHeight - MENU_MARGIN,
+			),
+		),
 	};
 
 	return createPortal(
 		<div className={styles.overlay} onPointerDown={onClose} role="presentation">
 			<div
+				ref={menuRef}
 				className={styles.menu}
 				style={{
 					left: `${menuPosition.left}px`,

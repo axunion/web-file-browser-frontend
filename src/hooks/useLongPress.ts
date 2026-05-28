@@ -12,14 +12,9 @@ type LongPressResult<T> = {
 	onMouseLeave: () => void;
 	onTouchStart: (data: T) => (event: React.TouchEvent) => void;
 	onTouchEnd: () => void;
+	onTouchCancel: () => void;
 };
 
-/**
- * Hook for handling long press interactions on elements
- * @param callback Function to call when long press is detected
- * @param options Configuration options (delay, etc.)
- * @returns Object with event handlers for long press detection
- */
 const useLongPress = <T>(
 	callback: LongPressCallback<T>,
 	options: LongPressOptions = {},
@@ -36,8 +31,6 @@ const useLongPress = <T>(
 
 	const startLongPress = useCallback(
 		(data: T, event: React.MouseEvent | React.TouchEvent) => {
-			event.preventDefault();
-
 			clearLongPress();
 
 			const element = event.currentTarget as HTMLElement;
@@ -68,6 +61,7 @@ const useLongPress = <T>(
 			[startLongPress],
 		),
 		onTouchEnd: clearLongPress,
+		onTouchCancel: clearLongPress,
 	};
 };
 

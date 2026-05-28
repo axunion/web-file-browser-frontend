@@ -1,4 +1,4 @@
-import { memo, type RefObject, useCallback, useReducer } from "react";
+import { memo, type RefObject, useCallback, useReducer, useRef } from "react";
 import ContextMenu from "@/components/ContextMenu";
 import FileItem from "@/components/FileItem";
 import MoveModal from "@/components/MoveModal";
@@ -87,6 +87,7 @@ const FileList = memo(
 	({ list, currentPath, onFileListUpdate, isNavigatingRef }: FileListProps) => {
 		const [state, dispatch] = useReducer(fileListReducer, initialState);
 		const { contextMenu, activeModal } = state;
+		const didLongPressRef = useRef(false);
 
 		const dirPath = currentPath
 			? `${ENDPOINT_DATA}${currentPath}/`
@@ -94,6 +95,7 @@ const FileList = memo(
 
 		const handleLongPress = useCallback(
 			(item: DirectoryItem, element: HTMLElement) => {
+				didLongPressRef.current = true;
 				try {
 					const rect = element.getBoundingClientRect();
 					const position = {
@@ -115,6 +117,11 @@ const FileList = memo(
 		const handleClick = useCallback(
 			(item: DirectoryItem) => {
 				if (isNavigatingRef.current) {
+					return;
+				}
+
+				if (didLongPressRef.current) {
+					didLongPressRef.current = false;
 					return;
 				}
 
@@ -178,6 +185,7 @@ const FileList = memo(
 						onMouseLeave={longPressHandlers.onMouseLeave}
 						onTouchStart={longPressHandlers.onTouchStart(item)}
 						onTouchEnd={longPressHandlers.onTouchEnd}
+						onTouchCancel={longPressHandlers.onTouchCancel}
 					>
 						<FileItem file={item} dirPath={dirPath} />
 					</button>
