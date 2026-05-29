@@ -119,7 +119,7 @@ Fix any failures based on the error output.
 ### Step 5: Biome fix
 
 ```bash
-pnpm check:write
+pnpm fix
 ```
 
 ## Notes

@@ -75,7 +75,7 @@ pnpm test:run
 
 ### Step 8: Biome fix
 ```bash
-pnpm check:write
+pnpm fix
 ```
 
 ### Step 9: Build verification

@@ -3,4 +3,4 @@ description: Run Biome check and auto-fix formatting/lint issues. Use after edit
 allowed-tools: Bash
 ---
 
-Run `pnpm check:write` to apply Biome formatting and lint fixes, then report the results.
+Run `pnpm fix` to apply Biome formatting and lint fixes, then report the results.

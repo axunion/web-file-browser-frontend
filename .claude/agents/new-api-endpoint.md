@@ -108,7 +108,7 @@ pnpm test:run
 ### Step 5: Verify
 
 ```bash
-pnpm check:write  # Biome fix
+pnpm fix          # Biome fix
 pnpm build        # Type check + build
 ```
 

@@ -7,19 +7,22 @@
 - **Config files** (`.claude/`): English
 
 ## Project Overview
-Web file browser frontend (React 19 + TypeScript 5.9 + Vite 7).
+Web file browser frontend (React 19 + TypeScript 5.9 + Vite 8).
 
 - **Package manager**: pnpm (do not use npm or yarn)
-- **Node version**: Pinned to 24.12.0 via Volta
+- **Node version**: 24.16.0 / pnpm 11.4.0 — specified via `devEngines` in `package.json` (onFail: warn)
 
 ## Essential Commands
 
 ```bash
 pnpm dev          # Start development server
 pnpm build        # Type check + build
-pnpm check:write  # Biome format & lint fix
+pnpm typecheck    # Type check only (tsc --noEmit)
+pnpm fix          # Biome format & lint fix
 pnpm test:run     # Run tests (no watch)
 ```
+
+> **pre-commit hook**: lefthook runs `pnpm fix` (Biome) and `pnpm typecheck` automatically on staged files before every commit.
 
 ## Architectural Decisions (do not change or suggest alternatives)
 
