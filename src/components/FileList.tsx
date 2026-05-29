@@ -41,12 +41,12 @@ type FileListAction =
 	| { type: "OPEN_TRASH_MODAL" }
 	| { type: "CLOSE_MODAL" };
 
-const initialState: FileListState = {
+export const fileListInitialState: FileListState = {
 	contextMenu: null,
 	activeModal: null,
 };
 
-const fileListReducer = (
+export const fileListReducer = (
 	state: FileListState,
 	action: FileListAction,
 ): FileListState => {
@@ -85,7 +85,7 @@ const fileListReducer = (
 
 const FileList = memo(
 	({ list, currentPath, onFileListUpdate, isNavigatingRef }: FileListProps) => {
-		const [state, dispatch] = useReducer(fileListReducer, initialState);
+		const [state, dispatch] = useReducer(fileListReducer, fileListInitialState);
 		const { contextMenu, activeModal } = state;
 		const didLongPressRef = useRef(false);
 

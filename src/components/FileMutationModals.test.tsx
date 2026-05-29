@@ -229,4 +229,122 @@ describe("file mutation modals", () => {
 		expect(onSuccess).not.toHaveBeenCalled();
 		expect(await screen.findByText("移動失敗")).toBeInTheDocument();
 	});
+
+	// ---- success paths ----
+
+	it("should call onSuccess after a successful image upload", async () => {
+		// beforeEach already sets uploadImages to return { status: "success", files: [] }
+		const onSuccess = vi.fn();
+
+		render(
+			<ImageUploadModal
+				files={[new File(["a"], "a.jpg", { type: "image/jpeg" })]}
+				currentPath="photos"
+				onClose={vi.fn()}
+				onSuccess={onSuccess}
+			/>,
+		);
+
+		fireEvent.click(
+			screen.getByRole("button", { name: MESSAGES.UPLOAD_IMAGES_ARIA_LABEL }),
+		);
+
+		await waitFor(() => {
+			expect(onSuccess).toHaveBeenCalledOnce();
+		});
+	});
+
+	it("should call onSuccess after a successful file upload", async () => {
+		const uploadFile = vi
+			.fn()
+			.mockResolvedValue({ status: "success" as const });
+		const onSuccess = vi.fn();
+
+		mockedUseFileUpload.mockReturnValue({
+			isLoading: false,
+			error: null,
+			uploadFile,
+			abort: vi.fn(),
+		});
+
+		render(
+			<FileUploadModal
+				file={new File(["file"], "sample.txt")}
+				currentPath="documents"
+				onClose={vi.fn()}
+				onSuccess={onSuccess}
+			/>,
+		);
+
+		fireEvent.click(
+			screen.getByRole("button", { name: MESSAGES.UPLOAD_FILE_ARIA_LABEL }),
+		);
+
+		await waitFor(() => {
+			expect(onSuccess).toHaveBeenCalledOnce();
+		});
+	});
+
+	it("should call onSuccess after successful deletion", async () => {
+		const deleteFile = vi.fn().mockResolvedValue({
+			status: "success" as const,
+			path: "docs",
+			filename: "old.txt",
+		});
+		const onSuccess = vi.fn();
+
+		mockedUseDelete.mockReturnValue({
+			isLoading: false,
+			error: null,
+			deleteFile,
+			abort: vi.fn(),
+		});
+
+		render(
+			<MoveToTrashModal
+				item={{ name: "old.txt", type: "file" }}
+				currentPath="docs"
+				onClose={vi.fn()}
+				onSuccess={onSuccess}
+			/>,
+		);
+
+		fireEvent.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
+
+		await waitFor(() => {
+			expect(onSuccess).toHaveBeenCalledOnce();
+		});
+	});
+
+	it("should call onSuccess after a successful file move", async () => {
+		const moveFile = vi.fn().mockResolvedValue({
+			status: "success" as const,
+			path: "archive",
+			filename: "report.pdf",
+		});
+		const onSuccess = vi.fn();
+
+		mockedUseFileMove.mockReturnValue({
+			isLoading: false,
+			error: null,
+			moveFile,
+			abort: vi.fn(),
+		});
+
+		render(
+			<MoveModal
+				item={{ name: "report.pdf", type: "file" }}
+				currentPath="source"
+				onClose={vi.fn()}
+				onSuccess={onSuccess}
+			/>,
+		);
+
+		fireEvent.click(screen.getByRole("button", { name: "dest" }));
+		fireEvent.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
+
+		await waitFor(() => {
+			expect(onSuccess).toHaveBeenCalledOnce();
+		});
+	});
 });
