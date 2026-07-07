@@ -8,37 +8,51 @@ globs: src/components/**
 ## Base Pattern
 
 ```tsx
-import { memo } from "react";
+import { MESSAGES } from "@/constants/messages";
+import styles from "./Xxx.module.css";
 
 export type XxxProps = {
   foo: string;
-  bar?: number;
+  onAction: () => void;
 };
 
-const Xxx = memo(({ foo, bar }: XxxProps) => {
-  return <div>{foo}</div>;
-});
+const Xxx = ({ foo, onAction }: XxxProps) => {
+  return <div className={styles.container}>{foo}</div>;
+};
 
 export default Xxx;
 ```
 
-- Use arrow function + `React.memo`
-- Define props with `export type` — no `interface`
-- Export as default export
+- Arrow function, default export, props via `export type XxxProps`.
+- `React.memo` is **not** the default — apply it only where re-renders are hot
+  (list rendering: `FileItem`, `FileList`, `Toast`).
+
+## Styling
+
+- CSS Modules: one `Xxx.module.css` per component, imported as `styles`.
+- Modals additionally share `ModalCommon.module.css` (header / icon / actions / error).
 
 ## Modals
-- Use the base component at `src/components/Modal.tsx`
-- Do not implement custom overlay / backdrop
 
-## State Management
-- Complex UI state (multiple interdependent states): use `useReducer` + discriminated union
-- Simple state: `useState` is sufficient
+- Build on the base component `src/components/Modal.tsx`.
+- Do not implement custom overlay / backdrop.
 
 ## Icons
-- Use the `Icon` component from `@iconify/react` exclusively
-- Do not add other icon libraries
+
+- Use the `Icon` component from `@iconify/react` exclusively; no other icon libraries.
+
+## User-Facing Text
+
+- Every user-visible string comes from the `MESSAGES` constant
+  (`src/constants/messages.ts`) — never hardcode Japanese in JSX.
+
+## State
+
+- Simple state: `useState`.
+- Multiple interdependent states: `useReducer` + discriminated union actions.
 
 ## Accessibility
-- Add `aria-label` to all interactive elements
-- Always implement keyboard handlers (`onKeyDown`)
-- Set `role` attributes appropriately
+
+- `aria-label` on interactive elements without visible text.
+- Keyboard support (`onKeyDown`) wherever click handlers exist on non-button elements.
+- Set `role` appropriately.

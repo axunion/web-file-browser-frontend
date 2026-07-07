@@ -1,6 +1,6 @@
-# CLAUDE.md — Web File Browser Frontend
+# AGENTS.md — Web File Browser Frontend
 
-> **Sync note**: This file is kept in sync with `AGENTS.md`. If you update one, apply the
+> **Sync note**: This file is kept in sync with `CLAUDE.md`. If you update one, apply the
 > same change to the other.
 
 Behavioral defaults plus house conventions. Bias toward caution over speed; on trivial

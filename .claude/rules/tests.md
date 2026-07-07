@@ -5,32 +5,13 @@ globs: src/**/*.test.*
 
 # Test Rules
 
-## Framework
-- **Vitest** + **@testing-library/react**
-- Place test files in the same directory as source files (e.g., `src/components/Foo.tsx` → `src/components/Foo.test.tsx`)
-
-## Pattern
-
-```ts
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-
-describe("ComponentName", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  it("does something", async () => {
-    // arrange
-    // act
-    // assert
-  });
-});
-```
-
-- Use `describe` / `it` pattern — never `test()`
-- Organize conditions and states with nested `describe`
+- **Vitest** + **@testing-library/react**; colocate tests with source
+  (`src/components/Foo.tsx` → `src/components/Foo.test.tsx`).
+- `describe` / `it` — never `test()`. Group states/conditions with nested `describe`.
+- Prefer role/text queries (`getByRole`, `getByText`); `getByTestId` only as a last
+  resort. Use `userEvent.setup()` for interactions.
+- Tests are self-contained: no shared mutable state; reset with `vi.clearAllMocks()`
+  in `beforeEach` when mocks are involved.
 
 ## Mocking fetch
 
@@ -39,17 +20,20 @@ beforeEach(() => {
   global.fetch = vi.fn();
 });
 
-it("calls API", async () => {
+it("POSTs the payload to the endpoint", async () => {
   vi.mocked(global.fetch).mockResolvedValueOnce(
-    new Response(JSON.stringify({ status: "success" }), { status: 200 })
+    new Response(JSON.stringify({ status: "success" }), { status: 200 }),
   );
-  // ...
+
+  const { result } = renderHook(() => useRenameFile());
+  await act(async () => {
+    await result.current.renameFile({ path: "", name: "a", newName: "b" });
+  });
+
+  const [url, options] = vi.mocked(global.fetch).mock.calls[0];
+  // assert on url and the URLSearchParams / FormData body
 });
 ```
 
-- Mock `global.fetch` with `vi.fn()`
-- Set individual responses with `mockResolvedValueOnce`
-
-## Assertions
-- Prefer `@testing-library` queries (`getByRole`, `getByText`, etc.)
-- Use `getByTestId` only as a last resort
+- Hooks: `renderHook` + `act`; assert on the actual request (URL, body entries), not
+  just the returned state — see `src/hooks/apiHooks.test.ts` for the reference pattern.
