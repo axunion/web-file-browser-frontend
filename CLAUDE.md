@@ -10,7 +10,7 @@
 Web file browser frontend (React 19 + TypeScript 5.9 + Vite 8).
 
 - **Package manager**: pnpm (do not use npm or yarn)
-- **Node version**: 24.16.0 / pnpm 11.4.0 — specified via `devEngines` in `package.json` (onFail: warn)
+- **Node version**: ^24 (pinned via `.node-version`) / pnpm 11.9.0 — specified via `devEngines` in `package.json` (onFail: download)
 
 ## Essential Commands
 
@@ -31,7 +31,7 @@ pnpm test:run     # Run tests (no watch)
 | Routing | Hash-based (`window.location.hash`). React Router is not needed — do not suggest it |
 | Server state | SWR. Redux / Zustand are not needed — do not suggest them |
 | Component structure | Flat (`src/components/` root). Do not nest into subdirectories |
-| Biome config | Use default settings. `biome.json` does not exist — do not create it |
+| Biome config | Configured via `biome.json` (formatter: 2-space indent, double quotes; linter: recommended preset; import organization on). Scope is the whole repo (`biome check .`), not just `src` |
 | Path alias | `@/` → `src/` |
 
 ## Code Conventions
@@ -49,7 +49,7 @@ pnpm test:run     # Run tests (no watch)
 - User-facing messages must reference the `MESSAGES` constant in `src/constants/messages.ts`
 
 ### Formatting
-- Indent with tabs (per `.editorconfig`)
+- Indent with 2 spaces (per `.editorconfig` and `biome.json`)
 - Follow Biome default rules
 
 ## Detailed Guidelines

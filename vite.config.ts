@@ -4,19 +4,19 @@ import { defineConfig } from "vite";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-	plugins: [react()],
-	css: {
-		transformer: "lightningcss",
-		modules: {
-			localsConvention: "camelCaseOnly",
-		},
-	},
-	build: {
-		cssMinify: "lightningcss",
-	},
-	resolve: {
-		alias: {
-			"@": path.resolve(__dirname, "./src"),
-		},
-	},
+  plugins: [react()],
+  css: {
+    transformer: "lightningcss",
+    modules: {
+      localsConvention: "camelCaseOnly",
+    },
+  },
+  build: {
+    cssMinify: "lightningcss",
+  },
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
 });

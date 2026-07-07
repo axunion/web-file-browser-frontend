@@ -28,323 +28,323 @@ const mockedUseDelete = vi.mocked(useDelete);
 const mockedUseFileList = vi.mocked(useFileList);
 
 describe("file mutation modals", () => {
-	beforeEach(() => {
-		vi.clearAllMocks();
-		mockedUseFileList.mockReturnValue({
-			items: [{ name: "dest", type: "directory" }],
-			isLoading: false,
-			errorMessage: null,
-			setPath: vi.fn(),
-			refresh: vi.fn().mockResolvedValue(undefined),
-		});
-		mockedUseImageUpload.mockReturnValue({
-			isLoading: false,
-			error: null,
-			uploadImages: vi.fn().mockResolvedValue({ status: "success", files: [] }),
-			abort: vi.fn(),
-		});
-	});
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockedUseFileList.mockReturnValue({
+      items: [{ name: "dest", type: "directory" }],
+      isLoading: false,
+      errorMessage: null,
+      setPath: vi.fn(),
+      refresh: vi.fn().mockResolvedValue(undefined),
+    });
+    mockedUseImageUpload.mockReturnValue({
+      isLoading: false,
+      error: null,
+      uploadImages: vi.fn().mockResolvedValue({ status: "success", files: [] }),
+      abort: vi.fn(),
+    });
+  });
 
-	it("should not treat image upload API error payloads as success", async () => {
-		const uploadImages = vi.fn().mockResolvedValue({
-			status: "error",
-			message: "画像アップロード失敗",
-		});
-		const onSuccess = vi.fn();
+  it("should not treat image upload API error payloads as success", async () => {
+    const uploadImages = vi.fn().mockResolvedValue({
+      status: "error",
+      message: "画像アップロード失敗",
+    });
+    const onSuccess = vi.fn();
 
-		mockedUseImageUpload.mockReturnValue({
-			isLoading: false,
-			error: null,
-			uploadImages,
-			abort: vi.fn(),
-		});
+    mockedUseImageUpload.mockReturnValue({
+      isLoading: false,
+      error: null,
+      uploadImages,
+      abort: vi.fn(),
+    });
 
-		render(
-			<ImageUploadModal
-				files={[
-					new File(["a"], "a.jpg", { type: "image/jpeg" }),
-					new File(["b"], "b.jpg", { type: "image/jpeg" }),
-				]}
-				currentPath="photos"
-				onClose={vi.fn()}
-				onSuccess={onSuccess}
-			/>,
-		);
+    render(
+      <ImageUploadModal
+        files={[
+          new File(["a"], "a.jpg", { type: "image/jpeg" }),
+          new File(["b"], "b.jpg", { type: "image/jpeg" }),
+        ]}
+        currentPath="photos"
+        onClose={vi.fn()}
+        onSuccess={onSuccess}
+      />,
+    );
 
-		fireEvent.click(
-			screen.getByRole("button", { name: MESSAGES.UPLOAD_IMAGES_ARIA_LABEL }),
-		);
+    fireEvent.click(
+      screen.getByRole("button", { name: MESSAGES.UPLOAD_IMAGES_ARIA_LABEL }),
+    );
 
-		await waitFor(() => {
-			expect(onSuccess).not.toHaveBeenCalled();
-		});
+    await waitFor(() => {
+      expect(onSuccess).not.toHaveBeenCalled();
+    });
 
-		expect(await screen.findByText("画像アップロード失敗")).toBeInTheDocument();
-	});
+    expect(await screen.findByText("画像アップロード失敗")).toBeInTheDocument();
+  });
 
-	it("should not treat upload API error payloads as success", async () => {
-		const uploadFile = vi.fn().mockResolvedValue({
-			status: "error",
-			message: "アップロード失敗",
-		});
-		const onSuccess = vi.fn();
+  it("should not treat upload API error payloads as success", async () => {
+    const uploadFile = vi.fn().mockResolvedValue({
+      status: "error",
+      message: "アップロード失敗",
+    });
+    const onSuccess = vi.fn();
 
-		mockedUseFileUpload.mockReturnValue({
-			isLoading: false,
-			error: null,
-			uploadFile,
-			abort: vi.fn(),
-		});
+    mockedUseFileUpload.mockReturnValue({
+      isLoading: false,
+      error: null,
+      uploadFile,
+      abort: vi.fn(),
+    });
 
-		render(
-			<FileUploadModal
-				file={new File(["file"], "sample.txt")}
-				currentPath="documents"
-				onClose={vi.fn()}
-				onSuccess={onSuccess}
-			/>,
-		);
+    render(
+      <FileUploadModal
+        file={new File(["file"], "sample.txt")}
+        currentPath="documents"
+        onClose={vi.fn()}
+        onSuccess={onSuccess}
+      />,
+    );
 
-		fireEvent.click(
-			screen.getByRole("button", { name: MESSAGES.UPLOAD_FILE_ARIA_LABEL }),
-		);
+    fireEvent.click(
+      screen.getByRole("button", { name: MESSAGES.UPLOAD_FILE_ARIA_LABEL }),
+    );
 
-		await waitFor(() => {
-			expect(onSuccess).not.toHaveBeenCalled();
-		});
+    await waitFor(() => {
+      expect(onSuccess).not.toHaveBeenCalled();
+    });
 
-		expect(await screen.findByText("アップロード失敗")).toBeInTheDocument();
-	});
+    expect(await screen.findByText("アップロード失敗")).toBeInTheDocument();
+  });
 
-	it("should keep the rename modal open when the API returns an error payload", async () => {
-		const renameFile = vi.fn().mockResolvedValue({
-			status: "error",
-			message: "名前変更失敗",
-		});
-		const onSuccess = vi.fn();
+  it("should keep the rename modal open when the API returns an error payload", async () => {
+    const renameFile = vi.fn().mockResolvedValue({
+      status: "error",
+      message: "名前変更失敗",
+    });
+    const onSuccess = vi.fn();
 
-		mockedUseFileRename.mockReturnValue({
-			isLoading: false,
-			error: null,
-			renameFile,
-			abort: vi.fn(),
-		});
+    mockedUseFileRename.mockReturnValue({
+      isLoading: false,
+      error: null,
+      renameFile,
+      abort: vi.fn(),
+    });
 
-		render(
-			<RenameModal
-				item={{ name: "photo.jpg", type: "file" }}
-				currentPath="albums%2F2026"
-				onClose={vi.fn()}
-				onSuccess={onSuccess}
-			/>,
-		);
+    render(
+      <RenameModal
+        item={{ name: "photo.jpg", type: "file" }}
+        currentPath="albums%2F2026"
+        onClose={vi.fn()}
+        onSuccess={onSuccess}
+      />,
+    );
 
-		fireEvent.change(screen.getByRole("textbox"), {
-			target: { value: "photo-renamed" },
-		});
-		fireEvent.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
+    fireEvent.change(screen.getByRole("textbox"), {
+      target: { value: "photo-renamed" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
 
-		await waitFor(() => {
-			expect(renameFile).toHaveBeenCalledWith({
-				path: "albums%2F2026",
-				name: "photo.jpg",
-				newName: "photo-renamed.jpg",
-			});
-		});
+    await waitFor(() => {
+      expect(renameFile).toHaveBeenCalledWith({
+        path: "albums%2F2026",
+        name: "photo.jpg",
+        newName: "photo-renamed.jpg",
+      });
+    });
 
-		expect(onSuccess).not.toHaveBeenCalled();
-		expect(await screen.findByText("名前変更失敗")).toBeInTheDocument();
-	});
+    expect(onSuccess).not.toHaveBeenCalled();
+    expect(await screen.findByText("名前変更失敗")).toBeInTheDocument();
+  });
 
-	it("should pass the current path to delete and keep the modal open on API errors", async () => {
-		const deleteFile = vi.fn().mockResolvedValue({
-			status: "error",
-			message: "削除失敗",
-		});
-		const onSuccess = vi.fn();
+  it("should pass the current path to delete and keep the modal open on API errors", async () => {
+    const deleteFile = vi.fn().mockResolvedValue({
+      status: "error",
+      message: "削除失敗",
+    });
+    const onSuccess = vi.fn();
 
-		mockedUseDelete.mockReturnValue({
-			isLoading: false,
-			error: null,
-			deleteFile,
-			abort: vi.fn(),
-		});
+    mockedUseDelete.mockReturnValue({
+      isLoading: false,
+      error: null,
+      deleteFile,
+      abort: vi.fn(),
+    });
 
-		render(
-			<MoveToTrashModal
-				item={{ name: "old.txt", type: "file" }}
-				currentPath="nested%2Ffolder"
-				onClose={vi.fn()}
-				onSuccess={onSuccess}
-			/>,
-		);
+    render(
+      <MoveToTrashModal
+        item={{ name: "old.txt", type: "file" }}
+        currentPath="nested%2Ffolder"
+        onClose={vi.fn()}
+        onSuccess={onSuccess}
+      />,
+    );
 
-		fireEvent.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
+    fireEvent.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
 
-		await waitFor(() => {
-			expect(deleteFile).toHaveBeenCalledWith({
-				path: "nested%2Ffolder",
-				name: "old.txt",
-			});
-		});
+    await waitFor(() => {
+      expect(deleteFile).toHaveBeenCalledWith({
+        path: "nested%2Ffolder",
+        name: "old.txt",
+      });
+    });
 
-		expect(onSuccess).not.toHaveBeenCalled();
-		expect(await screen.findByText("削除失敗")).toBeInTheDocument();
-	});
+    expect(onSuccess).not.toHaveBeenCalled();
+    expect(await screen.findByText("削除失敗")).toBeInTheDocument();
+  });
 
-	it("should not treat move API error payloads as success", async () => {
-		const moveFile = vi.fn().mockResolvedValue({
-			status: "error",
-			message: "移動失敗",
-		});
-		const onSuccess = vi.fn();
+  it("should not treat move API error payloads as success", async () => {
+    const moveFile = vi.fn().mockResolvedValue({
+      status: "error",
+      message: "移動失敗",
+    });
+    const onSuccess = vi.fn();
 
-		mockedUseFileMove.mockReturnValue({
-			isLoading: false,
-			error: null,
-			moveFile,
-			abort: vi.fn(),
-		});
+    mockedUseFileMove.mockReturnValue({
+      isLoading: false,
+      error: null,
+      moveFile,
+      abort: vi.fn(),
+    });
 
-		render(
-			<MoveModal
-				item={{ name: "report.pdf", type: "file" }}
-				currentPath="source"
-				onClose={vi.fn()}
-				onSuccess={onSuccess}
-			/>,
-		);
+    render(
+      <MoveModal
+        item={{ name: "report.pdf", type: "file" }}
+        currentPath="source"
+        onClose={vi.fn()}
+        onSuccess={onSuccess}
+      />,
+    );
 
-		fireEvent.click(screen.getByRole("button", { name: "dest" }));
-		fireEvent.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
+    fireEvent.click(screen.getByRole("button", { name: "dest" }));
+    fireEvent.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
 
-		await waitFor(() => {
-			expect(moveFile).toHaveBeenCalledWith({
-				path: "source",
-				name: "report.pdf",
-				destinationPath: "dest",
-			});
-		});
+    await waitFor(() => {
+      expect(moveFile).toHaveBeenCalledWith({
+        path: "source",
+        name: "report.pdf",
+        destinationPath: "dest",
+      });
+    });
 
-		expect(onSuccess).not.toHaveBeenCalled();
-		expect(await screen.findByText("移動失敗")).toBeInTheDocument();
-	});
+    expect(onSuccess).not.toHaveBeenCalled();
+    expect(await screen.findByText("移動失敗")).toBeInTheDocument();
+  });
 
-	// ---- success paths ----
+  // ---- success paths ----
 
-	it("should call onSuccess after a successful image upload", async () => {
-		// beforeEach already sets uploadImages to return { status: "success", files: [] }
-		const onSuccess = vi.fn();
+  it("should call onSuccess after a successful image upload", async () => {
+    // beforeEach already sets uploadImages to return { status: "success", files: [] }
+    const onSuccess = vi.fn();
 
-		render(
-			<ImageUploadModal
-				files={[new File(["a"], "a.jpg", { type: "image/jpeg" })]}
-				currentPath="photos"
-				onClose={vi.fn()}
-				onSuccess={onSuccess}
-			/>,
-		);
+    render(
+      <ImageUploadModal
+        files={[new File(["a"], "a.jpg", { type: "image/jpeg" })]}
+        currentPath="photos"
+        onClose={vi.fn()}
+        onSuccess={onSuccess}
+      />,
+    );
 
-		fireEvent.click(
-			screen.getByRole("button", { name: MESSAGES.UPLOAD_IMAGES_ARIA_LABEL }),
-		);
+    fireEvent.click(
+      screen.getByRole("button", { name: MESSAGES.UPLOAD_IMAGES_ARIA_LABEL }),
+    );
 
-		await waitFor(() => {
-			expect(onSuccess).toHaveBeenCalledOnce();
-		});
-	});
+    await waitFor(() => {
+      expect(onSuccess).toHaveBeenCalledOnce();
+    });
+  });
 
-	it("should call onSuccess after a successful file upload", async () => {
-		const uploadFile = vi
-			.fn()
-			.mockResolvedValue({ status: "success" as const });
-		const onSuccess = vi.fn();
+  it("should call onSuccess after a successful file upload", async () => {
+    const uploadFile = vi
+      .fn()
+      .mockResolvedValue({ status: "success" as const });
+    const onSuccess = vi.fn();
 
-		mockedUseFileUpload.mockReturnValue({
-			isLoading: false,
-			error: null,
-			uploadFile,
-			abort: vi.fn(),
-		});
+    mockedUseFileUpload.mockReturnValue({
+      isLoading: false,
+      error: null,
+      uploadFile,
+      abort: vi.fn(),
+    });
 
-		render(
-			<FileUploadModal
-				file={new File(["file"], "sample.txt")}
-				currentPath="documents"
-				onClose={vi.fn()}
-				onSuccess={onSuccess}
-			/>,
-		);
+    render(
+      <FileUploadModal
+        file={new File(["file"], "sample.txt")}
+        currentPath="documents"
+        onClose={vi.fn()}
+        onSuccess={onSuccess}
+      />,
+    );
 
-		fireEvent.click(
-			screen.getByRole("button", { name: MESSAGES.UPLOAD_FILE_ARIA_LABEL }),
-		);
+    fireEvent.click(
+      screen.getByRole("button", { name: MESSAGES.UPLOAD_FILE_ARIA_LABEL }),
+    );
 
-		await waitFor(() => {
-			expect(onSuccess).toHaveBeenCalledOnce();
-		});
-	});
+    await waitFor(() => {
+      expect(onSuccess).toHaveBeenCalledOnce();
+    });
+  });
 
-	it("should call onSuccess after successful deletion", async () => {
-		const deleteFile = vi.fn().mockResolvedValue({
-			status: "success" as const,
-			path: "docs",
-			filename: "old.txt",
-		});
-		const onSuccess = vi.fn();
+  it("should call onSuccess after successful deletion", async () => {
+    const deleteFile = vi.fn().mockResolvedValue({
+      status: "success" as const,
+      path: "docs",
+      filename: "old.txt",
+    });
+    const onSuccess = vi.fn();
 
-		mockedUseDelete.mockReturnValue({
-			isLoading: false,
-			error: null,
-			deleteFile,
-			abort: vi.fn(),
-		});
+    mockedUseDelete.mockReturnValue({
+      isLoading: false,
+      error: null,
+      deleteFile,
+      abort: vi.fn(),
+    });
 
-		render(
-			<MoveToTrashModal
-				item={{ name: "old.txt", type: "file" }}
-				currentPath="docs"
-				onClose={vi.fn()}
-				onSuccess={onSuccess}
-			/>,
-		);
+    render(
+      <MoveToTrashModal
+        item={{ name: "old.txt", type: "file" }}
+        currentPath="docs"
+        onClose={vi.fn()}
+        onSuccess={onSuccess}
+      />,
+    );
 
-		fireEvent.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
+    fireEvent.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
 
-		await waitFor(() => {
-			expect(onSuccess).toHaveBeenCalledOnce();
-		});
-	});
+    await waitFor(() => {
+      expect(onSuccess).toHaveBeenCalledOnce();
+    });
+  });
 
-	it("should call onSuccess after a successful file move", async () => {
-		const moveFile = vi.fn().mockResolvedValue({
-			status: "success" as const,
-			path: "archive",
-			filename: "report.pdf",
-		});
-		const onSuccess = vi.fn();
+  it("should call onSuccess after a successful file move", async () => {
+    const moveFile = vi.fn().mockResolvedValue({
+      status: "success" as const,
+      path: "archive",
+      filename: "report.pdf",
+    });
+    const onSuccess = vi.fn();
 
-		mockedUseFileMove.mockReturnValue({
-			isLoading: false,
-			error: null,
-			moveFile,
-			abort: vi.fn(),
-		});
+    mockedUseFileMove.mockReturnValue({
+      isLoading: false,
+      error: null,
+      moveFile,
+      abort: vi.fn(),
+    });
 
-		render(
-			<MoveModal
-				item={{ name: "report.pdf", type: "file" }}
-				currentPath="source"
-				onClose={vi.fn()}
-				onSuccess={onSuccess}
-			/>,
-		);
+    render(
+      <MoveModal
+        item={{ name: "report.pdf", type: "file" }}
+        currentPath="source"
+        onClose={vi.fn()}
+        onSuccess={onSuccess}
+      />,
+    );
 
-		fireEvent.click(screen.getByRole("button", { name: "dest" }));
-		fireEvent.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
+    fireEvent.click(screen.getByRole("button", { name: "dest" }));
+    fireEvent.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
 
-		await waitFor(() => {
-			expect(onSuccess).toHaveBeenCalledOnce();
-		});
-	});
+    await waitFor(() => {
+      expect(onSuccess).toHaveBeenCalledOnce();
+    });
+  });
 });

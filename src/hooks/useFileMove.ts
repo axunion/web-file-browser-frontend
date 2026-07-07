@@ -4,24 +4,24 @@ import type { MoveFileRequest, MoveFileResponse } from "@/types/api";
 import useApiRequest from "./useApiRequest";
 
 const useFileMove = () => {
-	const { isLoading, error, execute, abort } = useApiRequest<
-		MoveFileRequest,
-		MoveFileResponse
-	>({ endpoint: ENDPOINT_MOVE });
+  const { isLoading, error, execute, abort } = useApiRequest<
+    MoveFileRequest,
+    MoveFileResponse
+  >({ endpoint: ENDPOINT_MOVE });
 
-	const moveFile = useCallback(
-		(params: MoveFileRequest) =>
-			execute(params, (p) => {
-				const formData = new URLSearchParams();
-				formData.append("path", p.path ?? "");
-				formData.append("name", p.name);
-				formData.append("destinationPath", p.destinationPath);
-				return formData;
-			}),
-		[execute],
-	);
+  const moveFile = useCallback(
+    (params: MoveFileRequest) =>
+      execute(params, (p) => {
+        const formData = new URLSearchParams();
+        formData.append("path", p.path ?? "");
+        formData.append("name", p.name);
+        formData.append("destinationPath", p.destinationPath);
+        return formData;
+      }),
+    [execute],
+  );
 
-	return { isLoading, error, moveFile, abort };
+  return { isLoading, error, moveFile, abort };
 };
 
 export default useFileMove;

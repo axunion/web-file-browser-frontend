@@ -1,86 +1,86 @@
 .pathSection {
-	margin-top: 1rem;
-	margin-bottom: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 
 .pathLabel {
-	margin-bottom: 0.5rem;
-	color: var(--gray-600);
-	font-size: 0.875rem;
-	line-height: 1.25rem;
+  margin-bottom: 0.5rem;
+  color: var(--gray-600);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
 }
 
 .pathValue {
-	overflow: hidden;
-	padding: 0.5rem 0.75rem;
-	border-radius: var(--radius-sm);
-	background: var(--gray-100);
-	color: var(--gray-500);
-	font-size: 0.875rem;
-	line-height: 1.25rem;
-	text-overflow: ellipsis;
-	white-space: nowrap;
+  overflow: hidden;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-sm);
+  background: var(--gray-100);
+  color: var(--gray-500);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .directoryList {
-	overflow-y: auto;
-	max-height: 12rem;
-	border: 1px solid var(--gray-200);
-	border-radius: var(--radius-sm);
+  overflow-y: auto;
+  max-height: 12rem;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-sm);
 }
 
 .directoryButton {
-	display: flex;
-	width: 100%;
-	align-items: center;
-	gap: 0.5rem;
-	padding: 0.5rem 0.75rem;
-	font-size: 0.875rem;
-	line-height: 1.25rem;
-	cursor: pointer;
-	text-align: left;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  cursor: pointer;
+  text-align: left;
 }
 
 .directoryButton:hover,
 .directoryButton:focus-visible {
-	background: var(--gray-100);
+  background: var(--gray-100);
 }
 
 .navigateUpButton {
-	border-bottom: 1px solid var(--gray-200);
+  border-bottom: 1px solid var(--gray-200);
 }
 
 .folderIcon {
-	width: 1.25rem;
-	height: 1.25rem;
-	color: var(--folder-color);
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--folder-color);
 }
 
 .directoryName {
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .stateMessage {
-	padding: 1rem 0.75rem;
-	color: var(--gray-500);
-	font-size: 0.875rem;
-	line-height: 1.25rem;
-	text-align: center;
+  padding: 1rem 0.75rem;
+  color: var(--gray-500);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  text-align: center;
 }
 
 .error {
-	margin-top: 0.5rem;
-	color: var(--error-color);
-	font-size: 0.875rem;
-	line-height: 1.25rem;
+  margin-top: 0.5rem;
+  color: var(--error-color);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
 }
 
 .actions {
-	margin-top: 1.5rem;
+  margin-top: 1.5rem;
 }
 
 .submitButton {
-	padding: 0.5rem 2rem;
+  padding: 0.5rem 2rem;
 }

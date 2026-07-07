@@ -4,24 +4,24 @@ import type { RenameFileRequest, RenameFileResponse } from "@/types/api";
 import useApiRequest from "./useApiRequest";
 
 const useRenameFile = () => {
-	const { isLoading, error, execute, abort } = useApiRequest<
-		RenameFileRequest,
-		RenameFileResponse
-	>({ endpoint: ENDPOINT_RENAME });
+  const { isLoading, error, execute, abort } = useApiRequest<
+    RenameFileRequest,
+    RenameFileResponse
+  >({ endpoint: ENDPOINT_RENAME });
 
-	const renameFile = useCallback(
-		(params: RenameFileRequest) =>
-			execute(params, (p) => {
-				const formData = new URLSearchParams();
-				formData.append("path", p.path ?? "");
-				formData.append("name", p.name);
-				formData.append("newName", p.newName);
-				return formData;
-			}),
-		[execute],
-	);
+  const renameFile = useCallback(
+    (params: RenameFileRequest) =>
+      execute(params, (p) => {
+        const formData = new URLSearchParams();
+        formData.append("path", p.path ?? "");
+        formData.append("name", p.name);
+        formData.append("newName", p.newName);
+        return formData;
+      }),
+    [execute],
+  );
 
-	return { isLoading, error, renameFile, abort };
+  return { isLoading, error, renameFile, abort };
 };
 
 export default useRenameFile;

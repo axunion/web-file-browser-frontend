@@ -2,117 +2,117 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { type ApiResponse, isErrorResponse } from "@/types/api";
 
 type ApiRequestOptions = {
-	endpoint: string;
-	contentType?: string;
+  endpoint: string;
+  contentType?: string;
 };
 
 type ApiRequestState = {
-	isLoading: boolean;
-	error: string | null;
+  isLoading: boolean;
+  error: string | null;
 };
 
 type UseApiRequestReturn<TParams, TResponse> = ApiRequestState & {
-	execute: (
-		params: TParams,
-		prepareBody: (params: TParams) => FormData | URLSearchParams,
-	) => Promise<TResponse>;
-	abort: () => void;
+  execute: (
+    params: TParams,
+    prepareBody: (params: TParams) => FormData | URLSearchParams,
+  ) => Promise<TResponse>;
+  abort: () => void;
 };
 
 const useApiRequest = <TParams, TResponse extends ApiResponse>(
-	options: ApiRequestOptions,
+  options: ApiRequestOptions,
 ): UseApiRequestReturn<TParams, TResponse> => {
-	const [isLoading, setIsLoading] = useState(false);
-	const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-	const isMountedRef = useRef(true);
-	const abortControllerRef = useRef<AbortController | null>(null);
+  const isMountedRef = useRef(true);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
-	useEffect(() => {
-		isMountedRef.current = true;
+  useEffect(() => {
+    isMountedRef.current = true;
 
-		return () => {
-			isMountedRef.current = false;
-			abortControllerRef.current?.abort();
-		};
-	}, []);
+    return () => {
+      isMountedRef.current = false;
+      abortControllerRef.current?.abort();
+    };
+  }, []);
 
-	const abort = useCallback(() => {
-		abortControllerRef.current?.abort();
-	}, []);
+  const abort = useCallback(() => {
+    abortControllerRef.current?.abort();
+  }, []);
 
-	const execute = useCallback(
-		async (
-			params: TParams,
-			prepareBody: (params: TParams) => FormData | URLSearchParams,
-		): Promise<TResponse> => {
-			abortControllerRef.current?.abort();
+  const execute = useCallback(
+    async (
+      params: TParams,
+      prepareBody: (params: TParams) => FormData | URLSearchParams,
+    ): Promise<TResponse> => {
+      abortControllerRef.current?.abort();
 
-			const abortController = new AbortController();
-			abortControllerRef.current = abortController;
+      const abortController = new AbortController();
+      abortControllerRef.current = abortController;
 
-			if (isMountedRef.current) {
-				setIsLoading(true);
-				setError(null);
-			}
+      if (isMountedRef.current) {
+        setIsLoading(true);
+        setError(null);
+      }
 
-			try {
-				const body = prepareBody(params);
-				const isFormData = body instanceof FormData;
+      try {
+        const body = prepareBody(params);
+        const isFormData = body instanceof FormData;
 
-				const response = await fetch(options.endpoint, {
-					method: "POST",
-					headers: isFormData
-						? undefined
-						: {
-								"Content-Type":
-									options.contentType ?? "application/x-www-form-urlencoded",
-							},
-					body: isFormData ? body : body.toString(),
-					signal: abortController.signal,
-				});
+        const response = await fetch(options.endpoint, {
+          method: "POST",
+          headers: isFormData
+            ? undefined
+            : {
+                "Content-Type":
+                  options.contentType ?? "application/x-www-form-urlencoded",
+              },
+          body: isFormData ? body : body.toString(),
+          signal: abortController.signal,
+        });
 
-				if (!response.ok) {
-					const errorText = await response.text();
-					throw new Error(errorText || "Request failed");
-				}
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(errorText || "Request failed");
+        }
 
-				const text = await response.text();
-				let data: TResponse;
+        const text = await response.text();
+        let data: TResponse;
 
-				try {
-					data = JSON.parse(text) as TResponse;
-				} catch {
-					throw new Error("Invalid JSON response from server");
-				}
+        try {
+          data = JSON.parse(text) as TResponse;
+        } catch {
+          throw new Error("Invalid JSON response from server");
+        }
 
-				if (isErrorResponse(data)) {
-					throw new Error(data.message || "Request failed");
-				}
+        if (isErrorResponse(data)) {
+          throw new Error(data.message || "Request failed");
+        }
 
-				return data;
-			} catch (err) {
-				if (err instanceof Error && err.name === "AbortError") {
-					throw err;
-				}
+        return data;
+      } catch (err) {
+        if (err instanceof Error && err.name === "AbortError") {
+          throw err;
+        }
 
-				const errorMessage =
-					err instanceof Error ? err.message : "An unknown error occurred";
+        const errorMessage =
+          err instanceof Error ? err.message : "An unknown error occurred";
 
-				if (isMountedRef.current) {
-					setError(errorMessage);
-				}
-				throw err;
-			} finally {
-				if (isMountedRef.current) {
-					setIsLoading(false);
-				}
-			}
-		},
-		[options.endpoint, options.contentType],
-	);
+        if (isMountedRef.current) {
+          setError(errorMessage);
+        }
+        throw err;
+      } finally {
+        if (isMountedRef.current) {
+          setIsLoading(false);
+        }
+      }
+    },
+    [options.endpoint, options.contentType],
+  );
 
-	return { isLoading, error, execute, abort };
+  return { isLoading, error, execute, abort };
 };
 
 export default useApiRequest;

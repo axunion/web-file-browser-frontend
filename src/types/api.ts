@@ -1,23 +1,23 @@
 export type ErrorResponse = {
-	status: "error";
-	message: string;
+  status: "error";
+  message: string;
 };
 
 export type ApiResponseStatus = "success" | "error";
 
 export type ApiResponse = {
-	status: ApiResponseStatus;
-	message?: string;
+  status: ApiResponseStatus;
+  message?: string;
 };
 
 export type DirectoryItem = {
-	type: "file" | "directory";
-	name: string;
+  type: "file" | "directory";
+  name: string;
 };
 
 export type FileListSuccessResponse = {
-	status: "success";
-	list: DirectoryItem[];
+  status: "success";
+  list: DirectoryItem[];
 };
 
 export type FileListErrorResponse = ErrorResponse;
@@ -25,64 +25,64 @@ export type FileListErrorResponse = ErrorResponse;
 export type FileListResponse = FileListSuccessResponse | FileListErrorResponse;
 
 export type UploadFileRequest = {
-	file: File;
-	path: string;
+  file: File;
+  path: string;
 };
 
 export type UploadFileSuccessResponse = {
-	status: "success";
+  status: "success";
 };
 
 export type UploadFileErrorResponse = ErrorResponse;
 
 export type UploadFileResponse =
-	| UploadFileSuccessResponse
-	| UploadFileErrorResponse;
+  | UploadFileSuccessResponse
+  | UploadFileErrorResponse;
 
 export type UploadImagesRequest = {
-	images: File[];
-	path: string;
+  images: File[];
+  path: string;
 };
 
 export type UploadImagesSuccessResponse = {
-	status: "success";
-	files: string[];
+  status: "success";
+  files: string[];
 };
 
 export type UploadImagesErrorResponse = ErrorResponse;
 
 export type UploadImagesResponse =
-	| UploadImagesSuccessResponse
-	| UploadImagesErrorResponse;
+  | UploadImagesSuccessResponse
+  | UploadImagesErrorResponse;
 
 export type RenameFileRequest = {
-	path: string;
-	name: string;
-	newName: string;
+  path: string;
+  name: string;
+  newName: string;
 };
 
 export type RenameFileSuccessResponse = {
-	status: "success";
-	path: string;
-	filename: string;
+  status: "success";
+  path: string;
+  filename: string;
 };
 
 export type RenameFileErrorResponse = ErrorResponse;
 
 export type RenameFileResponse =
-	| RenameFileSuccessResponse
-	| RenameFileErrorResponse;
+  | RenameFileSuccessResponse
+  | RenameFileErrorResponse;
 
 export type MoveFileRequest = {
-	path: string;
-	name: string;
-	destinationPath: string;
+  path: string;
+  name: string;
+  destinationPath: string;
 };
 
 export type MoveFileSuccessResponse = {
-	status: "success";
-	path: string;
-	filename: string;
+  status: "success";
+  path: string;
+  filename: string;
 };
 
 export type MoveFileErrorResponse = ErrorResponse;
@@ -90,26 +90,26 @@ export type MoveFileErrorResponse = ErrorResponse;
 export type MoveFileResponse = MoveFileSuccessResponse | MoveFileErrorResponse;
 
 export type DeleteFileRequest = {
-	path: string;
-	name: string;
+  path: string;
+  name: string;
 };
 
 export type DeleteFileSuccessResponse = {
-	status: "success";
-	path: string;
-	filename: string;
+  status: "success";
+  path: string;
+  filename: string;
 };
 
 export type DeleteFileErrorResponse = ErrorResponse;
 
 export type DeleteFileResponse =
-	| DeleteFileSuccessResponse
-	| DeleteFileErrorResponse;
+  | DeleteFileSuccessResponse
+  | DeleteFileErrorResponse;
 
 export const isErrorResponse = <T extends ApiResponse>(
-	response: T,
+  response: T,
 ): response is T & ErrorResponse => response.status === "error";
 
 export const isSuccessResponse = <T extends ApiResponse>(
-	response: T,
+  response: T,
 ): response is Exclude<T, ErrorResponse> => response.status === "success";

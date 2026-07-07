@@ -1,42 +1,42 @@
 type EnvConfig = {
-	VITE_ENDPOINT_API: string;
-	VITE_ENDPOINT_DATA: string;
+  VITE_ENDPOINT_API: string;
+  VITE_ENDPOINT_DATA: string;
 };
 
 class ConfigurationError extends Error {
-	constructor(message: string) {
-		super(message);
-		this.name = "ConfigurationError";
-	}
+  constructor(message: string) {
+    super(message);
+    this.name = "ConfigurationError";
+  }
 }
 
 const ensureTrailingSlash = (url: string) =>
-	url.endsWith("/") ? url : `${url}/`;
+  url.endsWith("/") ? url : `${url}/`;
 
 const validateEnv = (): EnvConfig => {
-	const requiredEnvVars = {
-		VITE_ENDPOINT_API: import.meta.env.VITE_ENDPOINT_API,
-		VITE_ENDPOINT_DATA: import.meta.env.VITE_ENDPOINT_DATA,
-	};
+  const requiredEnvVars = {
+    VITE_ENDPOINT_API: import.meta.env.VITE_ENDPOINT_API,
+    VITE_ENDPOINT_DATA: import.meta.env.VITE_ENDPOINT_DATA,
+  };
 
-	const missingVars: string[] = [];
+  const missingVars: string[] = [];
 
-	for (const [key, value] of Object.entries(requiredEnvVars)) {
-		if (!value || value.trim() === "") {
-			missingVars.push(key);
-		}
-	}
+  for (const [key, value] of Object.entries(requiredEnvVars)) {
+    if (!value || value.trim() === "") {
+      missingVars.push(key);
+    }
+  }
 
-	if (missingVars.length > 0) {
-		throw new ConfigurationError(
-			`Missing required environment variables: ${missingVars.join(", ")}. Please check your .env file.`,
-		);
-	}
+  if (missingVars.length > 0) {
+    throw new ConfigurationError(
+      `Missing required environment variables: ${missingVars.join(", ")}. Please check your .env file.`,
+    );
+  }
 
-	return {
-		VITE_ENDPOINT_API: ensureTrailingSlash(requiredEnvVars.VITE_ENDPOINT_API),
-		VITE_ENDPOINT_DATA: ensureTrailingSlash(requiredEnvVars.VITE_ENDPOINT_DATA),
-	};
+  return {
+    VITE_ENDPOINT_API: ensureTrailingSlash(requiredEnvVars.VITE_ENDPOINT_API),
+    VITE_ENDPOINT_DATA: ensureTrailingSlash(requiredEnvVars.VITE_ENDPOINT_DATA),
+  };
 };
 
 const config = validateEnv();

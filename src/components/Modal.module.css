@@ -1,36 +1,36 @@
 .overlay {
-	position: fixed;
-	inset: 0;
-	z-index: 10;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	background: var(--overlay-bg);
-	backdrop-filter: var(--overlay-blur);
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--overlay-bg);
+  backdrop-filter: var(--overlay-blur);
 }
 
 .panel {
-	position: relative;
-	width: 80%;
-	max-width: 20rem;
-	max-height: 80vh;
-	padding: 1.5rem;
-	border: 1px solid var(--glass-border);
-	border-radius: var(--radius-lg);
-	background: var(--glass-bg-heavy);
-	backdrop-filter: var(--glass-blur-lg);
-	box-shadow: var(--glass-shadow);
-	outline: none;
+  position: relative;
+  width: 80%;
+  max-width: 20rem;
+  max-height: 80vh;
+  padding: 1.5rem;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  background: var(--glass-bg-heavy);
+  backdrop-filter: var(--glass-blur-lg);
+  box-shadow: var(--glass-shadow);
+  outline: none;
 }
 
 .closeButton {
-	position: absolute;
-	top: 1rem;
-	right: 1rem;
-	cursor: pointer;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  cursor: pointer;
 }
 
 .closeIcon {
-	width: 1.5rem;
-	height: 1.5rem;
+  width: 1.5rem;
+  height: 1.5rem;
 }

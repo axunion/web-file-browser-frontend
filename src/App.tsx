@@ -12,78 +12,78 @@ import { getPath } from "@/utils/path";
 import styles from "./App.module.css";
 
 const App = () => {
-	const [hashResult, setHashResult] = useState(() => getPath());
-	const {
-		items,
-		isLoading,
-		errorMessage: fileListErrorMessage,
-		refresh,
-	} = useFileList(hashResult.path);
-	const [errorMessage, setErrorMessage] = useState<string | null>(null);
-	const isNavigatingRef = useRef(false);
-	const { toasts, showToast, dismissToast } = useToast();
+  const [hashResult, setHashResult] = useState(() => getPath());
+  const {
+    items,
+    isLoading,
+    errorMessage: fileListErrorMessage,
+    refresh,
+  } = useFileList(hashResult.path);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const isNavigatingRef = useRef(false);
+  const { toasts, showToast, dismissToast } = useToast();
 
-	useEffect(() => {
-		const handleHashChange = () => {
-			setHashResult(getPath());
-		};
+  useEffect(() => {
+    const handleHashChange = () => {
+      setHashResult(getPath());
+    };
 
-		window.addEventListener("hashchange", handleHashChange);
-		return () => window.removeEventListener("hashchange", handleHashChange);
-	}, []);
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, []);
 
-	useEffect(() => {
-		setErrorMessage(fileListErrorMessage);
-	}, [fileListErrorMessage]);
+  useEffect(() => {
+    setErrorMessage(fileListErrorMessage);
+  }, [fileListErrorMessage]);
 
-	const handleErrorClose = () => {
-		setErrorMessage(null);
-		void refresh();
-	};
+  const handleErrorClose = () => {
+    setErrorMessage(null);
+    void refresh();
+  };
 
-	const handleFileListUpdate = () => {
-		void refresh();
-	};
+  const handleFileListUpdate = () => {
+    void refresh();
+  };
 
-	return (
-		<>
-			<div className={styles.header}>
-				<Header
-					title={hashResult.paths.slice(-1).pop()}
-					paths={hashResult.paths}
-					onFileListUpdate={handleFileListUpdate}
-					showToast={showToast}
-				/>
-			</div>
+  return (
+    <>
+      <div className={styles.header}>
+        <Header
+          title={hashResult.paths.slice(-1).pop()}
+          paths={hashResult.paths}
+          onFileListUpdate={handleFileListUpdate}
+          showToast={showToast}
+        />
+      </div>
 
-			<div className={styles.breadcrumb}>
-				{hashResult.paths.length > 0 && <Breadcrumb paths={hashResult.paths} />}
-			</div>
+      <div className={styles.breadcrumb}>
+        {hashResult.paths.length > 0 && <Breadcrumb paths={hashResult.paths} />}
+      </div>
 
-			<main className={styles.main} aria-busy={isLoading}>
-				{isLoading ? (
-					<div className={styles.loadingState}>
-						<Icon icon="eos-icons:loading" className={styles.loadingIcon} />
-					</div>
-				) : items.length > 0 ? (
-					<FileList
-						list={items}
-						currentPath={hashResult.path}
-						onFileListUpdate={handleFileListUpdate}
-						isNavigatingRef={isNavigatingRef}
-					/>
-				) : (
-					<div>{MESSAGES.NO_DATA}</div>
-				)}
-			</main>
+      <main className={styles.main} aria-busy={isLoading}>
+        {isLoading ? (
+          <div className={styles.loadingState}>
+            <Icon icon="eos-icons:loading" className={styles.loadingIcon} />
+          </div>
+        ) : items.length > 0 ? (
+          <FileList
+            list={items}
+            currentPath={hashResult.path}
+            onFileListUpdate={handleFileListUpdate}
+            isNavigatingRef={isNavigatingRef}
+          />
+        ) : (
+          <div>{MESSAGES.NO_DATA}</div>
+        )}
+      </main>
 
-			{errorMessage && (
-				<ErrorModal onClose={handleErrorClose}>{errorMessage}</ErrorModal>
-			)}
+      {errorMessage && (
+        <ErrorModal onClose={handleErrorClose}>{errorMessage}</ErrorModal>
+      )}
 
-			<Toast toasts={toasts} onDismiss={dismissToast} />
-		</>
-	);
+      <Toast toasts={toasts} onDismiss={dismissToast} />
+    </>
+  );
 };
 
 export default App;

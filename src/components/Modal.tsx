@@ -5,112 +5,112 @@ import { MESSAGES } from "@/constants/messages";
 import styles from "./Modal.module.css";
 
 export type ModalProps = {
-	onClose: () => void;
-	children: React.ReactNode;
-	title?: string;
+  onClose: () => void;
+  children: React.ReactNode;
+  title?: string;
 };
 
 const FOCUSABLE_SELECTOR =
-	'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+  'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 const Modal = ({ onClose, children, title }: ModalProps) => {
-	const [isClosing, setIsClosing] = useState(false);
-	const modalRef = useRef<HTMLDivElement>(null);
-	const previousActiveElement = useRef<Element | null>(null);
+  const [isClosing, setIsClosing] = useState(false);
+  const modalRef = useRef<HTMLDivElement>(null);
+  const previousActiveElement = useRef<Element | null>(null);
 
-	const close = useCallback(() => setIsClosing(true), []);
+  const close = useCallback(() => setIsClosing(true), []);
 
-	const handleAnimationEnd = () => {
-		if (isClosing) {
-			onClose();
-		}
-	};
+  const handleAnimationEnd = () => {
+    if (isClosing) {
+      onClose();
+    }
+  };
 
-	useEffect(() => {
-		previousActiveElement.current = document.activeElement;
+  useEffect(() => {
+    previousActiveElement.current = document.activeElement;
 
-		modalRef.current?.focus();
+    modalRef.current?.focus();
 
-		const handleKeyDown = (e: KeyboardEvent) => {
-			if (e.key === "Escape") {
-				close();
-				return;
-			}
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        close();
+        return;
+      }
 
-			if (e.key === "Tab" && modalRef.current) {
-				const focusable = Array.from(
-					modalRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR),
-				);
+      if (e.key === "Tab" && modalRef.current) {
+        const focusable = Array.from(
+          modalRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR),
+        );
 
-				if (focusable.length === 0) return;
+        if (focusable.length === 0) return;
 
-				const first = focusable[0];
-				const last = focusable[focusable.length - 1];
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
 
-				if (e.shiftKey) {
-					if (
-						document.activeElement === first ||
-						document.activeElement === modalRef.current
-					) {
-						e.preventDefault();
-						last.focus();
-					}
-				} else {
-					if (
-						document.activeElement === last ||
-						document.activeElement === modalRef.current
-					) {
-						e.preventDefault();
-						first.focus();
-					}
-				}
-			}
-		};
+        if (e.shiftKey) {
+          if (
+            document.activeElement === first ||
+            document.activeElement === modalRef.current
+          ) {
+            e.preventDefault();
+            last.focus();
+          }
+        } else {
+          if (
+            document.activeElement === last ||
+            document.activeElement === modalRef.current
+          ) {
+            e.preventDefault();
+            first.focus();
+          }
+        }
+      }
+    };
 
-		document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
 
-		return () => {
-			document.removeEventListener("keydown", handleKeyDown);
-			if (previousActiveElement.current instanceof HTMLElement) {
-				previousActiveElement.current.focus();
-			}
-		};
-	}, [close]);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      if (previousActiveElement.current instanceof HTMLElement) {
+        previousActiveElement.current.focus();
+      }
+    };
+  }, [close]);
 
-	return createPortal(
-		<div
-			className={`${styles.overlay} ${isClosing ? "fade-out" : "fade-in"}`}
-			onPointerDown={close}
-			onAnimationEnd={handleAnimationEnd}
-		>
-			<div
-				ref={modalRef}
-				tabIndex={-1}
-				role="dialog"
-				aria-modal="true"
-				aria-labelledby={title ? "modal-title" : undefined}
-				className={styles.panel}
-				onPointerDown={(e) => e.stopPropagation()}
-			>
-				{title && (
-					<h2 id="modal-title" className="sr-only">
-						{title}
-					</h2>
-				)}
-				{children}
+  return createPortal(
+    <div
+      className={`${styles.overlay} ${isClosing ? "fade-out" : "fade-in"}`}
+      onPointerDown={close}
+      onAnimationEnd={handleAnimationEnd}
+    >
+      <div
+        ref={modalRef}
+        tabIndex={-1}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={title ? "modal-title" : undefined}
+        className={styles.panel}
+        onPointerDown={(e) => e.stopPropagation()}
+      >
+        {title && (
+          <h2 id="modal-title" className="sr-only">
+            {title}
+          </h2>
+        )}
+        {children}
 
-				<button
-					type="button"
-					className={styles.closeButton}
-					onClick={close}
-					aria-label={MESSAGES.CLOSE_MODAL}
-				>
-					<Icon icon="mdi:close-thick" className={styles.closeIcon} />
-				</button>
-			</div>
-		</div>,
-		document.body,
-	);
+        <button
+          type="button"
+          className={styles.closeButton}
+          onClick={close}
+          aria-label={MESSAGES.CLOSE_MODAL}
+        >
+          <Icon icon="mdi:close-thick" className={styles.closeIcon} />
+        </button>
+      </div>
+    </div>,
+    document.body,
+  );
 };
 
 export default Modal;

@@ -4,23 +4,23 @@ import type { DeleteFileRequest, DeleteFileResponse } from "@/types/api";
 import useApiRequest from "./useApiRequest";
 
 const useDelete = () => {
-	const { isLoading, error, execute, abort } = useApiRequest<
-		DeleteFileRequest,
-		DeleteFileResponse
-	>({ endpoint: ENDPOINT_DELETE });
+  const { isLoading, error, execute, abort } = useApiRequest<
+    DeleteFileRequest,
+    DeleteFileResponse
+  >({ endpoint: ENDPOINT_DELETE });
 
-	const deleteFile = useCallback(
-		(params: DeleteFileRequest) =>
-			execute(params, (p) => {
-				const formData = new URLSearchParams();
-				formData.append("path", p.path ?? "");
-				formData.append("name", p.name);
-				return formData;
-			}),
-		[execute],
-	);
+  const deleteFile = useCallback(
+    (params: DeleteFileRequest) =>
+      execute(params, (p) => {
+        const formData = new URLSearchParams();
+        formData.append("path", p.path ?? "");
+        formData.append("name", p.name);
+        return formData;
+      }),
+    [execute],
+  );
 
-	return { isLoading, error, deleteFile, abort };
+  return { isLoading, error, deleteFile, abort };
 };
 
 export default useDelete;

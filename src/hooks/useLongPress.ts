@@ -3,66 +3,66 @@ import { useCallback, useEffect, useRef } from "react";
 type LongPressCallback<T> = (data: T, element: HTMLElement) => void;
 
 type LongPressOptions = {
-	delay?: number;
+  delay?: number;
 };
 
 type LongPressResult<T> = {
-	onMouseDown: (data: T) => (event: React.MouseEvent) => void;
-	onMouseUp: () => void;
-	onMouseLeave: () => void;
-	onTouchStart: (data: T) => (event: React.TouchEvent) => void;
-	onTouchEnd: () => void;
-	onTouchCancel: () => void;
+  onMouseDown: (data: T) => (event: React.MouseEvent) => void;
+  onMouseUp: () => void;
+  onMouseLeave: () => void;
+  onTouchStart: (data: T) => (event: React.TouchEvent) => void;
+  onTouchEnd: () => void;
+  onTouchCancel: () => void;
 };
 
 const useLongPress = <T>(
-	callback: LongPressCallback<T>,
-	options: LongPressOptions = {},
+  callback: LongPressCallback<T>,
+  options: LongPressOptions = {},
 ): LongPressResult<T> => {
-	const { delay = 300 } = options;
-	const timeoutRef = useRef<number | null>(null);
+  const { delay = 300 } = options;
+  const timeoutRef = useRef<number | null>(null);
 
-	const clearLongPress = useCallback(() => {
-		if (timeoutRef.current) {
-			clearTimeout(timeoutRef.current);
-			timeoutRef.current = null;
-		}
-	}, []);
+  const clearLongPress = useCallback(() => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+  }, []);
 
-	const startLongPress = useCallback(
-		(data: T, event: React.MouseEvent | React.TouchEvent) => {
-			clearLongPress();
+  const startLongPress = useCallback(
+    (data: T, event: React.MouseEvent | React.TouchEvent) => {
+      clearLongPress();
 
-			const element = event.currentTarget as HTMLElement;
-			if (!element) return;
+      const element = event.currentTarget as HTMLElement;
+      if (!element) return;
 
-			timeoutRef.current = window.setTimeout(() => {
-				callback(data, element);
-			}, delay);
-		},
-		[callback, delay, clearLongPress],
-	);
+      timeoutRef.current = window.setTimeout(() => {
+        callback(data, element);
+      }, delay);
+    },
+    [callback, delay, clearLongPress],
+  );
 
-	useEffect(() => {
-		return () => {
-			clearLongPress();
-		};
-	}, [clearLongPress]);
+  useEffect(() => {
+    return () => {
+      clearLongPress();
+    };
+  }, [clearLongPress]);
 
-	return {
-		onMouseDown: useCallback(
-			(data: T) => (event: React.MouseEvent) => startLongPress(data, event),
-			[startLongPress],
-		),
-		onMouseUp: clearLongPress,
-		onMouseLeave: clearLongPress,
-		onTouchStart: useCallback(
-			(data: T) => (event: React.TouchEvent) => startLongPress(data, event),
-			[startLongPress],
-		),
-		onTouchEnd: clearLongPress,
-		onTouchCancel: clearLongPress,
-	};
+  return {
+    onMouseDown: useCallback(
+      (data: T) => (event: React.MouseEvent) => startLongPress(data, event),
+      [startLongPress],
+    ),
+    onMouseUp: clearLongPress,
+    onMouseLeave: clearLongPress,
+    onTouchStart: useCallback(
+      (data: T) => (event: React.TouchEvent) => startLongPress(data, event),
+      [startLongPress],
+    ),
+    onTouchEnd: clearLongPress,
+    onTouchCancel: clearLongPress,
+  };
 };
 
 export default useLongPress;
