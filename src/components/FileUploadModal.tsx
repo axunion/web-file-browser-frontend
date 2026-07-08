@@ -8,7 +8,7 @@ import { isErrorResponse } from "@/types/api";
 import styles from "./FileUploadModal.module.css";
 import commonStyles from "./ModalCommon.module.css";
 
-export type FileUploadProps = {
+export type FileUploadModalProps = {
   file: File;
   currentPath: string;
   onClose: () => void;
@@ -20,7 +20,7 @@ const FileUploadModal = ({
   currentPath,
   onClose,
   onSuccess,
-}: FileUploadProps) => {
+}: FileUploadModalProps) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { isLoading, uploadFile } = useFileUpload();
 

@@ -82,6 +82,9 @@ export default useRenameFile;
 - Abort-on-unmount and error state are handled inside `useApiRequest` — do not
   reimplement them.
 - Fallback error messages come from `MESSAGES` in `src/constants/messages.ts`.
+- Known exception: `useMultiFileUpload` runs a sequential per-file `fetch` loop with
+  its own abort handling, because `useApiRequest` models a single request. Do not
+  copy that pattern for ordinary mutations.
 
 ## SWR
 

@@ -22,10 +22,3 @@
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
 }
-
-.validationError {
-  padding: 0.5rem 1rem;
-  color: var(--error-color);
-  font-size: 0.875rem;
-  text-align: center;
-}

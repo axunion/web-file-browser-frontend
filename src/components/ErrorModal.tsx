@@ -3,12 +3,12 @@ import Modal from "@/components/Modal";
 import { MESSAGES } from "@/constants/messages";
 import styles from "./ErrorModal.module.css";
 
-export type ErrorProps = {
+export type ErrorModalProps = {
   onClose: () => void;
   children: React.ReactNode;
 };
 
-const ErrorModal = ({ onClose, children }: ErrorProps) => {
+const ErrorModal = ({ onClose, children }: ErrorModalProps) => {
   return (
     <Modal onClose={onClose}>
       <section>
