@@ -20,7 +20,7 @@ describe("useFileList", () => {
   const originalFetch = global.fetch;
 
   beforeEach(() => {
-    vi.resetAllMocks();
+    vi.clearAllMocks();
   });
 
   afterEach(() => {

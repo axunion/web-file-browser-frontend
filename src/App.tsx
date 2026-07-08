@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Breadcrumb from "@/components/Breadcrumb";
 import ErrorModal from "@/components/ErrorModal";
 import FileList from "@/components/FileList";
@@ -41,9 +41,9 @@ const App = () => {
     void refresh();
   };
 
-  const handleFileListUpdate = () => {
+  const handleFileListUpdate = useCallback(() => {
     void refresh();
-  };
+  }, [refresh]);
 
   return (
     <>

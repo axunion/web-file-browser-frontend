@@ -52,7 +52,13 @@ const ContextMenu = ({
 
     const currentIndex = items.indexOf(document.activeElement as HTMLElement);
     const delta = e.key === "ArrowDown" ? 1 : -1;
-    items[(currentIndex + delta + items.length) % items.length].focus();
+    const nextIndex =
+      currentIndex === -1
+        ? delta === 1
+          ? 0
+          : items.length - 1
+        : (currentIndex + delta + items.length) % items.length;
+    items[nextIndex].focus();
   };
 
   const windowWidth = window.innerWidth;

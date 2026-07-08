@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import FileList from "@/components/FileList";
@@ -30,7 +30,11 @@ const renderFileList = (
   );
 
 const openContextMenu = async (name: string) => {
-  fireEvent.mouseDown(screen.getByRole("button", { name }));
+  const user = userEvent.setup();
+  await user.pointer({
+    keys: "[MouseLeft>]",
+    target: screen.getByRole("button", { name }),
+  });
   return screen.findByRole("menu");
 };
 
@@ -137,14 +141,17 @@ describe("FileList", () => {
       ).not.toBeInTheDocument();
     });
 
-    it("does not open the context menu when the press is released early", () => {
+    it("does not open the context menu when the press is released early", async () => {
+      const user = userEvent.setup();
       renderFileList();
 
       const button = screen.getByRole("button", {
         name: getFileItemAriaLabel("photo 1.jpg", "file"),
       });
-      fireEvent.mouseDown(button);
-      fireEvent.mouseUp(button);
+      await user.pointer([
+        { keys: "[MouseLeft>]", target: button },
+        { keys: "[/MouseLeft]" },
+      ]);
 
       expect(screen.queryByRole("menu")).not.toBeInTheDocument();
     });

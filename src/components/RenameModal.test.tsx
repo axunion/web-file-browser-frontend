@@ -20,6 +20,14 @@ const makeSuccessReturn = (renameFile = vi.fn()) => ({
   abort: vi.fn(),
 });
 
+const typeNewName = async (value: string) => {
+  const user = userEvent.setup();
+  const input = screen.getByRole("textbox");
+  await user.clear(input);
+  await user.type(input, value);
+  return { user, input };
+};
+
 describe("RenameModal", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -62,10 +70,7 @@ describe("RenameModal", () => {
         />,
       );
 
-      const user = userEvent.setup();
-      const input = screen.getByRole("textbox");
-      await user.clear(input);
-      await user.type(input, "photo-renamed");
+      const { user } = await typeNewName("photo-renamed");
       await user.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
 
       await waitFor(() => {
@@ -99,10 +104,7 @@ describe("RenameModal", () => {
         />,
       );
 
-      const user = userEvent.setup();
-      const input = screen.getByRole("textbox");
-      await user.clear(input);
-      await user.type(input, "new-folder");
+      const { user } = await typeNewName("new-folder");
       await user.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
 
       await waitFor(() => {
@@ -134,10 +136,7 @@ describe("RenameModal", () => {
         />,
       );
 
-      const user = userEvent.setup();
-      const input = screen.getByRole("textbox");
-      await user.clear(input);
-      await user.type(input, ".");
+      const { user } = await typeNewName(".");
       await user.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
 
       await waitFor(() => {
@@ -164,10 +163,7 @@ describe("RenameModal", () => {
         />,
       );
 
-      const user = userEvent.setup();
-      const input = screen.getByRole("textbox");
-      await user.clear(input);
-      await user.type(input, "..");
+      const { user } = await typeNewName("..");
       await user.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
 
       await waitFor(() => {
@@ -206,10 +202,7 @@ describe("RenameModal", () => {
         />,
       );
 
-      const user = userEvent.setup();
-      const input = screen.getByRole("textbox");
-      await user.clear(input);
-      await user.type(input, `file${char}name`);
+      const { user } = await typeNewName(`file${char}name`);
       await user.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
 
       await waitFor(() => {
@@ -262,11 +255,7 @@ describe("RenameModal", () => {
         />,
       );
 
-      const user = userEvent.setup();
-      const input = screen.getByRole("textbox");
-
-      await user.clear(input);
-      await user.type(input, ".");
+      const { user, input } = await typeNewName(".");
       await user.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
 
       await waitFor(() => {
@@ -320,10 +309,7 @@ describe("RenameModal", () => {
         />,
       );
 
-      const user = userEvent.setup();
-      const input = screen.getByRole("textbox");
-      await user.clear(input);
-      await user.type(input, "photo-renamed");
+      const { user } = await typeNewName("photo-renamed");
       await user.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
 
       expect(await screen.findByText("名前変更失敗")).toBeInTheDocument();
@@ -356,10 +342,7 @@ describe("RenameModal", () => {
         />,
       );
 
-      const user = userEvent.setup();
-      const input = screen.getByRole("textbox");
-      await user.clear(input);
-      await user.type(input, "photo-renamed");
+      const { user } = await typeNewName("photo-renamed");
       await user.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
 
       await waitFor(() => {

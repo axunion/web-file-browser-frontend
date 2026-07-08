@@ -1,4 +1,11 @@
-import { memo, type RefObject, useCallback, useReducer, useRef } from "react";
+import {
+  memo,
+  type RefObject,
+  useCallback,
+  useMemo,
+  useReducer,
+  useRef,
+} from "react";
 import ContextMenu from "@/components/ContextMenu";
 import FileItem from "@/components/FileItem";
 import MoveModal from "@/components/MoveModal";
@@ -8,7 +15,7 @@ import { ENDPOINT_DATA } from "@/constants/config";
 import { getFileItemAriaLabel } from "@/constants/messages";
 import useLongPress from "@/hooks/useLongPress";
 import type { DirectoryItem } from "@/types/api";
-import { appendPath } from "@/utils/path";
+import { appendPath, toEncodedPath } from "@/utils/path";
 import styles from "./FileList.module.css";
 
 export type FileListProps = {
@@ -89,13 +96,10 @@ const FileList = memo(
     const { contextMenu, activeModal } = state;
     const didLongPressRef = useRef(false);
 
-    const encodedPath = currentPath
-      .split("/")
-      .map(encodeURIComponent)
-      .join("/");
-    const dirPath = encodedPath
-      ? `${ENDPOINT_DATA}${encodedPath}/`
-      : ENDPOINT_DATA;
+    const dirPath = useMemo(() => {
+      const encodedPath = toEncodedPath(currentPath.split("/"));
+      return encodedPath ? `${ENDPOINT_DATA}${encodedPath}/` : ENDPOINT_DATA;
+    }, [currentPath]);
 
     const handleLongPress = useCallback(
       (item: DirectoryItem, element: HTMLElement) => {
