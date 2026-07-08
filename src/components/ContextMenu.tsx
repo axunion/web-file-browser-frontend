@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { MESSAGES } from "@/constants/messages";
 import styles from "./ContextMenu.module.css";
@@ -32,6 +32,29 @@ const ContextMenu = ({
     }
   }, []);
 
+  useEffect(() => {
+    menuRef.current?.querySelector<HTMLElement>('[role="menuitem"]')?.focus();
+  }, []);
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "Escape") {
+      onClose();
+      return;
+    }
+
+    if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return;
+
+    e.preventDefault();
+    const items = Array.from(
+      menuRef.current?.querySelectorAll<HTMLElement>('[role="menuitem"]') ?? [],
+    );
+    if (items.length === 0) return;
+
+    const currentIndex = items.indexOf(document.activeElement as HTMLElement);
+    const delta = e.key === "ArrowDown" ? 1 : -1;
+    items[(currentIndex + delta + items.length) % items.length].focus();
+  };
+
   const windowWidth = window.innerWidth;
   const windowHeight = window.innerHeight;
   const menuPosition = {
@@ -61,6 +84,7 @@ const ContextMenu = ({
           top: `${menuPosition.top}px`,
         }}
         onPointerDown={(e) => e.stopPropagation()}
+        onKeyDown={handleKeyDown}
         role="menu"
         aria-label={MESSAGES.FILE_ACTIONS}
       >

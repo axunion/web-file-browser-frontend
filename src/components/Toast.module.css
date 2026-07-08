@@ -113,3 +113,11 @@
 .dismissButton:hover {
   color: var(--text-color);
 }
+
+/* Keep a near-zero duration instead of none: dismissal relies on animationend. */
+@media (prefers-reduced-motion: reduce) {
+  .toast,
+  .dismissing {
+    animation-duration: 0.01ms;
+  }
+}

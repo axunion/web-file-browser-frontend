@@ -75,7 +75,7 @@ const Toast = memo(({ toasts, onDismiss }: ToastProps) => {
   if (toasts.length === 0) return null;
 
   return createPortal(
-    <div className={styles.container} aria-live="assertive">
+    <div className={styles.container}>
       {toasts.map((toast) => (
         <ToastEntry key={toast.id} toast={toast} onDismiss={onDismiss} />
       ))}

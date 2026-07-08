@@ -150,11 +150,12 @@ p {
   animation: contentReveal 0.2s ease-out both;
 }
 
+/* Keep a near-zero duration instead of none: Modal relies on animationend to close. */
 @media (prefers-reduced-motion: reduce) {
   .fade-in,
   .fade-out,
   .content-reveal {
-    animation: none;
+    animation-duration: 0.01ms;
   }
 }
 

@@ -1,13 +1,21 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { MESSAGES } from "@/constants/messages";
 import ContextMenu from "./ContextMenu";
 
-const defaultProps = {
-  position: { x: 100, y: 100 },
-  onClose: vi.fn(),
-  onRename: vi.fn(),
-  onTrash: vi.fn(),
+const renderMenu = (
+  props: Partial<React.ComponentProps<typeof ContextMenu>> = {},
+) => {
+  const merged = {
+    position: { x: 100, y: 100 },
+    onClose: vi.fn(),
+    onRename: vi.fn(),
+    onTrash: vi.fn(),
+    ...props,
+  };
+  render(<ContextMenu {...merged} />);
+  return merged;
 };
 
 describe("ContextMenu", () => {
@@ -17,7 +25,7 @@ describe("ContextMenu", () => {
 
   describe("rendering", () => {
     it("renders rename and delete menu items", () => {
-      render(<ContextMenu {...defaultProps} />);
+      renderMenu();
 
       expect(
         screen.getByRole("menuitem", { name: MESSAGES.RENAME }),
@@ -28,7 +36,7 @@ describe("ContextMenu", () => {
     });
 
     it("does not render the move button when onMove is not provided", () => {
-      render(<ContextMenu {...defaultProps} />);
+      renderMenu();
 
       expect(
         screen.queryByRole("menuitem", { name: MESSAGES.MOVE }),
@@ -36,7 +44,7 @@ describe("ContextMenu", () => {
     });
 
     it("renders the move button when onMove is provided", () => {
-      render(<ContextMenu {...defaultProps} onMove={vi.fn()} />);
+      renderMenu({ onMove: vi.fn() });
 
       expect(
         screen.getByRole("menuitem", { name: MESSAGES.MOVE }),
@@ -44,7 +52,7 @@ describe("ContextMenu", () => {
     });
 
     it("has a menu container with the correct aria-label", () => {
-      render(<ContextMenu {...defaultProps} />);
+      renderMenu();
 
       expect(
         screen.getByRole("menu", { name: MESSAGES.FILE_ACTIONS }),
@@ -53,49 +61,94 @@ describe("ContextMenu", () => {
   });
 
   describe("callback behavior", () => {
-    it("calls onRename when the rename item is clicked", () => {
-      const onRename = vi.fn();
-      render(<ContextMenu {...defaultProps} onRename={onRename} />);
+    it("calls onRename when the rename item is clicked", async () => {
+      const user = userEvent.setup();
+      const { onRename } = renderMenu();
 
-      fireEvent.click(screen.getByRole("menuitem", { name: MESSAGES.RENAME }));
+      await user.click(screen.getByRole("menuitem", { name: MESSAGES.RENAME }));
 
       expect(onRename).toHaveBeenCalledOnce();
     });
 
-    it("calls onTrash when the delete item is clicked", () => {
-      const onTrash = vi.fn();
-      render(<ContextMenu {...defaultProps} onTrash={onTrash} />);
+    it("calls onTrash when the delete item is clicked", async () => {
+      const user = userEvent.setup();
+      const { onTrash } = renderMenu();
 
-      fireEvent.click(screen.getByRole("menuitem", { name: MESSAGES.DELETE }));
+      await user.click(screen.getByRole("menuitem", { name: MESSAGES.DELETE }));
 
       expect(onTrash).toHaveBeenCalledOnce();
     });
 
-    it("calls onMove when the move item is clicked", () => {
-      const onMove = vi.fn();
-      render(<ContextMenu {...defaultProps} onMove={onMove} />);
+    it("calls onMove when the move item is clicked", async () => {
+      const user = userEvent.setup();
+      const { onMove } = renderMenu({ onMove: vi.fn() });
 
-      fireEvent.click(screen.getByRole("menuitem", { name: MESSAGES.MOVE }));
+      await user.click(screen.getByRole("menuitem", { name: MESSAGES.MOVE }));
 
       expect(onMove).toHaveBeenCalledOnce();
     });
 
-    it("calls onClose when the overlay is pointer-downed", () => {
-      const onClose = vi.fn();
-      render(<ContextMenu {...defaultProps} onClose={onClose} />);
+    it("calls onClose when the overlay is pointer-downed", async () => {
+      const user = userEvent.setup();
+      const { onClose } = renderMenu();
 
-      fireEvent.pointerDown(screen.getByRole("presentation"));
+      await user.click(screen.getByRole("presentation"));
 
       expect(onClose).toHaveBeenCalledOnce();
     });
 
-    it("does not call onClose when clicking inside the menu panel", () => {
-      const onClose = vi.fn();
-      render(<ContextMenu {...defaultProps} onClose={onClose} />);
+    it("does not call onClose when clicking inside the menu panel", async () => {
+      const user = userEvent.setup();
+      const { onClose } = renderMenu();
 
-      fireEvent.pointerDown(screen.getByRole("menu"));
+      await user.click(screen.getByRole("menu"));
 
       expect(onClose).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("keyboard support", () => {
+    it("focuses the first menu item when opened", () => {
+      renderMenu();
+
+      expect(
+        screen.getByRole("menuitem", { name: MESSAGES.RENAME }),
+      ).toHaveFocus();
+    });
+
+    it("closes on Escape", async () => {
+      const user = userEvent.setup();
+      const { onClose } = renderMenu();
+
+      await user.keyboard("{Escape}");
+
+      expect(onClose).toHaveBeenCalledOnce();
+    });
+
+    it("moves focus down and wraps with ArrowDown", async () => {
+      const user = userEvent.setup();
+      renderMenu({ onMove: vi.fn() });
+
+      await user.keyboard("{ArrowDown}");
+      expect(
+        screen.getByRole("menuitem", { name: MESSAGES.MOVE }),
+      ).toHaveFocus();
+
+      await user.keyboard("{ArrowDown}{ArrowDown}");
+      expect(
+        screen.getByRole("menuitem", { name: MESSAGES.RENAME }),
+      ).toHaveFocus();
+    });
+
+    it("moves focus up and wraps with ArrowUp", async () => {
+      const user = userEvent.setup();
+      renderMenu();
+
+      await user.keyboard("{ArrowUp}");
+
+      expect(
+        screen.getByRole("menuitem", { name: MESSAGES.DELETE }),
+      ).toHaveFocus();
     });
   });
 });
