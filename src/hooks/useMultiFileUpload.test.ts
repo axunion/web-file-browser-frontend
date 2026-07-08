@@ -12,6 +12,7 @@ const errorResponse = (message: string) =>
 
 describe("useMultiFileUpload", () => {
   beforeEach(() => {
+    vi.clearAllMocks();
     global.fetch = vi.fn();
   });
 

@@ -15,6 +15,7 @@ const makeToast = (overrides: Partial<ToastItem> = {}): ToastItem => ({
 
 describe("Toast", () => {
   beforeEach(() => {
+    vi.clearAllMocks();
     vi.useFakeTimers();
   });
 

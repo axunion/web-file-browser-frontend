@@ -286,6 +286,40 @@ describe("RenameModal", () => {
     });
   });
 
+  describe("error path", () => {
+    it("keeps the modal open and shows the message on API errors", async () => {
+      const renameFile = vi.fn().mockResolvedValue({
+        status: "error",
+        message: "名前変更失敗",
+      });
+      const onSuccess = vi.fn();
+      mockedUseFileRename.mockReturnValue({
+        isLoading: false,
+        error: null,
+        renameFile,
+        abort: vi.fn(),
+      });
+
+      render(
+        <RenameModal
+          item={{ name: "photo.jpg", type: "file" }}
+          currentPath="albums"
+          onClose={vi.fn()}
+          onSuccess={onSuccess}
+        />,
+      );
+
+      fireEvent.change(screen.getByRole("textbox"), {
+        target: { value: "photo-renamed" },
+      });
+      fireEvent.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
+
+      expect(await screen.findByText("名前変更失敗")).toBeInTheDocument();
+      expect(onSuccess).not.toHaveBeenCalled();
+      expect(screen.getByRole("dialog")).toBeInTheDocument();
+    });
+  });
+
   describe("success path", () => {
     it("calls onSuccess after a successful rename", async () => {
       const renameFile = vi.fn().mockResolvedValue({

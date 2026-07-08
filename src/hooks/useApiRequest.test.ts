@@ -26,30 +26,34 @@ describe("useApiRequest", () => {
   });
 
   it("should set loading state during request", async () => {
-    const mockFetch = vi.fn().mockImplementation(
+    let resolveFetch: (value: unknown) => void = () => {};
+    global.fetch = vi.fn().mockImplementation(
       () =>
-        new Promise((resolve) =>
-          setTimeout(
-            () =>
-              resolve({
-                ok: true,
-                text: () => Promise.resolve('{"status":"success"}'),
-              }),
-            100,
-          ),
-        ),
+        new Promise((resolve) => {
+          resolveFetch = resolve;
+        }),
     );
-    global.fetch = mockFetch;
 
     const { result } = renderHook(() =>
       useApiRequest({ endpoint: "/api/test" }),
     );
 
+    let executePromise: Promise<unknown> = Promise.resolve();
     act(() => {
-      result.current.execute({}, () => new URLSearchParams());
+      executePromise = result.current.execute({}, () => new URLSearchParams());
     });
 
     expect(result.current.isLoading).toBe(true);
+
+    resolveFetch({
+      ok: true,
+      text: () => Promise.resolve('{"status":"success"}'),
+    });
+    await act(async () => {
+      await executePromise;
+    });
+
+    expect(result.current.isLoading).toBe(false);
   });
 
   it("should handle successful response", async () => {

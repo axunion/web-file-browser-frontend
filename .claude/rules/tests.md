@@ -17,6 +17,7 @@ globs: src/**/*.test.*
 
 ```ts
 beforeEach(() => {
+  vi.clearAllMocks();
   global.fetch = vi.fn();
 });
 
@@ -36,4 +37,5 @@ it("POSTs the payload to the endpoint", async () => {
 ```
 
 - Hooks: `renderHook` + `act`; assert on the actual request (URL, body entries), not
-  just the returned state — see `src/hooks/apiHooks.test.ts` for the reference pattern.
+  just the returned state — see `src/hooks/useFileRename.test.ts` for the reference
+  pattern.

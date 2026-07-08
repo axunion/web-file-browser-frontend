@@ -14,6 +14,7 @@ describe("useLongPress", () => {
   let element: HTMLButtonElement;
 
   beforeEach(() => {
+    vi.clearAllMocks();
     vi.useFakeTimers();
     element = document.createElement("button");
     document.body.appendChild(element);

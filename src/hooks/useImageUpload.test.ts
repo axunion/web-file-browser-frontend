@@ -4,6 +4,7 @@ import useImageUpload from "./useImageUpload";
 
 describe("useImageUpload", () => {
   beforeEach(() => {
+    vi.clearAllMocks();
     global.fetch = vi.fn();
   });
 
