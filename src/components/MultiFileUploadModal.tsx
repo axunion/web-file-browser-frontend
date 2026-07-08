@@ -33,6 +33,7 @@ export type MultiFileUploadModalProps = {
   currentPath: string;
   onClose: () => void;
   onSuccess: () => void;
+  onFileListUpdate: () => void;
   showToast: (type: ToastType, message: string) => void;
 };
 
@@ -42,6 +43,7 @@ const MultiFileUploadModal = memo(
     currentPath,
     onClose,
     onSuccess,
+    onFileListUpdate,
     showToast,
   }: MultiFileUploadModalProps) => {
     const { isUploading, progress, uploadFiles, abort } = useMultiFileUpload();
@@ -67,8 +69,9 @@ const MultiFileUploadModal = memo(
         onSuccess();
       } else if (hasError) {
         showToast("warning", MESSAGES.MULTI_FILE_UPLOAD_PARTIAL_ERROR);
+        onFileListUpdate();
       }
-    }, [isUploading, progress, onSuccess, showToast]);
+    }, [isUploading, progress, onSuccess, onFileListUpdate, showToast]);
 
     const completedCount = progress.filter(
       (p) => p.status === "success" || p.status === "error",

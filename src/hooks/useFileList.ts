@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useId, useMemo, useState } from "react";
-import useSWR, { mutate } from "swr";
+import useSWR from "swr";
 import { ENDPOINT_LIST } from "@/constants/config";
 import { MESSAGES } from "@/constants/messages";
 import {
@@ -91,11 +91,12 @@ const useFileList = (
     [path, scopeKey],
   );
 
-  const { data, error, isLoading, isValidating } = useSWR<FileListResponse>(
-    swrKey,
-    fetcher,
-    { revalidateOnFocus: false },
-  );
+  const {
+    data,
+    error,
+    isLoading,
+    mutate: revalidate,
+  } = useSWR<FileListResponse>(swrKey, fetcher, { revalidateOnFocus: false });
 
   const items = useMemo(
     () => (data && isSuccessResponse(data) ? data.list : []),
@@ -114,11 +115,11 @@ const useFileList = (
     return null;
   }, [data, error]);
 
-  const refresh = useCallback(() => mutate<FileListResponse>(swrKey), [swrKey]);
+  const refresh = useCallback(() => revalidate(), [revalidate]);
 
   return {
     items,
-    isLoading: isLoading || isValidating,
+    isLoading,
     errorMessage,
     setPath,
     refresh,

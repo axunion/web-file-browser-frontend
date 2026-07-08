@@ -10,7 +10,11 @@ const createResponse = (body: string, ok = true) => ({
 });
 
 const wrapper = ({ children }: { children: ReactNode }) =>
-  createElement(SWRConfig, { value: { dedupingInterval: 0 } }, children);
+  createElement(
+    SWRConfig,
+    { value: { dedupingInterval: 0, provider: () => new Map() } },
+    children,
+  );
 
 describe("useFileList", () => {
   const originalFetch = global.fetch;
@@ -129,6 +133,49 @@ describe("useFileList", () => {
       2,
       expect.stringContaining("path=special%2520folder"),
     );
+  });
+
+  it("should keep isLoading false while a refresh revalidates", async () => {
+    let resolveRefetch: (value: unknown) => void = () => {};
+    global.fetch = vi
+      .fn()
+      .mockResolvedValueOnce(
+        createResponse(
+          JSON.stringify({
+            status: "success",
+            list: [{ name: "old.txt", type: "file" }],
+          }),
+        ),
+      )
+      .mockImplementationOnce(
+        () =>
+          new Promise((resolve) => {
+            resolveRefetch = resolve;
+          }),
+      );
+
+    const { result } = renderHook(() => useFileList(""), { wrapper });
+
+    await waitFor(() => {
+      expect(result.current.items).toEqual([{ name: "old.txt", type: "file" }]);
+    });
+
+    let refreshPromise: Promise<unknown> = Promise.resolve();
+    act(() => {
+      refreshPromise = result.current.refresh();
+    });
+
+    expect(result.current.isLoading).toBe(false);
+    expect(result.current.items).toEqual([{ name: "old.txt", type: "file" }]);
+
+    resolveRefetch(
+      createResponse(JSON.stringify({ status: "success", list: [] })),
+    );
+    await act(async () => {
+      await refreshPromise;
+    });
+
+    expect(result.current.items).toEqual([]);
   });
 
   it("should revalidate the current path when refreshed", async () => {

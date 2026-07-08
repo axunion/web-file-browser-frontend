@@ -124,6 +124,7 @@ const Header = ({ title, paths, onFileListUpdate, showToast }: HeaderProps) => {
           currentPath={currentPath}
           onClose={onClosed}
           onSuccess={handleUploadSuccess}
+          onFileListUpdate={onFileListUpdate}
           showToast={showToast}
         />
       )}

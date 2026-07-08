@@ -1,146 +1,167 @@
-import { describe, expect, it } from "vitest";
+import { fireEvent, render, screen, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import FileList from "@/components/FileList";
+import {
+  getFileItemAriaLabel,
+  getImageAlt,
+  getOpenFileAriaLabel,
+  MESSAGES,
+} from "@/constants/messages";
 import type { DirectoryItem } from "@/types/api";
-import { fileListInitialState, fileListReducer } from "./FileList";
 
-const mockFile: DirectoryItem = { name: "photo.jpg", type: "file" };
-const mockDir: DirectoryItem = { name: "photos", type: "directory" };
-const mockPosition = { x: 100, y: 200 };
+const items: DirectoryItem[] = [
+  { name: "docs", type: "directory" },
+  { name: "photo 1.jpg", type: "file" },
+  { name: "notes.txt", type: "file" },
+];
 
-describe("fileListReducer", () => {
-  describe("OPEN_CONTEXT_MENU", () => {
-    it("sets the context menu with the provided item and position", () => {
-      const state = fileListReducer(fileListInitialState, {
-        type: "OPEN_CONTEXT_MENU",
-        item: mockFile,
-        position: mockPosition,
-      });
+const renderFileList = (
+  props: Partial<React.ComponentProps<typeof FileList>> = {},
+) =>
+  render(
+    <FileList
+      list={items}
+      currentPath="my folder#1"
+      onFileListUpdate={vi.fn()}
+      isNavigatingRef={{ current: false }}
+      {...props}
+    />,
+  );
 
-      expect(state.contextMenu).toEqual({
-        item: mockFile,
-        position: mockPosition,
-      });
-      expect(state.activeModal).toBeNull();
+const openContextMenu = async (name: string) => {
+  fireEvent.mouseDown(screen.getByRole("button", { name }));
+  return screen.findByRole("menu");
+};
+
+describe("FileList", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    window.location.hash = "";
+  });
+
+  describe("rendering", () => {
+    it("renders a button for each item with its accessible name", () => {
+      renderFileList();
+
+      for (const item of items) {
+        expect(
+          screen.getByRole("button", {
+            name: getFileItemAriaLabel(item.name, item.type),
+          }),
+        ).toBeInTheDocument();
+      }
     });
 
-    it("replaces a previously open context menu", () => {
-      const first = fileListReducer(fileListInitialState, {
-        type: "OPEN_CONTEXT_MENU",
-        item: mockFile,
-        position: { x: 10, y: 20 },
-      });
-      const second = fileListReducer(first, {
-        type: "OPEN_CONTEXT_MENU",
-        item: mockDir,
-        position: mockPosition,
-      });
+    it("URL-encodes every path segment in media and link URLs", () => {
+      renderFileList();
 
-      expect(second.contextMenu?.item).toBe(mockDir);
-      expect(second.contextMenu?.position).toEqual(mockPosition);
+      expect(screen.getByAltText(getImageAlt("photo 1.jpg"))).toHaveAttribute(
+        "src",
+        "http://localhost/data/my%20folder%231/photo%201.jpg",
+      );
+      expect(
+        screen.getByRole("link", { name: getOpenFileAriaLabel("notes.txt") }),
+      ).toHaveAttribute(
+        "href",
+        "http://localhost/data/my%20folder%231/notes.txt",
+      );
+    });
+
+    it("builds URLs directly under the data endpoint at the root path", () => {
+      renderFileList({ currentPath: "" });
+
+      expect(screen.getByAltText(getImageAlt("photo 1.jpg"))).toHaveAttribute(
+        "src",
+        "http://localhost/data/photo%201.jpg",
+      );
     });
   });
 
-  describe("CLOSE_CONTEXT_MENU", () => {
-    it("clears the context menu", () => {
-      const withMenu = fileListReducer(fileListInitialState, {
-        type: "OPEN_CONTEXT_MENU",
-        item: mockFile,
-        position: mockPosition,
-      });
-      const state = fileListReducer(withMenu, { type: "CLOSE_CONTEXT_MENU" });
+  describe("navigation", () => {
+    it("navigates into a directory on click", async () => {
+      const user = userEvent.setup();
+      renderFileList();
 
-      expect(state.contextMenu).toBeNull();
+      await user.click(
+        screen.getByRole("button", {
+          name: getFileItemAriaLabel("docs", "directory"),
+        }),
+      );
+
+      expect(window.location.hash).toBe("#/docs");
+    });
+
+    it("does not navigate while a navigation is already in flight", async () => {
+      const user = userEvent.setup();
+      renderFileList({ isNavigatingRef: { current: true } });
+
+      await user.click(
+        screen.getByRole("button", {
+          name: getFileItemAriaLabel("docs", "directory"),
+        }),
+      );
+
+      expect(window.location.hash).toBe("");
     });
   });
 
-  describe("OPEN_RENAME_MODAL", () => {
-    it("closes the context menu and opens the rename modal", () => {
-      const withMenu = fileListReducer(fileListInitialState, {
-        type: "OPEN_CONTEXT_MENU",
-        item: mockFile,
-        position: mockPosition,
-      });
-      const state = fileListReducer(withMenu, { type: "OPEN_RENAME_MODAL" });
+  describe("context menu", () => {
+    it("opens the context menu with file actions on long-press", async () => {
+      renderFileList();
 
-      expect(state.contextMenu).toBeNull();
-      expect(state.activeModal).toEqual({ type: "rename", item: mockFile });
+      const menu = await openContextMenu(
+        getFileItemAriaLabel("photo 1.jpg", "file"),
+      );
+
+      expect(
+        within(menu).getByRole("menuitem", { name: MESSAGES.RENAME }),
+      ).toBeInTheDocument();
+      expect(
+        within(menu).getByRole("menuitem", { name: MESSAGES.MOVE }),
+      ).toBeInTheDocument();
+      expect(
+        within(menu).getByRole("menuitem", { name: MESSAGES.DELETE }),
+      ).toBeInTheDocument();
     });
 
-    it("is a no-op when no context menu is open", () => {
-      const state = fileListReducer(fileListInitialState, {
-        type: "OPEN_RENAME_MODAL",
-      });
+    it("omits the move action for directories", async () => {
+      renderFileList();
 
-      expect(state).toEqual(fileListInitialState);
-    });
-  });
+      const menu = await openContextMenu(
+        getFileItemAriaLabel("docs", "directory"),
+      );
 
-  describe("OPEN_MOVE_MODAL", () => {
-    it("closes the context menu and opens the move modal", () => {
-      const withMenu = fileListReducer(fileListInitialState, {
-        type: "OPEN_CONTEXT_MENU",
-        item: mockFile,
-        position: mockPosition,
-      });
-      const state = fileListReducer(withMenu, { type: "OPEN_MOVE_MODAL" });
-
-      expect(state.contextMenu).toBeNull();
-      expect(state.activeModal).toEqual({ type: "move", item: mockFile });
+      expect(
+        within(menu).queryByRole("menuitem", { name: MESSAGES.MOVE }),
+      ).not.toBeInTheDocument();
     });
 
-    it("is a no-op when no context menu is open", () => {
-      const state = fileListReducer(fileListInitialState, {
-        type: "OPEN_MOVE_MODAL",
+    it("does not open the context menu when the press is released early", () => {
+      renderFileList();
+
+      const button = screen.getByRole("button", {
+        name: getFileItemAriaLabel("photo 1.jpg", "file"),
       });
+      fireEvent.mouseDown(button);
+      fireEvent.mouseUp(button);
 
-      expect(state).toEqual(fileListInitialState);
-    });
-  });
-
-  describe("OPEN_TRASH_MODAL", () => {
-    it("closes the context menu and opens the trash modal", () => {
-      const withMenu = fileListReducer(fileListInitialState, {
-        type: "OPEN_CONTEXT_MENU",
-        item: mockDir,
-        position: mockPosition,
-      });
-      const state = fileListReducer(withMenu, { type: "OPEN_TRASH_MODAL" });
-
-      expect(state.contextMenu).toBeNull();
-      expect(state.activeModal).toEqual({ type: "trash", item: mockDir });
+      expect(screen.queryByRole("menu")).not.toBeInTheDocument();
     });
 
-    it("is a no-op when no context menu is open", () => {
-      const state = fileListReducer(fileListInitialState, {
-        type: "OPEN_TRASH_MODAL",
-      });
+    it("opens the rename dialog from the context menu", async () => {
+      const user = userEvent.setup();
+      renderFileList();
 
-      expect(state).toEqual(fileListInitialState);
-    });
-  });
+      const menu = await openContextMenu(
+        getFileItemAriaLabel("photo 1.jpg", "file"),
+      );
+      await user.click(
+        within(menu).getByRole("menuitem", { name: MESSAGES.RENAME }),
+      );
 
-  describe("CLOSE_MODAL", () => {
-    it("clears the active modal while preserving other state", () => {
-      const withMenu = fileListReducer(fileListInitialState, {
-        type: "OPEN_CONTEXT_MENU",
-        item: mockFile,
-        position: mockPosition,
-      });
-      const withModal = fileListReducer(withMenu, {
-        type: "OPEN_RENAME_MODAL",
-      });
-      expect(withModal.activeModal).not.toBeNull();
-
-      const state = fileListReducer(withModal, { type: "CLOSE_MODAL" });
-
-      expect(state.activeModal).toBeNull();
-    });
-
-    it("is idempotent when no modal is open", () => {
-      const state = fileListReducer(fileListInitialState, {
-        type: "CLOSE_MODAL",
-      });
-
-      expect(state.activeModal).toBeNull();
+      expect(screen.getByRole("dialog")).toBeInTheDocument();
+      expect(screen.queryByRole("menu")).not.toBeInTheDocument();
     });
   });
 });

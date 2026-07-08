@@ -41,12 +41,12 @@ type FileListAction =
   | { type: "OPEN_TRASH_MODAL" }
   | { type: "CLOSE_MODAL" };
 
-export const fileListInitialState: FileListState = {
+const fileListInitialState: FileListState = {
   contextMenu: null,
   activeModal: null,
 };
 
-export const fileListReducer = (
+const fileListReducer = (
   state: FileListState,
   action: FileListAction,
 ): FileListState => {
@@ -89,23 +89,23 @@ const FileList = memo(
     const { contextMenu, activeModal } = state;
     const didLongPressRef = useRef(false);
 
-    const dirPath = currentPath
-      ? `${ENDPOINT_DATA}${currentPath}/`
+    const encodedPath = currentPath
+      .split("/")
+      .map(encodeURIComponent)
+      .join("/");
+    const dirPath = encodedPath
+      ? `${ENDPOINT_DATA}${encodedPath}/`
       : ENDPOINT_DATA;
 
     const handleLongPress = useCallback(
       (item: DirectoryItem, element: HTMLElement) => {
         didLongPressRef.current = true;
-        try {
-          const rect = element.getBoundingClientRect();
-          const position = {
-            x: rect.left + rect.width / 2,
-            y: rect.top + rect.height / 2,
-          };
-          dispatch({ type: "OPEN_CONTEXT_MENU", item, position });
-        } catch (error) {
-          console.error("Error getting element position:", error);
-        }
+        const rect = element.getBoundingClientRect();
+        const position = {
+          x: rect.left + rect.width / 2,
+          y: rect.top + rect.height / 2,
+        };
+        dispatch({ type: "OPEN_CONTEXT_MENU", item, position });
       },
       [],
     );
