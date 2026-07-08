@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { MESSAGES } from "@/constants/messages";
 import Modal from "./Modal";
@@ -42,11 +43,12 @@ describe("Modal", () => {
   });
 
   describe("closing via the close button", () => {
-    it("does not call onClose until the animation ends", () => {
+    it("does not call onClose until the animation ends", async () => {
+      const user = userEvent.setup();
       const onClose = vi.fn();
       renderModal(onClose);
 
-      fireEvent.click(
+      await user.click(
         screen.getByRole("button", { name: MESSAGES.CLOSE_MODAL }),
       );
       expect(onClose).not.toHaveBeenCalled();
@@ -57,11 +59,12 @@ describe("Modal", () => {
   });
 
   describe("closing via the Escape key", () => {
-    it("calls onClose after Escape and animation end", () => {
+    it("calls onClose after Escape and animation end", async () => {
+      const user = userEvent.setup();
       const onClose = vi.fn();
       renderModal(onClose);
 
-      fireEvent.keyDown(document, { key: "Escape" });
+      await user.keyboard("{Escape}");
       expect(onClose).not.toHaveBeenCalled();
 
       fireOverlayAnimationEnd();
@@ -70,23 +73,25 @@ describe("Modal", () => {
   });
 
   describe("closing via the overlay", () => {
-    it("calls onClose when the overlay is clicked and animation ends", () => {
+    it("calls onClose when the overlay is clicked and animation ends", async () => {
+      const user = userEvent.setup();
       const onClose = vi.fn();
       renderModal(onClose);
 
       const overlay = screen.getByRole("dialog").parentElement as HTMLElement;
-      fireEvent.pointerDown(overlay);
+      await user.pointer({ keys: "[MouseLeft>]", target: overlay });
       fireEvent.animationEnd(overlay);
 
       expect(onClose).toHaveBeenCalledOnce();
     });
 
-    it("does not close when clicking inside the dialog panel", () => {
+    it("does not close when clicking inside the dialog panel", async () => {
+      const user = userEvent.setup();
       const onClose = vi.fn();
       renderModal(onClose);
 
       const dialog = screen.getByRole("dialog");
-      fireEvent.pointerDown(dialog);
+      await user.pointer({ keys: "[MouseLeft>]", target: dialog });
 
       fireOverlayAnimationEnd();
       expect(onClose).not.toHaveBeenCalled();
@@ -117,7 +122,8 @@ describe("Modal", () => {
       document.body.removeChild(previousButton);
     });
 
-    it("cycles Tab focus from the last focusable element to the first", () => {
+    it("cycles Tab focus from the last focusable element to the first", async () => {
+      const user = userEvent.setup();
       renderModal(
         vi.fn(),
         <>
@@ -133,14 +139,15 @@ describe("Modal", () => {
       closeButton.focus();
       expect(document.activeElement).toBe(closeButton);
 
-      fireEvent.keyDown(document, { key: "Tab" });
+      await user.tab();
 
       expect(document.activeElement).toBe(
         screen.getByRole("button", { name: "First" }),
       );
     });
 
-    it("cycles Shift+Tab focus from the first focusable element to the last", () => {
+    it("cycles Shift+Tab focus from the first focusable element to the last", async () => {
+      const user = userEvent.setup();
       renderModal(
         vi.fn(),
         <>
@@ -153,7 +160,7 @@ describe("Modal", () => {
       firstButton.focus();
       expect(document.activeElement).toBe(firstButton);
 
-      fireEvent.keyDown(document, { key: "Tab", shiftKey: true });
+      await user.tab({ shift: true });
 
       expect(document.activeElement).toBe(
         screen.getByRole("button", { name: MESSAGES.CLOSE_MODAL }),

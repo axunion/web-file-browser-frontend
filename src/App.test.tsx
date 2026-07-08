@@ -1,4 +1,5 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import App from "@/App";
 import { MESSAGES } from "@/constants/messages";
@@ -23,9 +24,10 @@ describe("App navigation", () => {
   });
 
   it("should navigate to the parent directory from the header back button", async () => {
+    const user = userEvent.setup();
     render(<App />);
 
-    fireEvent.click(screen.getByRole("button", { name: MESSAGES.BACK }));
+    await user.click(screen.getByRole("button", { name: MESSAGES.BACK }));
 
     await waitFor(() => {
       expect(window.location.hash).toBe("#/first");

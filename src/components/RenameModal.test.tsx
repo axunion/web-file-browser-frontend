@@ -1,4 +1,5 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { MESSAGES } from "@/constants/messages";
 import useFileRename from "@/hooks/useFileRename";
@@ -61,10 +62,11 @@ describe("RenameModal", () => {
         />,
       );
 
-      fireEvent.change(screen.getByRole("textbox"), {
-        target: { value: "photo-renamed" },
-      });
-      fireEvent.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
+      const user = userEvent.setup();
+      const input = screen.getByRole("textbox");
+      await user.clear(input);
+      await user.type(input, "photo-renamed");
+      await user.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
 
       await waitFor(() => {
         expect(renameFile).toHaveBeenCalledWith({
@@ -97,10 +99,11 @@ describe("RenameModal", () => {
         />,
       );
 
-      fireEvent.change(screen.getByRole("textbox"), {
-        target: { value: "new-folder" },
-      });
-      fireEvent.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
+      const user = userEvent.setup();
+      const input = screen.getByRole("textbox");
+      await user.clear(input);
+      await user.type(input, "new-folder");
+      await user.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
 
       await waitFor(() => {
         expect(renameFile).toHaveBeenCalledWith({
@@ -131,8 +134,11 @@ describe("RenameModal", () => {
         />,
       );
 
-      fireEvent.change(screen.getByRole("textbox"), { target: { value: "." } });
-      fireEvent.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
+      const user = userEvent.setup();
+      const input = screen.getByRole("textbox");
+      await user.clear(input);
+      await user.type(input, ".");
+      await user.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
 
       await waitFor(() => {
         expect(screen.getByText(MESSAGES.INVALID_NAME)).toBeInTheDocument();
@@ -158,10 +164,11 @@ describe("RenameModal", () => {
         />,
       );
 
-      fireEvent.change(screen.getByRole("textbox"), {
-        target: { value: ".." },
-      });
-      fireEvent.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
+      const user = userEvent.setup();
+      const input = screen.getByRole("textbox");
+      await user.clear(input);
+      await user.type(input, "..");
+      await user.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
 
       await waitFor(() => {
         expect(screen.getByText(MESSAGES.INVALID_NAME)).toBeInTheDocument();
@@ -199,10 +206,11 @@ describe("RenameModal", () => {
         />,
       );
 
-      fireEvent.change(screen.getByRole("textbox"), {
-        target: { value: `file${char}name` },
-      });
-      fireEvent.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
+      const user = userEvent.setup();
+      const input = screen.getByRole("textbox");
+      await user.clear(input);
+      await user.type(input, `file${char}name`);
+      await user.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
 
       await waitFor(() => {
         expect(
@@ -254,16 +262,19 @@ describe("RenameModal", () => {
         />,
       );
 
+      const user = userEvent.setup();
       const input = screen.getByRole("textbox");
 
-      fireEvent.change(input, { target: { value: "." } });
-      fireEvent.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
+      await user.clear(input);
+      await user.type(input, ".");
+      await user.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
 
       await waitFor(() => {
         expect(screen.getByText(MESSAGES.INVALID_NAME)).toBeInTheDocument();
       });
 
-      fireEvent.change(input, { target: { value: "valid-name" } });
+      await user.clear(input);
+      await user.type(input, "valid-name");
       expect(screen.queryByText(MESSAGES.INVALID_NAME)).not.toBeInTheDocument();
     });
   });
@@ -309,10 +320,11 @@ describe("RenameModal", () => {
         />,
       );
 
-      fireEvent.change(screen.getByRole("textbox"), {
-        target: { value: "photo-renamed" },
-      });
-      fireEvent.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
+      const user = userEvent.setup();
+      const input = screen.getByRole("textbox");
+      await user.clear(input);
+      await user.type(input, "photo-renamed");
+      await user.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
 
       expect(await screen.findByText("名前変更失敗")).toBeInTheDocument();
       expect(onSuccess).not.toHaveBeenCalled();
@@ -344,10 +356,11 @@ describe("RenameModal", () => {
         />,
       );
 
-      fireEvent.change(screen.getByRole("textbox"), {
-        target: { value: "photo-renamed" },
-      });
-      fireEvent.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
+      const user = userEvent.setup();
+      const input = screen.getByRole("textbox");
+      await user.clear(input);
+      await user.type(input, "photo-renamed");
+      await user.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
 
       await waitFor(() => {
         expect(onSuccess).toHaveBeenCalledOnce();

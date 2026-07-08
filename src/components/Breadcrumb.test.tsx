@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { MESSAGES } from "@/constants/messages";
 import * as pathUtils from "@/utils/path";
@@ -56,37 +57,41 @@ describe("Breadcrumb", () => {
   });
 
   describe("navigation", () => {
-    it("calls setPaths with an empty array when the root button is clicked", () => {
+    it("calls setPaths with an empty array when the root button is clicked", async () => {
+      const user = userEvent.setup();
       render(<Breadcrumb paths={["folder1"]} />);
 
       const rootButton = screen
         .getByText(MESSAGES.BREADCRUMB_ROOT)
         .closest("button") as HTMLButtonElement;
-      fireEvent.click(rootButton);
+      await user.click(rootButton);
 
       expect(pathUtils.setPaths).toHaveBeenCalledWith([]);
     });
 
-    it("calls setPaths with a slice up to the clicked segment", () => {
+    it("calls setPaths with a slice up to the clicked segment", async () => {
+      const user = userEvent.setup();
       render(<Breadcrumb paths={["a", "b", "c"]} />);
 
-      fireEvent.click(screen.getByRole("button", { name: "b" }));
+      await user.click(screen.getByRole("button", { name: "b" }));
 
       expect(pathUtils.setPaths).toHaveBeenCalledWith(["a", "b"]);
     });
 
-    it("calls setPaths with only the first segment when the first item is clicked", () => {
+    it("calls setPaths with only the first segment when the first item is clicked", async () => {
+      const user = userEvent.setup();
       render(<Breadcrumb paths={["a", "b", "c"]} />);
 
-      fireEvent.click(screen.getByRole("button", { name: "a" }));
+      await user.click(screen.getByRole("button", { name: "a" }));
 
       expect(pathUtils.setPaths).toHaveBeenCalledWith(["a"]);
     });
 
-    it("calls setPaths with all segments when the last item is clicked", () => {
+    it("calls setPaths with all segments when the last item is clicked", async () => {
+      const user = userEvent.setup();
       render(<Breadcrumb paths={["a", "b", "c"]} />);
 
-      fireEvent.click(screen.getByRole("button", { name: "c" }));
+      await user.click(screen.getByRole("button", { name: "c" }));
 
       expect(pathUtils.setPaths).toHaveBeenCalledWith(["a", "b", "c"]);
     });

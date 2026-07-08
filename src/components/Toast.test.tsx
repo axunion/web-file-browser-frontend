@@ -1,4 +1,5 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { MESSAGES } from "@/constants/messages";
 import type { ToastItem } from "@/hooks/useToast";
@@ -16,11 +17,6 @@ const makeToast = (overrides: Partial<ToastItem> = {}): ToastItem => ({
 describe("Toast", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.useFakeTimers();
-  });
-
-  afterEach(() => {
-    vi.useRealTimers();
   });
 
   describe("rendering", () => {
@@ -66,13 +62,14 @@ describe("Toast", () => {
   });
 
   describe("dismissing via the button", () => {
-    it("calls onDismiss with the toast id after clicking dismiss and animation ends", () => {
+    it("calls onDismiss with the toast id after clicking dismiss and animation ends", async () => {
+      const user = userEvent.setup();
       const onDismiss = vi.fn();
       render(
         <Toast toasts={[makeToast({ id: "abc" })]} onDismiss={onDismiss} />,
       );
 
-      fireEvent.click(
+      await user.click(
         screen.getByRole("button", { name: MESSAGES.DISMISS_TOAST }),
       );
 
@@ -82,13 +79,14 @@ describe("Toast", () => {
       expect(onDismiss).toHaveBeenCalledWith("abc");
     });
 
-    it("does not call onDismiss before the animation ends", () => {
+    it("does not call onDismiss before the animation ends", async () => {
+      const user = userEvent.setup();
       const onDismiss = vi.fn();
       render(
         <Toast toasts={[makeToast({ id: "abc" })]} onDismiss={onDismiss} />,
       );
 
-      fireEvent.click(
+      await user.click(
         screen.getByRole("button", { name: MESSAGES.DISMISS_TOAST }),
       );
 
@@ -97,6 +95,14 @@ describe("Toast", () => {
   });
 
   describe("auto-dismiss timer", () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
     it("calls onDismiss after TOAST_DURATION_MS when the timer fires", () => {
       const onDismiss = vi.fn();
       render(
