@@ -108,8 +108,8 @@ Format:
 - Never commit secrets (`*.key`, `*.pem`, `credentials*`).
 - Never use `--no-verify` or `--amend`; always create a new commit.
 
-> **pre-commit hook**: lefthook runs `pnpm fix` (Biome) and `pnpm typecheck` automatically
-> on staged files before every commit.
+> **pre-commit hook**: lefthook runs `biome check --write` on staged files and
+> `pnpm typecheck` automatically before every commit.
 
 ## Detailed Guidelines
 
