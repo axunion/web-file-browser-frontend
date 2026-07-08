@@ -64,4 +64,42 @@ describe("useImageUpload", () => {
 
     expect(result.current.error).toBe("ファイルが大きすぎます");
   });
+
+  it("reports isLoading while an upload is in flight", () => {
+    vi.mocked(global.fetch).mockReturnValue(new Promise(() => {})); // pending
+
+    const { result } = renderHook(() => useImageUpload());
+
+    act(() => {
+      void result.current.uploadImages(
+        [new File(["x"], "x.png", { type: "image/png" })],
+        "",
+      );
+    });
+
+    expect(result.current.isLoading).toBe(true);
+    expect(result.current.error).toBeNull();
+  });
+
+  it("aborts an in-flight upload", () => {
+    const abortSpy = vi.fn();
+    vi.mocked(global.fetch).mockImplementationOnce((_url, options) => {
+      options?.signal?.addEventListener("abort", abortSpy);
+      return new Promise(() => {}); // Never resolves
+    });
+
+    const { result } = renderHook(() => useImageUpload());
+
+    act(() => {
+      void result.current.uploadImages(
+        [new File(["x"], "x.png", { type: "image/png" })],
+        "",
+      );
+    });
+    act(() => {
+      result.current.abort();
+    });
+
+    expect(abortSpy).toHaveBeenCalled();
+  });
 });
