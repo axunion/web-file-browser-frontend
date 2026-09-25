@@ -174,44 +174,39 @@ describe("RenameModal", () => {
   });
 
   describe("validation — invalid characters", () => {
-    it.each([
-      "<",
-      ">",
-      ":",
-      '"',
-      "/",
-      "\\",
-      "|",
-      "?",
-      "*",
-    ])("shows INVALID_NAME_CHARACTERS error for '%s' and does not call API", async (char) => {
-      const renameFile = vi.fn();
-      mockedUseFileRename.mockReturnValue({
-        isLoading: false,
-        error: null,
-        renameFile,
-        abort: vi.fn(),
-      });
+    it.each(["<", ">", ":", '"', "/", "\\", "|", "?", "*"])(
+      "shows INVALID_NAME_CHARACTERS error for '%s' and does not call API",
+      async (char) => {
+        const renameFile = vi.fn();
+        mockedUseFileRename.mockReturnValue({
+          isLoading: false,
+          error: null,
+          renameFile,
+          abort: vi.fn(),
+        });
 
-      render(
-        <RenameModal
-          item={{ name: "photo.jpg", type: "file" }}
-          currentPath="albums"
-          onClose={vi.fn()}
-          onSuccess={vi.fn()}
-        />,
-      );
+        render(
+          <RenameModal
+            item={{ name: "photo.jpg", type: "file" }}
+            currentPath="albums"
+            onClose={vi.fn()}
+            onSuccess={vi.fn()}
+          />,
+        );
 
-      const { user } = await typeNewName(`file${char}name`);
-      await user.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
+        const { user } = await typeNewName(`file${char}name`);
+        await user.click(
+          screen.getByRole("button", { name: MESSAGES.CONFIRM }),
+        );
 
-      await waitFor(() => {
-        expect(
-          screen.getByText(MESSAGES.INVALID_NAME_CHARACTERS),
-        ).toBeInTheDocument();
-      });
-      expect(renameFile).not.toHaveBeenCalled();
-    });
+        await waitFor(() => {
+          expect(
+            screen.getByText(MESSAGES.INVALID_NAME_CHARACTERS),
+          ).toBeInTheDocument();
+        });
+        expect(renameFile).not.toHaveBeenCalled();
+      },
+    );
 
     it("shows INVALID_NAME_CHARACTERS error for control characters", async () => {
       const renameFile = vi.fn();

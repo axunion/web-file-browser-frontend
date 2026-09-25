@@ -7,4 +7,9 @@ pre-commit:
       stage_fixed: true
 
     - name: typecheck
-      run: pnpm typecheck
+      run: pnpm exec tsc -b
+
+pre-push:
+  jobs:
+    - name: test
+      run: pnpm test:run

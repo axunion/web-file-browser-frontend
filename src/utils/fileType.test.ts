@@ -3,57 +3,39 @@ import { getFileType } from "./fileType";
 
 describe("getFileType", () => {
   describe("video files", () => {
-    it.each([
-      "mp4",
-      "mov",
-      "avi",
-      "wmv",
-      "flv",
-      "mkv",
-      "webm",
-    ])("returns 'video' for .%s", (ext) => {
-      expect(getFileType(`video.${ext}`)).toBe("video");
-    });
+    it.each(["mp4", "mov", "avi", "wmv", "flv", "mkv", "webm"])(
+      "returns 'video' for .%s",
+      (ext) => {
+        expect(getFileType(`video.${ext}`)).toBe("video");
+      },
+    );
   });
 
   describe("audio files", () => {
-    it.each([
-      "mp3",
-      "wav",
-      "aac",
-      "ogg",
-      "m4a",
-      "wma",
-    ])("returns 'audio' for .%s", (ext) => {
-      expect(getFileType(`audio.${ext}`)).toBe("audio");
-    });
+    it.each(["mp3", "wav", "aac", "ogg", "m4a", "wma"])(
+      "returns 'audio' for .%s",
+      (ext) => {
+        expect(getFileType(`audio.${ext}`)).toBe("audio");
+      },
+    );
   });
 
   describe("image files", () => {
-    it.each([
-      "jpg",
-      "jpeg",
-      "png",
-      "gif",
-      "bmp",
-      "webp",
-      "svg",
-    ])("returns 'image' for .%s", (ext) => {
-      expect(getFileType(`image.${ext}`)).toBe("image");
-    });
+    it.each(["jpg", "jpeg", "png", "gif", "bmp", "webp", "svg"])(
+      "returns 'image' for .%s",
+      (ext) => {
+        expect(getFileType(`image.${ext}`)).toBe("image");
+      },
+    );
   });
 
   describe("text files", () => {
-    it.each([
-      "txt",
-      "doc",
-      "docx",
-      "csv",
-      "rtf",
-      "md",
-    ])("returns 'text' for .%s", (ext) => {
-      expect(getFileType(`document.${ext}`)).toBe("text");
-    });
+    it.each(["txt", "doc", "docx", "csv", "rtf", "md"])(
+      "returns 'text' for .%s",
+      (ext) => {
+        expect(getFileType(`document.${ext}`)).toBe("text");
+      },
+    );
   });
 
   describe("pdf files", () => {

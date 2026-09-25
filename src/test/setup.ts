@@ -1,4 +1,4 @@
-import "@testing-library/jest-dom";
+import "@testing-library/jest-dom/vitest";
 import { addCollection } from "@iconify/react";
 import { cleanup } from "@testing-library/react";
 import { afterEach } from "vitest";
