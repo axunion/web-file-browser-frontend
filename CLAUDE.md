@@ -1,116 +1,82 @@
 # CLAUDE.md — Web File Browser Frontend
 
-> **Sync note**: This file is kept in sync with `AGENTS.md`. If you update one, apply the
-> same change to the other.
-
-Behavioral defaults plus house conventions. Bias toward caution over speed; on trivial
-tasks, use judgment.
-
 ## Approach
 
-- **Think before coding.** State assumptions; if uncertain, ask. When multiple
-  interpretations exist, surface them rather than silently picking one. If a simpler path
-  exists, say so and push back when warranted.
-- **Simplest thing that works.** Write the minimum code that solves the stated problem —
-  nothing speculative. No unasked-for abstractions, flexibility, or error handling for
-  impossible cases. If 200 lines could be 50, rewrite it.
-- **Surgical changes.** Every changed line should trace to the request. Don't refactor,
-  reformat, or "improve" adjacent code that isn't broken; match the surrounding style.
-  Remove only the imports and symbols your change orphaned; leave unrelated dead code alone
-  and mention it.
-- **Goal-driven.** Turn each task into a verifiable outcome ("fix the bug" → "write a
-  failing test that reproduces it, then make it pass"). For multi-step work, state a brief
-  plan with a verification check per step, then loop until it passes.
+- **Change scope.** Deliver what was asked, at the scope intended. Don't "improve"
+  adjacent code, comments, or formatting, and don't add unrequested features,
+  abstractions, or configurability. If the request seems mistaken or a better approach
+  exists, say so in a sentence and continue as asked.
+- **Dead code.** Delete code your own change makes unused; never leave it commented
+  out. Point out pre-existing dead code, but don't delete, split, or refactor it
+  unless asked.
+- **Implementation size.** Extract a helper only when it's used in 3+ places;
+  otherwise inline it. Don't write error handling for cases that can't happen.
+- **Ambiguity.** Make routine judgment calls yourself. When different readings of the
+  request would lead to materially different work, present the options instead of
+  picking one.
 
 ## Language
 
-Write in **English only**: code, in-code comments, commit messages, console output, error
-and log messages, and AI-readable config files (CLAUDE.md, `.claude/`, etc.).
+Default to the user's language for everything interactive — chat replies, plan-mode
+proposals, clarifying questions, and any other back-and-forth during the session.
 
-Exceptions:
-
-- **Conversation with the user**: Japanese
-- **User-facing UI messages**: Japanese — always via the `MESSAGES` constant in
-  `src/constants/messages.ts`
-
-## Project Overview
-
-Web file browser frontend (React 19 + TypeScript 5.9 + Vite 8).
-
-- **Package manager**: pnpm (do not use npm or yarn)
-- **Node version**: ^24 (pinned via `.node-version`) / pnpm 11.9.0 — specified via
-  `devEngines` in `package.json` (onFail: download)
-
-## Essential Commands
-
-```bash
-pnpm dev          # Start development server
-pnpm build        # Type check + build
-pnpm typecheck    # Type check only (tsc --noEmit)
-pnpm fix          # Biome format & lint fix
-pnpm test:run     # Run tests (no watch)
-```
+Switch to English only for durable artifacts: things other people or tools will read
+after the session ends — in-code comments, commit messages, console/log/error output,
+AI-readable instruction files, and reader-facing docs (README and the like). Scratch
+notes and other throwaway dev artifacts stay in the user's language.
 
 ## Architectural Decisions (do not change or suggest alternatives)
 
-| Decision | Details |
-|---|---|
-| Routing | Hash-based (`window.location.hash`). React Router is not needed — do not suggest it |
-| Server state | SWR. Redux / Zustand are not needed — do not suggest them |
-| Component structure | Flat (`src/components/` root). Do not nest into subdirectories |
-| Biome config | Configured via `biome.json` (formatter: 2-space indent, double quotes; linter: recommended preset; import organization on). Scope is the whole repo (`biome check .`), not just `src` |
-| Path alias | `@/` → `src/` |
-
-## Code Structure
-
-- Name variables, functions, and files to communicate intent.
-- One concern per file; split when a file exceeds ~300 lines.
-- Extract a helper only when used in 3+ places; otherwise inline it.
-- Delete dead code you create; never comment it out.
+- **Routing**: hash-based (`window.location.hash`); no React Router.
+- **State**: SWR for server state; no Redux / Zustand.
+- **Components**: flat under `src/components/`; no subdirectories.
 
 ## Code Conventions
 
-### TypeScript
-- No `interface` — use `type` only
-- No `any` type
-- Props defined as `export type XxxProps = { ... }`
-
-### Components
-- Arrow function components; `React.memo` only where re-renders are hot (see `.claude/rules/components.md`)
-- default export (components and hooks), named export (types and constants)
-
-### Formatting
-- Indent with 2 spaces (per `.editorconfig` and `biome.json`)
-- Follow Biome default rules
+- Use pnpm only (not npm or yarn).
+- Use `type`, never `interface`.
+- One concern per file; split when a file exceeds ~300 lines.
 
 ## Testing
 
-- Write tests before or alongside implementation — they are your success criteria.
+- When changing code behavior, write tests before or alongside the implementation —
+  they are your success criteria.
 - Test observable outcomes and edge cases, not implementation details.
 - Each test is fully self-contained; no shared mutable state between tests.
+- Persist a test only for a flow worth protecting against regressions (ideally one that
+  has broken before); a one-off check for a single change doesn't need to become a file.
+  When unsure, ask.
+- Visual judgment ("does this look right") stays a manual check of the running app;
+  don't try to automate it.
+
+## Subagents
+
+The main conversation writes all code; agents only investigate or check work they
+didn't write. A write agent would need every tool, lose context on each re-spawn, and
+hand back a working tree rather than a summary — so there isn't one.
+
+- **Trivial** (typos, one-line fixes, config tweaks): implement directly, no agents.
+- **Contained** (a self-contained change in one area): implement directly, optionally
+  after `Explore` (this codebase) or `researcher` (external library APIs). Then run
+  `reviewer` and `tester` in parallel without asking.
+- **Large, ambiguous, or high-risk** (many files, or substantial changes to
+  `src/hooks/` or `src/utils/path.ts`): propose that the user run `/goal` with a
+  condition like "implement X; done when reviewer reports no findings and tester
+  passes". Each turn: `Explore` + `researcher` in parallel, implement, then `reviewer`
+  + `tester` in parallel.
 
 ## Commits
 
-Format:
+Format — plain prose, no prefixes or labels (`feat:`, `fix:`, and the like):
 
 ```
-<one-line summary>
+<summary: imperative mood, ≤70 chars, no trailing period>
 
-<Why: one sentence — motivation or problem>
+<motivation: one sentence, only when not evident from the diff>
 
-- <change 1>
-- <change 2>
+- <change bullets: only for 2+ distinct changes>
 ```
 
-- Summary: imperative mood, ≤70 chars, no trailing period, no prefix tags (`feat:`, `fix:`, etc.).
-- Why line: include only when motivation is not evident from the diff alone.
-- Bullets: include only for 2+ distinct changes.
 - Never commit secrets (`*.key`, `*.pem`, `credentials*`).
-- Never use `--no-verify` or `--amend`; always create a new commit.
-
-> **pre-commit hook**: lefthook runs `biome check --write` on staged files and
-> `pnpm typecheck` automatically before every commit.
-
-## Detailed Guidelines
-
-Context-specific rules are in `.claude/rules/`.
+- Never use `--no-verify`. Use `--amend` only when explicitly asked; default to a new
+  commit.
