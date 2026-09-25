@@ -1,5 +1,4 @@
 import { join } from "node:path";
-import { getIconData } from "@iconify/utils";
 import { describe, expect, it } from "vitest";
 import { scanIconReferences } from "../../scripts/iconScan.mjs";
 import { ICON_COLLECTIONS } from "./icons";
@@ -15,7 +14,7 @@ describe("ICON_COLLECTIONS", () => {
     const missing = referenced.filter((icon) => {
       const [prefix, name] = icon.split(":");
       const collection = ICON_COLLECTIONS.find((c) => c.prefix === prefix);
-      return !collection || !getIconData(collection, name);
+      return !collection?.icons[name] && !collection?.aliases?.[name];
     });
 
     // If this fails, run `pnpm generate:icons` to rebuild src/constants/icons.ts.

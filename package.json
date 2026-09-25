@@ -11,7 +11,7 @@
     },
     "packageManager": {
       "name": "pnpm",
-      "version": "11.9.0",
+      "version": "^12",
       "onFail": "download"
     }
   },
@@ -35,13 +35,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.2",
-    "@iconify-json/eos-icons": "^1.2.4",
-    "@iconify-json/flat-color-icons": "^1.2.3",
-    "@iconify-json/line-md": "^1.2.16",
-    "@iconify-json/mdi": "^1.2.3",
-    "@iconify-json/vscode-icons": "^1.2.67",
     "@iconify/react": "^6.0.2",
-    "@iconify/utils": "^3.1.4",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",

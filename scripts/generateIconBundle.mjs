@@ -1,18 +1,16 @@
 // Generates src/constants/icons.ts with the icon data for every Iconify icon
 // name referenced in src, so no runtime requests to the Iconify API are needed.
-// Icon data comes from the @iconify-json/* devDependencies.
+// Icon data is fetched from the Iconify API at generation time only; the
+// generated file is committed, so the app and tests never hit the network.
 //
 // Usage: pnpm generate:icons
 
 import { execSync } from "node:child_process";
 import { writeFileSync } from "node:fs";
-import { createRequire } from "node:module";
 import { join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
-import { getIcons } from "@iconify/utils";
 import { scanIconReferences } from "./iconScan.mjs";
 
-const require = createRequire(import.meta.url);
 const srcDir = fileURLToPath(new URL("../src", import.meta.url));
 const outputFile = join(srcDir, "constants", "icons.ts");
 
@@ -26,11 +24,13 @@ for (const icon of scanIconReferences(srcDir)) {
 const collections = [];
 for (const prefix of [...namesByPrefix.keys()].sort()) {
   const names = [...namesByPrefix.get(prefix)].sort();
-  const collection = require(`@iconify-json/${prefix}/icons.json`);
-  const subset = getIcons(collection, names);
+  const url = `https://api.iconify.design/${prefix}.json?icons=${names.join(",")}`;
+  const response = await fetch(url);
+  // The API answers unknown prefixes with 404 and unknown names via not_found.
+  const subset = response.ok ? await response.json() : null;
   if (!subset || subset.not_found?.length) {
     console.error(
-      `Icons not found in @iconify-json/${prefix}: ${subset?.not_found?.join(", ") ?? names.join(", ")}`,
+      `Icons not found in "${prefix}": ${subset?.not_found?.join(", ") ?? names.join(", ")}`,
     );
     process.exit(1);
   }
