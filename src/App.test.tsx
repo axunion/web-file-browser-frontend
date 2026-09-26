@@ -18,7 +18,6 @@ describe("App navigation", () => {
       items: [],
       isLoading: false,
       errorMessage: null,
-      setPath: vi.fn(),
       refresh: vi.fn().mockResolvedValue(undefined),
     });
   });

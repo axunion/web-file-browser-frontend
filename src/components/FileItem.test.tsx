@@ -3,14 +3,15 @@ import { describe, expect, it } from "vitest";
 import FileItem from "@/components/FileItem";
 import { getImageAlt, getOpenFileAriaLabel } from "@/constants/messages";
 
-const dirPath = "http://localhost/data/docs/";
+const dirPaths = ["docs"];
+const dirUrl = "http://localhost/data/docs/";
 
 describe("FileItem", () => {
   it("renders a directory as a plain name without a link", () => {
     render(
       <FileItem
         file={{ name: "photos", type: "directory" }}
-        dirPath={dirPath}
+        dirPaths={dirPaths}
       />,
     );
 
@@ -23,12 +24,12 @@ describe("FileItem", () => {
     render(
       <FileItem
         file={{ name: "my photo.jpg", type: "file" }}
-        dirPath={dirPath}
+        dirPaths={dirPaths}
       />,
     );
 
     const img = screen.getByAltText(getImageAlt("my photo.jpg"));
-    expect(img).toHaveAttribute("src", `${dirPath}my%20photo.jpg`);
+    expect(img).toHaveAttribute("src", `${dirUrl}my%20photo.jpg`);
     expect(screen.getByText("my photo.jpg")).toBeInTheDocument();
   });
 
@@ -36,21 +37,24 @@ describe("FileItem", () => {
     render(
       <FileItem
         file={{ name: "notes 1.txt", type: "file" }}
-        dirPath={dirPath}
+        dirPaths={dirPaths}
       />,
     );
 
     const link = screen.getByRole("link", {
       name: getOpenFileAriaLabel("notes 1.txt"),
     });
-    expect(link).toHaveAttribute("href", `${dirPath}notes%201.txt`);
+    expect(link).toHaveAttribute("href", `${dirUrl}notes%201.txt`);
     expect(link).toHaveAttribute("target", "_blank");
     expect(link).toHaveAttribute("rel", "noreferrer");
   });
 
   it("renders unknown extensions as a generic file link", () => {
     render(
-      <FileItem file={{ name: "data.xyz", type: "file" }} dirPath={dirPath} />,
+      <FileItem
+        file={{ name: "data.xyz", type: "file" }}
+        dirPaths={dirPaths}
+      />,
     );
 
     expect(

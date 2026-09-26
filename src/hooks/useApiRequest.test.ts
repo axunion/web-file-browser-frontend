@@ -16,7 +16,10 @@ describe("useApiRequest", () => {
 
   it("should initialize with default state", () => {
     const { result } = renderHook(() =>
-      useApiRequest({ endpoint: "/api/test" }),
+      useApiRequest({
+        endpoint: "/api/test",
+        fallbackErrorMessage: "Fallback",
+      }),
     );
 
     expect(result.current.isLoading).toBe(false);
@@ -35,7 +38,10 @@ describe("useApiRequest", () => {
     );
 
     const { result } = renderHook(() =>
-      useApiRequest({ endpoint: "/api/test" }),
+      useApiRequest({
+        endpoint: "/api/test",
+        fallbackErrorMessage: "Fallback",
+      }),
     );
 
     let executePromise: Promise<unknown> = Promise.resolve();
@@ -67,6 +73,7 @@ describe("useApiRequest", () => {
     const { result } = renderHook(() =>
       useApiRequest<Record<string, never>, typeof mockResponse>({
         endpoint: "/api/test",
+        fallbackErrorMessage: "Fallback",
       }),
     );
 
@@ -91,7 +98,10 @@ describe("useApiRequest", () => {
     global.fetch = mockFetch;
 
     const { result } = renderHook(() =>
-      useApiRequest({ endpoint: "/api/test" }),
+      useApiRequest({
+        endpoint: "/api/test",
+        fallbackErrorMessage: "Fallback",
+      }),
     );
 
     await act(async () => {
@@ -106,12 +116,17 @@ describe("useApiRequest", () => {
     expect(result.current.isLoading).toBe(false);
   });
 
-  it("should handle fetch errors", async () => {
-    const mockFetch = vi.fn().mockRejectedValue(new Error("Network error"));
+  it("should show the fallback message instead of a network error's own text", async () => {
+    const mockFetch = vi
+      .fn()
+      .mockRejectedValue(new TypeError("Failed to fetch"));
     global.fetch = mockFetch;
 
     const { result } = renderHook(() =>
-      useApiRequest({ endpoint: "/api/test" }),
+      useApiRequest({
+        endpoint: "/api/test",
+        fallbackErrorMessage: "Fallback",
+      }),
     );
 
     await act(async () => {
@@ -122,30 +137,76 @@ describe("useApiRequest", () => {
       }
     });
 
-    expect(result.current.error).toBe("Network error");
+    expect(result.current.error).toBe("Fallback");
     expect(result.current.isLoading).toBe(false);
   });
 
-  it("should handle non-ok response", async () => {
-    const mockFetch = vi.fn().mockResolvedValue({
+  it("should show the message from a non-ok JSON error body", async () => {
+    global.fetch = vi.fn().mockResolvedValue({
       ok: false,
-      text: () => Promise.resolve("Not Found"),
+      text: () =>
+        Promise.resolve('{"status":"error","message":"Permission denied"}'),
     });
-    global.fetch = mockFetch;
 
     const { result } = renderHook(() =>
-      useApiRequest({ endpoint: "/api/test" }),
+      useApiRequest({
+        endpoint: "/api/test",
+        fallbackErrorMessage: "Fallback",
+      }),
     );
 
     await act(async () => {
-      try {
-        await result.current.execute({}, () => new URLSearchParams());
-      } catch {
-        // Expected
-      }
+      await expect(
+        result.current.execute({}, () => new URLSearchParams()),
+      ).rejects.toThrow("Permission denied");
     });
 
-    expect(result.current.error).toBe("Not Found");
+    expect(result.current.error).toBe("Permission denied");
+  });
+
+  it("should show the fallback message when the error message is not a string", async () => {
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      text: () => Promise.resolve('{"status":"error","message":{"code":1}}'),
+    });
+
+    const { result } = renderHook(() =>
+      useApiRequest({
+        endpoint: "/api/test",
+        fallbackErrorMessage: "Fallback",
+      }),
+    );
+
+    await act(async () => {
+      await expect(
+        result.current.execute({}, () => new URLSearchParams()),
+      ).rejects.toThrow("Fallback");
+    });
+
+    expect(result.current.error).toBe("Fallback");
+  });
+
+  it("should show the fallback message for a non-ok HTML body", async () => {
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: false,
+      text: () =>
+        Promise.resolve("<html><title>502 Bad Gateway</title></html>"),
+    });
+
+    const { result } = renderHook(() =>
+      useApiRequest({
+        endpoint: "/api/test",
+        fallbackErrorMessage: "Fallback",
+      }),
+    );
+
+    await act(async () => {
+      await expect(
+        result.current.execute({}, () => new URLSearchParams()),
+      ).rejects.toThrow("Fallback");
+    });
+
+    expect(result.current.error).toBe("Fallback");
   });
 
   it("should handle invalid JSON response", async () => {
@@ -156,7 +217,10 @@ describe("useApiRequest", () => {
     global.fetch = mockFetch;
 
     const { result } = renderHook(() =>
-      useApiRequest({ endpoint: "/api/test" }),
+      useApiRequest({
+        endpoint: "/api/test",
+        fallbackErrorMessage: "Fallback",
+      }),
     );
 
     await act(async () => {
@@ -167,7 +231,51 @@ describe("useApiRequest", () => {
       }
     });
 
-    expect(result.current.error).toBe("Invalid JSON response from server");
+    expect(result.current.error).toBe("Fallback");
+  });
+
+  it("should fall back to the configured message for an empty error body", async () => {
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: false,
+      text: () => Promise.resolve(""),
+    });
+
+    const { result } = renderHook(() =>
+      useApiRequest({
+        endpoint: "/api/test",
+        fallbackErrorMessage: "Fallback",
+      }),
+    );
+
+    await act(async () => {
+      await expect(
+        result.current.execute({}, () => new URLSearchParams()),
+      ).rejects.toThrow("Fallback");
+    });
+
+    expect(result.current.error).toBe("Fallback");
+  });
+
+  it("should fall back to the configured message for an error payload without a message", async () => {
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      text: () => Promise.resolve('{"status":"error"}'),
+    });
+
+    const { result } = renderHook(() =>
+      useApiRequest({
+        endpoint: "/api/test",
+        fallbackErrorMessage: "Fallback",
+      }),
+    );
+
+    await act(async () => {
+      await expect(
+        result.current.execute({}, () => new URLSearchParams()),
+      ).rejects.toThrow("Fallback");
+    });
+
+    expect(result.current.error).toBe("Fallback");
   });
 
   it("should abort request on unmount", async () => {
@@ -179,7 +287,10 @@ describe("useApiRequest", () => {
     global.fetch = mockFetch;
 
     const { result, unmount } = renderHook(() =>
-      useApiRequest({ endpoint: "/api/test" }),
+      useApiRequest({
+        endpoint: "/api/test",
+        fallbackErrorMessage: "Fallback",
+      }),
     );
 
     act(() => {
@@ -210,7 +321,10 @@ describe("useApiRequest", () => {
     global.fetch = mockFetch;
 
     const { result } = renderHook(() =>
-      useApiRequest({ endpoint: "/api/test" }),
+      useApiRequest({
+        endpoint: "/api/test",
+        fallbackErrorMessage: "Fallback",
+      }),
     );
 
     act(() => {
@@ -232,7 +346,10 @@ describe("useApiRequest", () => {
     global.fetch = mockFetch;
 
     const { result } = renderHook(() =>
-      useApiRequest({ endpoint: "/api/upload" }),
+      useApiRequest({
+        endpoint: "/api/upload",
+        fallbackErrorMessage: "Fallback",
+      }),
     );
 
     await act(async () => {
@@ -260,7 +377,10 @@ describe("useApiRequest", () => {
     global.fetch = mockFetch;
 
     const { result } = renderHook(() =>
-      useApiRequest({ endpoint: "/api/test" }),
+      useApiRequest({
+        endpoint: "/api/test",
+        fallbackErrorMessage: "Fallback",
+      }),
     );
 
     await act(async () => {

@@ -31,8 +31,8 @@ export type RenameFileResponse =
 ```
 
 - Naming: `[Action]Request` / `[Action]SuccessResponse` / `[Action]Response`.
-- Narrow with the existing generic guards `isErrorResponse` / `isSuccessResponse` —
-  do not add per-endpoint type guards.
+- Narrow with the existing generic guard `isSuccessResponse` — do not add
+  per-endpoint type guards.
 
 ## Endpoint Constants (`src/constants/config.ts`)
 
@@ -51,6 +51,7 @@ as `URLSearchParams` (urlencoded) or `FormData` (file upload), **never JSON**:
 ```ts
 import { useCallback } from "react";
 import { ENDPOINT_RENAME } from "@/constants/config";
+import { MESSAGES } from "@/constants/messages";
 import type { RenameFileRequest, RenameFileResponse } from "@/types/api";
 import useApiRequest from "./useApiRequest";
 
@@ -58,7 +59,10 @@ const useRenameFile = () => {
   const { isLoading, error, execute, abort } = useApiRequest<
     RenameFileRequest,
     RenameFileResponse
-  >({ endpoint: ENDPOINT_RENAME });
+  >({
+    endpoint: ENDPOINT_RENAME,
+    fallbackErrorMessage: MESSAGES.FILE_RENAME_ERROR,
+  });
 
   const renameFile = useCallback(
     (params: RenameFileRequest) =>
@@ -81,7 +85,11 @@ export default useRenameFile;
 - Return shape: `{ isLoading, error, [actionName], abort }`.
 - Abort-on-unmount and error state are handled inside `useApiRequest` — do not
   reimplement them.
-- Fallback error messages come from `MESSAGES` in `src/constants/messages.ts`.
+- Pass a `fallbackErrorMessage` from `MESSAGES` (`src/constants/messages.ts`); it is
+  used whenever the server gives no message, including network failures.
+- `execute` resolves only with the success response and throws on failure, and the
+  hook's `error` holds the message. Components render that `error` and don't
+  re-derive it from the response.
 - Known exception: `useMultiFileUpload` runs a sequential per-file `fetch` loop with
   its own abort handling, because `useApiRequest` models a single request. Do not
   copy that pattern for ordinary mutations.

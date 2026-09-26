@@ -62,23 +62,26 @@ describe("MoveToTrashModal", () => {
     });
   });
 
-  it("keeps the modal open and shows the message on API errors", async () => {
+  it("keeps the modal open when the delete fails", async () => {
     const user = userEvent.setup();
-    mockedUseDelete.mockReturnValue(
-      hookReturn({
-        deleteFile: vi.fn().mockResolvedValue({
-          status: "error",
-          message: "削除失敗",
-        }),
-      }),
-    );
+    const deleteFile = vi.fn().mockRejectedValue(new Error("削除失敗"));
+    mockedUseDelete.mockReturnValue(hookReturn({ deleteFile }));
     const { onSuccess } = renderModal();
 
     await user.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
 
-    expect(await screen.findByText("削除失敗")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(deleteFile).toHaveBeenCalledOnce();
+    });
     expect(onSuccess).not.toHaveBeenCalled();
     expect(screen.getByRole("dialog")).toBeInTheDocument();
+  });
+
+  it("shows the error reported by the delete hook", () => {
+    mockedUseDelete.mockReturnValue(hookReturn({ error: "削除失敗" }));
+    renderModal();
+
+    expect(screen.getByText("削除失敗")).toBeInTheDocument();
   });
 
   it("disables the confirm button while deleting", () => {

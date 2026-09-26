@@ -1,27 +1,24 @@
-import { useCallback, useEffect, useId, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import useSWR from "swr";
 import { ENDPOINT_LIST } from "@/constants/config";
 import { MESSAGES } from "@/constants/messages";
 import {
   type DirectoryItem,
   type FileListResponse,
-  isErrorResponse,
+  type FileListSuccessResponse,
   isSuccessResponse,
 } from "@/types/api";
 
-type UseFileListOptions = {
-  isolated?: boolean;
-};
+// Only messages from the server reach the UI; network failures and other
+// throws show MESSAGES.FILE_LOAD_ERROR instead.
+class ServerError extends Error {}
 
 type UseFileListReturn = {
   items: DirectoryItem[];
   isLoading: boolean;
   errorMessage: string | null;
-  setPath: (path: string) => void;
-  refresh: () => Promise<FileListResponse | undefined>;
+  refresh: () => Promise<FileListSuccessResponse | undefined>;
 };
-
-const SWR_KEY_SEPARATOR = "__file-list__";
 
 const buildUrl = (path: string) => {
   if (!path) {
@@ -33,87 +30,43 @@ const buildUrl = (path: string) => {
   return `${ENDPOINT_LIST}?${searchParams.toString()}`;
 };
 
-const getFetchUrl = (key: string) => {
-  const separatorIndex = key.indexOf(SWR_KEY_SEPARATOR);
-
-  return separatorIndex === -1
-    ? key
-    : key.slice(separatorIndex + SWR_KEY_SEPARATOR.length);
-};
-
-const fetcher = async (key: string): Promise<FileListResponse> => {
-  const response = await fetch(getFetchUrl(key));
-  const text = await response.text();
-
-  if (!response.ok) {
-    let message = text || MESSAGES.FILE_LOAD_ERROR;
-
-    try {
-      const data = JSON.parse(text) as Partial<FileListResponse>;
-
-      if (
-        data &&
-        typeof data === "object" &&
-        "message" in data &&
-        typeof data.message === "string"
-      ) {
-        message = data.message;
-      }
-    } catch {
-      // Ignore JSON parse failure here and keep the raw response text.
-    }
-
-    throw new Error(message);
-  }
+const fetcher = async (url: string): Promise<FileListSuccessResponse> => {
+  const response = await fetch(url);
+  let data: FileListResponse | null = null;
 
   try {
-    return JSON.parse(text) as FileListResponse;
+    data = JSON.parse(await response.text()) as FileListResponse | null;
   } catch {
-    throw new Error("Invalid JSON response from server");
+    // Non-JSON bodies (e.g. a proxy's HTML error page) fall back below.
   }
+
+  if (response.ok && data && isSuccessResponse(data)) {
+    return data;
+  }
+
+  const message = (data as { message?: unknown } | null)?.message;
+  throw new ServerError(
+    typeof message === "string" && message ? message : MESSAGES.FILE_LOAD_ERROR,
+  );
 };
 
-const useFileList = (
-  initPath: string,
-  options: UseFileListOptions = {},
-): UseFileListReturn => {
-  const { isolated = false } = options;
-  const instanceId = useId();
-  const [path, setPath] = useState(initPath);
-
-  useEffect(() => {
-    setPath(initPath);
-  }, [initPath]);
-
-  const scopeKey = isolated ? instanceId : "shared";
-  const swrKey = useMemo(
-    () => `${scopeKey}${SWR_KEY_SEPARATOR}${buildUrl(path)}`,
-    [path, scopeKey],
-  );
-
+const useFileList = (path: string): UseFileListReturn => {
   const {
     data,
     error,
     isLoading,
     mutate: revalidate,
-  } = useSWR<FileListResponse>(swrKey, fetcher, { revalidateOnFocus: false });
+  } = useSWR<FileListSuccessResponse>(buildUrl(path), fetcher, {
+    revalidateOnFocus: false,
+  });
 
-  const items = useMemo(
-    () => (data && isSuccessResponse(data) ? data.list : []),
-    [data],
-  );
+  const items = useMemo(() => data?.list ?? [], [data]);
 
-  const errorMessage = useMemo(() => {
-    if (error instanceof Error) {
-      return error.message || MESSAGES.FILE_LOAD_ERROR;
-    }
-
-    if (data && isErrorResponse(data)) {
-      return data.message || MESSAGES.FILE_LOAD_ERROR;
-    }
-
-    return null;
-  }, [data, error]);
+  const errorMessage = error
+    ? error instanceof ServerError
+      ? error.message
+      : MESSAGES.FILE_LOAD_ERROR
+    : null;
 
   const refresh = useCallback(() => revalidate(), [revalidate]);
 
@@ -121,7 +74,6 @@ const useFileList = (
     items,
     isLoading,
     errorMessage,
-    setPath,
     refresh,
   };
 };

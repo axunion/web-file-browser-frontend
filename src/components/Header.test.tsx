@@ -63,9 +63,8 @@ describe("Header", () => {
     });
     mockedUseMultiFileUpload.mockReturnValue({
       isUploading: false,
-      progress: [],
-      uploadFiles: vi.fn().mockResolvedValue(undefined),
-      abort: vi.fn(),
+      statuses: [],
+      uploadFiles: vi.fn().mockResolvedValue(null),
     });
   });
 

@@ -1,9 +1,13 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import MultiFileUploadModal from "@/components/MultiFileUploadModal";
-import { getMultiFileUploadCountLabel, MESSAGES } from "@/constants/messages";
-import type { FileUploadProgress } from "@/hooks/useMultiFileUpload";
+import {
+  getMultiFileUploadCountLabel,
+  getMultiFileUploadProgressLabel,
+  MESSAGES,
+} from "@/constants/messages";
+import type { FileUploadStatus } from "@/hooks/useMultiFileUpload";
 
 const mockUseMultiFileUpload = vi.fn();
 
@@ -16,14 +20,14 @@ const files = [new File(["a"], "a.txt"), new File(["b"], "b.txt")];
 const setupHook = (
   overrides: Partial<{
     isUploading: boolean;
-    progress: FileUploadProgress[];
+    statuses: FileUploadStatus[];
+    uploadFiles: ReturnType<typeof vi.fn>;
   }> = {},
 ) => {
   const hook = {
     isUploading: false,
-    progress: [] as FileUploadProgress[],
-    uploadFiles: vi.fn(),
-    abort: vi.fn(),
+    statuses: [] as FileUploadStatus[],
+    uploadFiles: vi.fn().mockResolvedValue(null),
     ...overrides,
   };
   mockUseMultiFileUpload.mockReturnValue(hook);
@@ -75,68 +79,74 @@ describe("MultiFileUploadModal", () => {
   });
 
   it("disables the confirm button while uploading", () => {
-    setupHook({
-      isUploading: true,
-      progress: [
-        { fileName: "a.txt", status: "uploading" },
-        { fileName: "b.txt", status: "pending" },
-      ],
-    });
+    setupHook({ isUploading: true, statuses: ["uploading", "pending"] });
     renderModal();
 
     expect(
       screen.getByRole("button", { name: MESSAGES.UPLOAD_FILES_ARIA_LABEL }),
     ).toBeDisabled();
+    expect(
+      screen.getByText(getMultiFileUploadProgressLabel(0, files.length)),
+    ).toBeInTheDocument();
   });
 
-  it("notifies success when all files uploaded", () => {
+  it("notifies success when all files uploaded", async () => {
+    const user = userEvent.setup();
     setupHook({
-      progress: [
-        { fileName: "a.txt", status: "success" },
-        { fileName: "b.txt", status: "success" },
-      ],
+      uploadFiles: vi.fn().mockResolvedValue(["success", "success"]),
     });
-    const { onSuccess, showToast } = renderModal();
+    const { onSuccess, onFileListUpdate, showToast } = renderModal();
 
+    await user.click(
+      screen.getByRole("button", { name: MESSAGES.UPLOAD_FILES_ARIA_LABEL }),
+    );
+
+    await waitFor(() => {
+      expect(onSuccess).toHaveBeenCalledTimes(1);
+    });
     expect(showToast).toHaveBeenCalledWith(
       "success",
       MESSAGES.MULTI_FILE_UPLOAD_SUCCESS,
     );
-    expect(onSuccess).toHaveBeenCalledTimes(1);
+    expect(onFileListUpdate).not.toHaveBeenCalled();
   });
 
-  it("refreshes the file list but stays open on partial failure", () => {
+  it("refreshes the file list but stays open on partial failure", async () => {
+    const user = userEvent.setup();
     setupHook({
-      progress: [
-        { fileName: "a.txt", status: "success" },
-        { fileName: "b.txt", status: "error" },
-      ],
+      uploadFiles: vi.fn().mockResolvedValue(["success", "error"]),
     });
     const { onSuccess, onFileListUpdate, showToast } = renderModal();
 
+    await user.click(
+      screen.getByRole("button", { name: MESSAGES.UPLOAD_FILES_ARIA_LABEL }),
+    );
+
+    await waitFor(() => {
+      expect(onFileListUpdate).toHaveBeenCalledTimes(1);
+    });
     expect(showToast).toHaveBeenCalledWith(
       "warning",
       MESSAGES.MULTI_FILE_UPLOAD_PARTIAL_ERROR,
     );
-    expect(onFileListUpdate).toHaveBeenCalledTimes(1);
     expect(onSuccess).not.toHaveBeenCalled();
     expect(screen.getByRole("dialog")).toBeInTheDocument();
   });
 
-  it("aborts the upload when the modal is closed", async () => {
+  it("stays silent when the upload was aborted", async () => {
     const user = userEvent.setup();
-    const hook = setupHook();
-    const { onClose } = renderModal();
+    const hook = setupHook({ uploadFiles: vi.fn().mockResolvedValue(null) });
+    const { onSuccess, onFileListUpdate, showToast } = renderModal();
 
     await user.click(
-      screen.getByRole("button", { name: MESSAGES.CLOSE_MODAL }),
+      screen.getByRole("button", { name: MESSAGES.UPLOAD_FILES_ARIA_LABEL }),
     );
-    const overlay = screen.getByRole("dialog").parentElement;
-    if (overlay) {
-      fireEvent.animationEnd(overlay);
-    }
 
-    expect(hook.abort).toHaveBeenCalled();
-    expect(onClose).toHaveBeenCalled();
+    await waitFor(() => {
+      expect(hook.uploadFiles).toHaveBeenCalledOnce();
+    });
+    expect(showToast).not.toHaveBeenCalled();
+    expect(onSuccess).not.toHaveBeenCalled();
+    expect(onFileListUpdate).not.toHaveBeenCalled();
   });
 });

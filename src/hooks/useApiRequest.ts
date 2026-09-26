@@ -1,8 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { type ApiResponse, isErrorResponse } from "@/types/api";
+import {
+  type ApiResponse,
+  type ErrorResponse,
+  isSuccessResponse,
+} from "@/types/api";
+
+// Only messages from the server reach the UI; anything else (network failures,
+// unexpected throws) shows the caller's fallback message instead.
+class ServerError extends Error {}
 
 type ApiRequestOptions = {
   endpoint: string;
+  fallbackErrorMessage: string;
 };
 
 type ApiRequestState = {
@@ -14,7 +23,7 @@ type UseApiRequestReturn<TParams, TResponse> = ApiRequestState & {
   execute: (
     params: TParams,
     prepareBody: (params: TParams) => FormData | URLSearchParams,
-  ) => Promise<TResponse>;
+  ) => Promise<Exclude<TResponse, ErrorResponse>>;
   abort: () => void;
 };
 
@@ -44,7 +53,7 @@ const useApiRequest = <TParams, TResponse extends ApiResponse>(
     async (
       params: TParams,
       prepareBody: (params: TParams) => FormData | URLSearchParams,
-    ): Promise<TResponse> => {
+    ): Promise<Exclude<TResponse, ErrorResponse>> => {
       abortControllerRef.current?.abort();
 
       const abortController = new AbortController();
@@ -68,32 +77,33 @@ const useApiRequest = <TParams, TResponse extends ApiResponse>(
           signal: abortController.signal,
         });
 
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(errorText || "Request failed");
-        }
-
-        const text = await response.text();
-        let data: TResponse;
+        let data: TResponse | null = null;
 
         try {
-          data = JSON.parse(text) as TResponse;
+          data = JSON.parse(await response.text()) as TResponse | null;
         } catch {
-          throw new Error("Invalid JSON response from server");
+          // Non-JSON bodies (e.g. a proxy's HTML error page) fall back below.
         }
 
-        if (isErrorResponse(data)) {
-          throw new Error(data.message || "Request failed");
+        if (response.ok && data && isSuccessResponse(data)) {
+          return data;
         }
 
-        return data;
+        const message = (data as { message?: unknown } | null)?.message;
+        throw new ServerError(
+          typeof message === "string" && message
+            ? message
+            : options.fallbackErrorMessage,
+        );
       } catch (err) {
         if (err instanceof Error && err.name === "AbortError") {
           throw err;
         }
 
         const errorMessage =
-          err instanceof Error ? err.message : "An unknown error occurred";
+          err instanceof ServerError
+            ? err.message
+            : options.fallbackErrorMessage;
 
         if (isMountedRef.current) {
           setError(errorMessage);
@@ -105,7 +115,7 @@ const useApiRequest = <TParams, TResponse extends ApiResponse>(
         }
       }
     },
-    [options.endpoint],
+    [options.endpoint, options.fallbackErrorMessage],
   );
 
   return { isLoading, error, execute, abort };

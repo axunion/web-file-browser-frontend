@@ -1,13 +1,15 @@
 import { Icon } from "@iconify/react";
 import { memo } from "react";
+import { ENDPOINT_DATA } from "@/constants/config";
 import { getImageAlt, getOpenFileAriaLabel } from "@/constants/messages";
 import type { DirectoryItem } from "@/types/api";
 import { getFileType } from "@/utils/fileType";
+import { toEncodedPath } from "@/utils/path";
 import styles from "./FileItem.module.css";
 
 export type FileItemProps = {
   file: DirectoryItem;
-  dirPath: string;
+  dirPaths: string[];
 };
 
 const icons = {
@@ -18,7 +20,7 @@ const icons = {
   file: <Icon icon="flat-color-icons:file" className={styles.icon} />,
 };
 
-const FileItem = memo(({ file, dirPath }: FileItemProps) => {
+const FileItem = memo(({ file, dirPaths }: FileItemProps) => {
   if (file.type === "directory") {
     return (
       <>
@@ -29,7 +31,7 @@ const FileItem = memo(({ file, dirPath }: FileItemProps) => {
   }
 
   const fileType = getFileType(file.name);
-  const src = `${dirPath}${encodeURIComponent(file.name)}`;
+  const src = `${ENDPOINT_DATA}${toEncodedPath([...dirPaths, file.name])}`;
 
   if (fileType === "image") {
     return (

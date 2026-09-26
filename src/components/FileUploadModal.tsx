@@ -1,10 +1,9 @@
 import { Icon } from "@iconify/react";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import Modal from "@/components/Modal";
 import { MESSAGES } from "@/constants/messages";
 import useFileUpload from "@/hooks/useFileUpload";
-import { isErrorResponse } from "@/types/api";
 import styles from "./FileUploadModal.module.css";
 import commonStyles from "./ModalCommon.module.css";
 
@@ -21,23 +20,14 @@ const FileUploadModal = ({
   onClose,
   onSuccess,
 }: FileUploadModalProps) => {
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const { isLoading, uploadFile } = useFileUpload();
+  const { isLoading, error, uploadFile } = useFileUpload();
 
   const handleUpload = useCallback(async () => {
     try {
-      const response = await uploadFile(file, currentPath);
-
-      if (isErrorResponse(response)) {
-        setErrorMessage(response.message || MESSAGES.FILE_UPLOAD_ERROR);
-        return;
-      }
-
+      await uploadFile(file, currentPath);
       onSuccess();
-    } catch (error) {
-      setErrorMessage(
-        error instanceof Error ? error.message : MESSAGES.FILE_UPLOAD_ERROR,
-      );
+    } catch {
+      // useFileUpload exposes the failure through `error`.
     }
   }, [file, currentPath, onSuccess, uploadFile]);
 
@@ -51,10 +41,8 @@ const FileUploadModal = ({
 
         <p className={styles.fileName}>{file.name}</p>
 
-        {errorMessage && (
-          <p className={`${commonStyles.error} ${styles.error}`}>
-            {errorMessage}
-          </p>
+        {error && (
+          <p className={`${commonStyles.error} ${styles.error}`}>{error}</p>
         )}
 
         <button

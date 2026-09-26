@@ -22,7 +22,7 @@ const renderFileList = (
   render(
     <FileList
       list={items}
-      currentPath="my folder#1"
+      paths={["my folder#1"]}
       onFileListUpdate={vi.fn()}
       isNavigatingRef={{ current: false }}
       {...props}
@@ -73,7 +73,7 @@ describe("FileList", () => {
     });
 
     it("builds URLs directly under the data endpoint at the root path", () => {
-      renderFileList({ currentPath: "" });
+      renderFileList({ paths: [] });
 
       expect(screen.getByAltText(getImageAlt("photo 1.jpg"))).toHaveAttribute(
         "src",
@@ -94,6 +94,20 @@ describe("FileList", () => {
       );
 
       expect(window.location.hash).toBe("#/docs");
+    });
+
+    it("does not navigate on the click that ends a long press", async () => {
+      const user = userEvent.setup();
+      renderFileList();
+
+      const button = screen.getByRole("button", {
+        name: getFileItemAriaLabel("docs", "directory"),
+      });
+      await user.pointer({ keys: "[MouseLeft>]", target: button });
+      await screen.findByRole("menu");
+      await user.pointer({ keys: "[/MouseLeft]", target: button });
+
+      expect(window.location.hash).toBe("");
     });
 
     it("does not navigate while a navigation is already in flight", async () => {

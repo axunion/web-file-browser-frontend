@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import Modal from "@/components/Modal";
 import { MESSAGES } from "@/constants/messages";
 import useFileRename from "@/hooks/useFileRename";
-import { type DirectoryItem, isErrorResponse } from "@/types/api";
+import type { DirectoryItem } from "@/types/api";
 import commonStyles from "./ModalCommon.module.css";
 import styles from "./RenameModal.module.css";
 
@@ -29,9 +29,11 @@ const RenameModal = ({
   const extension = hasExtension ? originalName.substring(dotIndex) : "";
 
   const [newName, setNewName] = useState(nameWithoutExt);
-  const [error, setError] = useState<string | null>(null);
+  const [validationError, setValidationError] = useState<string | null>(null);
+  const [isEditedSinceSubmit, setIsEditedSinceSubmit] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const { renameFile, isLoading } = useFileRename();
+  const { renameFile, isLoading, error: requestError } = useFileRename();
+  const error = validationError ?? (isEditedSinceSubmit ? null : requestError);
 
   const validateName = (trimmed: string): string | null => {
     if (trimmed === "." || trimmed === "..") {
@@ -57,30 +59,24 @@ const RenameModal = ({
     e.preventDefault();
 
     const trimmed = newName.trim();
-    const validationError = validateName(trimmed);
+    const nameError = validateName(trimmed);
 
-    if (validationError) {
-      setError(validationError);
+    if (nameError) {
+      setValidationError(nameError);
       return;
     }
 
+    setIsEditedSinceSubmit(false);
+
     try {
-      const response = await renameFile({
+      await renameFile({
         path: currentPath,
         name: originalName,
         newName: trimmed + extension,
       });
-
-      if (isErrorResponse(response)) {
-        setError(response.message || MESSAGES.FILE_RENAME_ERROR);
-        return;
-      }
-
       onSuccess();
-    } catch (error) {
-      setError(
-        error instanceof Error ? error.message : MESSAGES.FILE_RENAME_ERROR,
-      );
+    } catch {
+      // useFileRename exposes the failure through `error`.
     }
   };
 
@@ -106,7 +102,8 @@ const RenameModal = ({
               value={newName}
               onChange={(e) => {
                 setNewName(e.target.value);
-                setError(null);
+                setValidationError(null);
+                setIsEditedSinceSubmit(true);
               }}
               disabled={isLoading}
               className={styles.input}

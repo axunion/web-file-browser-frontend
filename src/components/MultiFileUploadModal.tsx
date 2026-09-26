@@ -1,5 +1,4 @@
 import { Icon } from "@iconify/react";
-import { useCallback, useEffect } from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import Modal from "@/components/Modal";
 import {
@@ -45,42 +44,31 @@ const MultiFileUploadModal = ({
   onFileListUpdate,
   showToast,
 }: MultiFileUploadModalProps) => {
-  const { isUploading, progress, uploadFiles, abort } = useMultiFileUpload();
+  // Unmounting the modal aborts any in-flight upload inside the hook.
+  const { isUploading, statuses, uploadFiles } = useMultiFileUpload();
 
-  const handleClose = useCallback(() => {
-    abort();
-    onClose();
-  }, [abort, onClose]);
+  const handleUpload = async () => {
+    const result = await uploadFiles(files, currentPath);
+    if (!result) return;
 
-  const handleUpload = useCallback(async () => {
-    await uploadFiles(files, currentPath);
-  }, [files, currentPath, uploadFiles]);
-
-  useEffect(() => {
-    if (progress.length === 0) return;
-    if (isUploading) return;
-
-    const hasError = progress.some((p) => p.status === "error");
-    const allSuccess = progress.every((p) => p.status === "success");
-
-    if (allSuccess) {
+    if (result.every((status) => status === "success")) {
       showToast("success", MESSAGES.MULTI_FILE_UPLOAD_SUCCESS);
       onSuccess();
-    } else if (hasError) {
+    } else {
       showToast("warning", MESSAGES.MULTI_FILE_UPLOAD_PARTIAL_ERROR);
       onFileListUpdate();
     }
-  }, [isUploading, progress, onSuccess, onFileListUpdate, showToast]);
+  };
 
-  const completedCount = progress.filter(
-    (p) => p.status === "success" || p.status === "error",
+  const completedCount = statuses.filter(
+    (status) => status === "success" || status === "error",
   ).length;
 
   const showProgress =
-    isUploading || progress.some((p) => p.status !== "pending");
+    isUploading || statuses.some((status) => status !== "pending");
 
   return (
-    <Modal onClose={handleClose}>
+    <Modal onClose={onClose}>
       <section>
         <div className={commonStyles.header}>
           <Icon icon="line-md:upload-loop" className={commonStyles.icon} />
@@ -88,22 +76,19 @@ const MultiFileUploadModal = ({
         </div>
 
         <div className={styles.fileList} aria-busy={isUploading}>
-          {(progress.length > 0
-            ? progress
-            : files.map((f) => ({
-                fileName: f.name,
-                status: "pending" as FileUploadStatus,
-              }))
-          ).map((item) => (
-            <div key={item.fileName} className={styles.fileItem}>
-              <Icon
-                icon={STATUS_ICON[item.status]}
-                className={`${styles.statusIcon} ${STATUS_STYLE[item.status]}`}
-                aria-hidden
-              />
-              <span className={styles.fileName}>{item.fileName}</span>
-            </div>
-          ))}
+          {files.map((file, index) => {
+            const status = statuses[index] ?? "pending";
+            return (
+              <div key={file.name} className={styles.fileItem}>
+                <Icon
+                  icon={STATUS_ICON[status]}
+                  className={`${styles.statusIcon} ${STATUS_STYLE[status]}`}
+                  aria-hidden
+                />
+                <span className={styles.fileName}>{file.name}</span>
+              </div>
+            );
+          })}
         </div>
 
         <p className={styles.progress}>

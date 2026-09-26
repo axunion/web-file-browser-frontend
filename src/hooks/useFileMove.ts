@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { ENDPOINT_MOVE } from "@/constants/config";
+import { MESSAGES } from "@/constants/messages";
 import type { MoveFileRequest, MoveFileResponse } from "@/types/api";
 import useApiRequest from "./useApiRequest";
 
@@ -7,7 +8,10 @@ const useFileMove = () => {
   const { isLoading, error, execute, abort } = useApiRequest<
     MoveFileRequest,
     MoveFileResponse
-  >({ endpoint: ENDPOINT_MOVE });
+  >({
+    endpoint: ENDPOINT_MOVE,
+    fallbackErrorMessage: MESSAGES.FILE_MOVE_ERROR,
+  });
 
   const moveFile = useCallback(
     (params: MoveFileRequest) =>

@@ -192,4 +192,97 @@ describe("useLongPress", () => {
       expect(callback).toHaveBeenCalledWith("second", element);
     });
   });
+
+  describe("click suppression", () => {
+    const makeClickEvent = (detail = 1) =>
+      ({ detail, stopPropagation: vi.fn() }) as unknown as React.MouseEvent;
+
+    it("swallows exactly one click after a completed long press", () => {
+      const { result } = renderHook(() => useLongPress(vi.fn()));
+
+      act(() => {
+        result.current.onMouseDown("data")(makeMouseEvent(element));
+        vi.advanceTimersByTime(300);
+      });
+
+      const firstClick = makeClickEvent();
+      const secondClick = makeClickEvent();
+      result.current.onClickCapture(firstClick);
+      result.current.onClickCapture(secondClick);
+
+      expect(firstClick.stopPropagation).toHaveBeenCalledOnce();
+      expect(secondClick.stopPropagation).not.toHaveBeenCalled();
+    });
+
+    it("lets a keyboard click through even after a long press without a click", () => {
+      const { result } = renderHook(() => useLongPress(vi.fn()));
+
+      act(() => {
+        result.current.onTouchStart("data")(makeTouchEvent(element));
+        vi.advanceTimersByTime(300);
+      });
+
+      const keyboardClick = makeClickEvent(0);
+      result.current.onClickCapture(keyboardClick);
+      const nextPointerClick = makeClickEvent();
+      result.current.onClickCapture(nextPointerClick);
+
+      expect(keyboardClick.stopPropagation).not.toHaveBeenCalled();
+      expect(nextPointerClick.stopPropagation).not.toHaveBeenCalled();
+    });
+
+    it("does not swallow clicks after a short press", () => {
+      const { result } = renderHook(() => useLongPress(vi.fn()));
+
+      act(() => {
+        result.current.onMouseDown("data")(makeMouseEvent(element));
+        vi.advanceTimersByTime(100);
+        result.current.onMouseUp();
+      });
+
+      const click = makeClickEvent();
+      result.current.onClickCapture(click);
+
+      expect(click.stopPropagation).not.toHaveBeenCalled();
+    });
+
+    it("swallows the replayed click after a touch long press", () => {
+      const callback = vi.fn();
+      const { result } = renderHook(() => useLongPress(callback));
+
+      act(() => {
+        result.current.onTouchStart("data")(makeTouchEvent(element));
+        vi.advanceTimersByTime(300);
+        result.current.onTouchEnd();
+        // Browser-emulated mouse events for the same tap.
+        result.current.onMouseDown("data")(makeMouseEvent(element));
+        result.current.onMouseUp();
+      });
+
+      const click = makeClickEvent();
+      result.current.onClickCapture(click);
+
+      expect(click.stopPropagation).toHaveBeenCalledOnce();
+      expect(callback).toHaveBeenCalledOnce();
+    });
+
+    it("forgets a long press that no click followed once a new press starts", () => {
+      const { result } = renderHook(() => useLongPress(vi.fn()));
+
+      act(() => {
+        result.current.onTouchStart("data")(makeTouchEvent(element));
+        vi.advanceTimersByTime(300);
+        result.current.onTouchEnd();
+      });
+      act(() => {
+        result.current.onTouchStart("data")(makeTouchEvent(element));
+        result.current.onTouchEnd();
+      });
+
+      const click = makeClickEvent();
+      result.current.onClickCapture(click);
+
+      expect(click.stopPropagation).not.toHaveBeenCalled();
+    });
+  });
 });

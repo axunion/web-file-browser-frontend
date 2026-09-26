@@ -4,31 +4,19 @@ import type { UploadFileResponse } from "@/types/api";
 
 export type FileUploadStatus = "pending" | "uploading" | "success" | "error";
 
-export type FileUploadProgress = {
-  fileName: string;
-  status: FileUploadStatus;
-};
-
 type UseMultiFileUploadReturn = {
   isUploading: boolean;
-  progress: FileUploadProgress[];
-  uploadFiles: (files: File[], path: string) => Promise<void>;
-  abort: () => void;
+  statuses: FileUploadStatus[];
+  /** Resolves with each file's final status, or null when the run was aborted. */
+  uploadFiles: (
+    files: File[],
+    path: string,
+  ) => Promise<FileUploadStatus[] | null>;
 };
-
-const markAbortedFromIndex = (
-  prev: FileUploadProgress[],
-  fromIndex: number,
-): FileUploadProgress[] =>
-  prev.map((p, idx) =>
-    idx >= fromIndex && (p.status === "pending" || p.status === "uploading")
-      ? { ...p, status: "error" }
-      : p,
-  );
 
 const useMultiFileUpload = (): UseMultiFileUploadReturn => {
   const [isUploading, setIsUploading] = useState(false);
-  const [progress, setProgress] = useState<FileUploadProgress[]>([]);
+  const [statuses, setStatuses] = useState<FileUploadStatus[]>([]);
 
   const isMountedRef = useRef(true);
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -41,38 +29,32 @@ const useMultiFileUpload = (): UseMultiFileUploadReturn => {
     };
   }, []);
 
-  const abort = useCallback(() => {
-    abortControllerRef.current?.abort();
-  }, []);
-
   const uploadFiles = useCallback(async (files: File[], path: string) => {
     abortControllerRef.current?.abort();
     const abortController = new AbortController();
     abortControllerRef.current = abortController;
 
-    const initial: FileUploadProgress[] = files.map((f) => ({
-      fileName: f.name,
-      status: "pending",
-    }));
+    // A run superseded by a newer call or by unmount stops touching state.
+    const isCurrent = () =>
+      isMountedRef.current && abortControllerRef.current === abortController;
 
-    if (isMountedRef.current) {
-      setProgress(initial);
-      setIsUploading(true);
-    }
+    const result: FileUploadStatus[] = files.map(() => "pending");
+    const publish = () => {
+      if (isCurrent()) {
+        setStatuses([...result]);
+      }
+    };
+
+    setIsUploading(true);
+    publish();
 
     for (let i = 0; i < files.length; i++) {
       if (abortController.signal.aborted) {
-        if (isMountedRef.current) {
-          setProgress((prev) => markAbortedFromIndex(prev, i));
-        }
         break;
       }
 
-      if (isMountedRef.current) {
-        setProgress((prev) =>
-          prev.map((p, idx) => (idx === i ? { ...p, status: "uploading" } : p)),
-        );
-      }
+      result[i] = "uploading";
+      publish();
 
       try {
         const formData = new FormData();
@@ -85,41 +67,32 @@ const useMultiFileUpload = (): UseMultiFileUploadReturn => {
           signal: abortController.signal,
         });
 
-        if (!response.ok) {
-          throw new Error("Request failed");
-        }
-
-        const data = (await response.json()) as UploadFileResponse;
-        const status: FileUploadStatus =
-          data.status === "success" ? "success" : "error";
-
-        if (isMountedRef.current) {
-          setProgress((prev) =>
-            prev.map((p, idx) => (idx === i ? { ...p, status } : p)),
-          );
-        }
+        const data = response.ok
+          ? ((await response.json()) as UploadFileResponse)
+          : null;
+        result[i] = data?.status === "success" ? "success" : "error";
       } catch (err) {
         if (err instanceof Error && err.name === "AbortError") {
-          if (isMountedRef.current) {
-            setProgress((prev) => markAbortedFromIndex(prev, i));
-          }
           break;
         }
-
-        if (isMountedRef.current) {
-          setProgress((prev) =>
-            prev.map((p, idx) => (idx === i ? { ...p, status: "error" } : p)),
-          );
-        }
+        result[i] = "error";
       }
+
+      publish();
     }
 
-    if (isMountedRef.current) {
+    if (abortController.signal.aborted) {
+      return null;
+    }
+
+    if (isCurrent()) {
       setIsUploading(false);
     }
+
+    return result;
   }, []);
 
-  return { isUploading, progress, uploadFiles, abort };
+  return { isUploading, statuses, uploadFiles };
 };
 
 export default useMultiFileUpload;

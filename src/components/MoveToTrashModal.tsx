@@ -1,9 +1,8 @@
 import { Icon } from "@iconify/react";
-import { useState } from "react";
 import Modal from "@/components/Modal";
 import { MESSAGES } from "@/constants/messages";
 import useDelete from "@/hooks/useDelete";
-import { type DirectoryItem, isErrorResponse } from "@/types/api";
+import type { DirectoryItem } from "@/types/api";
 import commonStyles from "./ModalCommon.module.css";
 import styles from "./MoveToTrashModal.module.css";
 
@@ -20,28 +19,16 @@ const MoveToTrashModal = ({
   onClose,
   onSuccess,
 }: MoveToTrashModalProps) => {
-  const [error, setError] = useState<string | null>(null);
-  const { deleteFile, isLoading } = useDelete();
+  const { deleteFile, isLoading, error } = useDelete();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      const response = await deleteFile({
-        path: currentPath,
-        name: item.name,
-      });
-
-      if (isErrorResponse(response)) {
-        setError(response.message || MESSAGES.FILE_DELETE_ERROR);
-        return;
-      }
-
+      await deleteFile({ path: currentPath, name: item.name });
       onSuccess();
-    } catch (error) {
-      setError(
-        error instanceof Error ? error.message : MESSAGES.FILE_DELETE_ERROR,
-      );
+    } catch {
+      // useDelete exposes the failure through `error`.
     }
   };
 

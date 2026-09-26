@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { ENDPOINT_UPLOAD } from "@/constants/config";
+import { MESSAGES } from "@/constants/messages";
 import type { UploadFileRequest, UploadFileResponse } from "@/types/api";
 import useApiRequest from "./useApiRequest";
 
@@ -7,7 +8,10 @@ const useFileUpload = () => {
   const { isLoading, error, execute, abort } = useApiRequest<
     UploadFileRequest,
     UploadFileResponse
-  >({ endpoint: ENDPOINT_UPLOAD });
+  >({
+    endpoint: ENDPOINT_UPLOAD,
+    fallbackErrorMessage: MESSAGES.FILE_UPLOAD_ERROR,
+  });
 
   const uploadFile = useCallback(
     (file: File, path: string) =>

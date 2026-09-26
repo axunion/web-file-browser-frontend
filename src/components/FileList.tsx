@@ -1,26 +1,18 @@
-import {
-  memo,
-  type RefObject,
-  useCallback,
-  useMemo,
-  useReducer,
-  useRef,
-} from "react";
+import { memo, type RefObject, useCallback, useReducer } from "react";
 import ContextMenu from "@/components/ContextMenu";
 import FileItem from "@/components/FileItem";
 import MoveModal from "@/components/MoveModal";
 import MoveToTrashModal from "@/components/MoveToTrashModal";
 import RenameModal from "@/components/RenameModal";
-import { ENDPOINT_DATA } from "@/constants/config";
 import { getFileItemAriaLabel } from "@/constants/messages";
 import useLongPress from "@/hooks/useLongPress";
 import type { DirectoryItem } from "@/types/api";
-import { appendPath, toEncodedPath } from "@/utils/path";
+import { appendPath } from "@/utils/path";
 import styles from "./FileList.module.css";
 
 export type FileListProps = {
   list: DirectoryItem[];
-  currentPath: string;
+  paths: string[];
   onFileListUpdate?: () => void;
   isNavigatingRef: RefObject<boolean>;
 };
@@ -79,19 +71,14 @@ const fileListReducer = (
 };
 
 const FileList = memo(
-  ({ list, currentPath, onFileListUpdate, isNavigatingRef }: FileListProps) => {
+  ({ list, paths, onFileListUpdate, isNavigatingRef }: FileListProps) => {
     const [state, dispatch] = useReducer(fileListReducer, fileListInitialState);
     const { contextMenu, activeModal } = state;
-    const didLongPressRef = useRef(false);
 
-    const dirPath = useMemo(() => {
-      const encodedPath = toEncodedPath(currentPath.split("/"));
-      return encodedPath ? `${ENDPOINT_DATA}${encodedPath}/` : ENDPOINT_DATA;
-    }, [currentPath]);
+    const currentPath = paths.join("/");
 
     const handleLongPress = useCallback(
       (item: DirectoryItem, element: HTMLElement) => {
-        didLongPressRef.current = true;
         const rect = element.getBoundingClientRect();
         const position = {
           x: rect.left + rect.width / 2,
@@ -109,11 +96,6 @@ const FileList = memo(
     const handleClick = useCallback(
       (item: DirectoryItem) => {
         if (isNavigatingRef.current) {
-          return;
-        }
-
-        if (didLongPressRef.current) {
-          didLongPressRef.current = false;
           return;
         }
 
@@ -165,6 +147,7 @@ const FileList = memo(
             style={{ animationDelay: `${Math.min(index * 0.03, 0.15)}s` }}
             className={`content-reveal ${styles.itemButton}`}
             aria-label={getFileItemAriaLabel(item.name, item.type)}
+            onClickCapture={longPressHandlers.onClickCapture}
             onClick={() => handleClick(item)}
             onMouseDown={longPressHandlers.onMouseDown(item)}
             onMouseUp={longPressHandlers.onMouseUp}
@@ -173,7 +156,7 @@ const FileList = memo(
             onTouchEnd={longPressHandlers.onTouchEnd}
             onTouchCancel={longPressHandlers.onTouchCancel}
           >
-            <FileItem file={item} dirPath={dirPath} />
+            <FileItem file={item} dirPaths={paths} />
           </button>
         ))}
 

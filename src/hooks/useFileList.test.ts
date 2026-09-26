@@ -2,6 +2,7 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import { createElement, type ReactNode } from "react";
 import { SWRConfig } from "swr";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { MESSAGES } from "@/constants/messages";
 import useFileList from "./useFileList";
 
 const createResponse = (body: string, ok = true) => ({
@@ -111,7 +112,10 @@ describe("useFileList", () => {
         ),
       );
 
-    const { result } = renderHook(() => useFileList(""), { wrapper });
+    const { result, rerender } = renderHook(
+      ({ path }: { path: string }) => useFileList(path),
+      { wrapper, initialProps: { path: "" } },
+    );
 
     await waitFor(() => {
       expect(result.current.items).toEqual([
@@ -119,9 +123,7 @@ describe("useFileList", () => {
       ]);
     });
 
-    act(() => {
-      result.current.setPath("special%20folder");
-    });
+    rerender({ path: "special%20folder" });
 
     await waitFor(() => {
       expect(result.current.items).toEqual([
@@ -133,6 +135,114 @@ describe("useFileList", () => {
       2,
       expect.stringContaining("path=special%2520folder"),
     );
+  });
+
+  it("should never expose the previous path's items after the path changes", async () => {
+    global.fetch = vi
+      .fn()
+      .mockResolvedValueOnce(
+        createResponse(
+          JSON.stringify({
+            status: "success",
+            list: [{ name: "root.txt", type: "file" }],
+          }),
+        ),
+      )
+      .mockImplementationOnce(() => new Promise(() => {}));
+
+    const { result, rerender } = renderHook(
+      ({ path }: { path: string }) => useFileList(path),
+      { wrapper, initialProps: { path: "" } },
+    );
+
+    await waitFor(() => {
+      expect(result.current.items).toEqual([
+        { name: "root.txt", type: "file" },
+      ]);
+    });
+
+    rerender({ path: "nested" });
+
+    expect(result.current.items).toEqual([]);
+    expect(result.current.isLoading).toBe(true);
+  });
+
+  it("should share one request between hooks reading the same path", async () => {
+    global.fetch = vi.fn().mockResolvedValue(
+      createResponse(
+        JSON.stringify({
+          status: "success",
+          list: [{ name: "shared.txt", type: "file" }],
+        }),
+      ),
+    );
+
+    const { result } = renderHook(
+      () => ({ first: useFileList("docs"), second: useFileList("docs") }),
+      { wrapper },
+    );
+
+    await waitFor(() => {
+      expect(result.current.second.items).toEqual([
+        { name: "shared.txt", type: "file" },
+      ]);
+    });
+
+    expect(result.current.first.items).toEqual([
+      { name: "shared.txt", type: "file" },
+    ]);
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+  });
+
+  it("should fall back to the load error message when the request itself fails", async () => {
+    global.fetch = vi.fn().mockRejectedValue(new TypeError("Failed to fetch"));
+
+    const { result } = renderHook(() => useFileList(""), { wrapper });
+
+    await waitFor(() => {
+      expect(result.current.errorMessage).toBe(MESSAGES.FILE_LOAD_ERROR);
+    });
+  });
+
+  it("should fall back to the load error message for a non-ok HTML body", async () => {
+    global.fetch = vi
+      .fn()
+      .mockResolvedValue(
+        createResponse("<html><title>502 Bad Gateway</title></html>", false),
+      );
+
+    const { result } = renderHook(() => useFileList(""), { wrapper });
+
+    await waitFor(() => {
+      expect(result.current.errorMessage).toBe(MESSAGES.FILE_LOAD_ERROR);
+    });
+  });
+
+  it("should fall back to the load error message for a non-string message", async () => {
+    global.fetch = vi
+      .fn()
+      .mockResolvedValue(
+        createResponse(
+          JSON.stringify({ status: "error", message: { code: 1 } }),
+          false,
+        ),
+      );
+
+    const { result } = renderHook(() => useFileList(""), { wrapper });
+
+    await waitFor(() => {
+      expect(result.current.errorMessage).toBe(MESSAGES.FILE_LOAD_ERROR);
+    });
+  });
+
+  it("should fall back to the load error message for invalid JSON", async () => {
+    global.fetch = vi.fn().mockResolvedValue(createResponse("<html>"));
+
+    const { result } = renderHook(() => useFileList(""), { wrapper });
+
+    await waitFor(() => {
+      expect(result.current.errorMessage).toBe(MESSAGES.FILE_LOAD_ERROR);
+    });
   });
 
   it("should keep isLoading false while a refresh revalidates", async () => {

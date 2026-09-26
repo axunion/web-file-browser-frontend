@@ -4,7 +4,7 @@ import Modal from "@/components/Modal";
 import { MESSAGES } from "@/constants/messages";
 import useFileList from "@/hooks/useFileList";
 import useFileMove from "@/hooks/useFileMove";
-import { type DirectoryItem, isErrorResponse } from "@/types/api";
+import type { DirectoryItem } from "@/types/api";
 import { getParentPaths } from "@/utils/path";
 import commonStyles from "./ModalCommon.module.css";
 import styles from "./MoveModal.module.css";
@@ -23,17 +23,9 @@ const MoveModal = ({
   onSuccess,
 }: MoveModalProps) => {
   const [browsePaths, setBrowsePaths] = useState<string[]>([]);
-  const [error, setError] = useState<string | null>(null);
-  const { moveFile, isLoading } = useFileMove();
-  const {
-    items,
-    isLoading: isLoadingDirs,
-    setPath,
-  } = useFileList("", {
-    isolated: true,
-  });
-
-  const browsePath = useMemo(() => browsePaths.join("/"), [browsePaths]);
+  const { moveFile, isLoading, error } = useFileMove();
+  const browsePath = browsePaths.join("/");
+  const { items, isLoading: isLoadingDirs } = useFileList(browsePath);
 
   const directories = useMemo(
     () => items.filter((listItem) => listItem.type === "directory"),
@@ -41,37 +33,23 @@ const MoveModal = ({
   );
 
   const handleNavigateUp = () => {
-    const newPaths = getParentPaths(browsePaths);
-    setBrowsePaths(newPaths);
-    setPath(newPaths.join("/"));
+    setBrowsePaths(getParentPaths(browsePaths));
   };
 
   const handleNavigateInto = (dirName: string) => {
-    const newPaths = [...browsePaths, dirName];
-    setBrowsePaths(newPaths);
-    setPath(newPaths.join("/"));
+    setBrowsePaths([...browsePaths, dirName]);
   };
 
   const handleMove = async () => {
     try {
-      const response = await moveFile({
+      await moveFile({
         path: currentPath,
         name: item.name,
         destinationPath: browsePath || "/",
       });
-
-      if (isErrorResponse(response)) {
-        setError(response.message || MESSAGES.FILE_MOVE_ERROR);
-        return;
-      }
-
       onSuccess();
-    } catch (moveError) {
-      setError(
-        moveError instanceof Error
-          ? moveError.message
-          : MESSAGES.FILE_MOVE_ERROR,
-      );
+    } catch {
+      // useFileMove exposes the failure through `error`.
     }
   };
 

@@ -282,11 +282,8 @@ describe("RenameModal", () => {
   });
 
   describe("error path", () => {
-    it("keeps the modal open and shows the message on API errors", async () => {
-      const renameFile = vi.fn().mockResolvedValue({
-        status: "error",
-        message: "名前変更失敗",
-      });
+    it("keeps the modal open when the rename fails", async () => {
+      const renameFile = vi.fn().mockRejectedValue(new Error("名前変更失敗"));
       const onSuccess = vi.fn();
       mockedUseFileRename.mockReturnValue({
         isLoading: false,
@@ -307,9 +304,70 @@ describe("RenameModal", () => {
       const { user } = await typeNewName("photo-renamed");
       await user.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
 
-      expect(await screen.findByText("名前変更失敗")).toBeInTheDocument();
+      await waitFor(() => {
+        expect(renameFile).toHaveBeenCalledOnce();
+      });
       expect(onSuccess).not.toHaveBeenCalled();
       expect(screen.getByRole("dialog")).toBeInTheDocument();
+    });
+
+    it("shows the hook's error until the user edits the name again", async () => {
+      mockedUseFileRename.mockReturnValue({
+        isLoading: false,
+        error: "名前変更失敗",
+        renameFile: vi.fn(),
+        abort: vi.fn(),
+      });
+
+      render(
+        <RenameModal
+          item={{ name: "photo.jpg", type: "file" }}
+          currentPath="albums"
+          onClose={vi.fn()}
+          onSuccess={vi.fn()}
+        />,
+      );
+
+      expect(screen.getByText("名前変更失敗")).toBeInTheDocument();
+
+      await typeNewName("photo-renamed");
+
+      expect(screen.queryByText("名前変更失敗")).not.toBeInTheDocument();
+    });
+
+    it("shows the request error again after resubmitting an edited name", async () => {
+      const hook = {
+        isLoading: false,
+        error: "名前変更失敗" as string | null,
+        renameFile: vi.fn().mockRejectedValue(new Error("再度失敗")),
+        abort: vi.fn(),
+      };
+      mockedUseFileRename.mockImplementation(() => hook);
+
+      const { rerender } = render(
+        <RenameModal
+          item={{ name: "photo.jpg", type: "file" }}
+          currentPath="albums"
+          onClose={vi.fn()}
+          onSuccess={vi.fn()}
+        />,
+      );
+
+      const { user } = await typeNewName("photo-renamed");
+      expect(screen.queryByText("名前変更失敗")).not.toBeInTheDocument();
+
+      await user.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
+      hook.error = "再度失敗";
+      rerender(
+        <RenameModal
+          item={{ name: "photo.jpg", type: "file" }}
+          currentPath="albums"
+          onClose={vi.fn()}
+          onSuccess={vi.fn()}
+        />,
+      );
+
+      expect(await screen.findByText("再度失敗")).toBeInTheDocument();
     });
   });
 

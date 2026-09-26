@@ -6,7 +6,6 @@ export const MESSAGES = {
   CLOSE_MODAL: "モーダルを閉じる",
   FILE_ACTIONS: "ファイル操作",
   CONFIRM: "OK",
-  ERROR_OCCURRED: "エラーが発生しました。",
   FILE_LOAD_ERROR: "ファイルの読み込み中にエラーが発生しました。",
   FILE_UPLOAD_ERROR: "アップロードに失敗しました。",
   FILE_RENAME_ERROR: "名前の変更に失敗しました。",

@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { ENDPOINT_RENAME } from "@/constants/config";
+import { MESSAGES } from "@/constants/messages";
 import type { RenameFileRequest, RenameFileResponse } from "@/types/api";
 import useApiRequest from "./useApiRequest";
 
@@ -7,7 +8,10 @@ const useRenameFile = () => {
   const { isLoading, error, execute, abort } = useApiRequest<
     RenameFileRequest,
     RenameFileResponse
-  >({ endpoint: ENDPOINT_RENAME });
+  >({
+    endpoint: ENDPOINT_RENAME,
+    fallbackErrorMessage: MESSAGES.FILE_RENAME_ERROR,
+  });
 
   const renameFile = useCallback(
     (params: RenameFileRequest) =>

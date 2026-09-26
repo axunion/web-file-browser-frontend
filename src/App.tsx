@@ -68,7 +68,7 @@ const App = () => {
         ) : items.length > 0 ? (
           <FileList
             list={items}
-            currentPath={hashResult.path}
+            paths={hashResult.paths}
             onFileListUpdate={handleFileListUpdate}
             isNavigatingRef={isNavigatingRef}
           />

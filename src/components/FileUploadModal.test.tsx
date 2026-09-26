@@ -57,24 +57,29 @@ describe("FileUploadModal", () => {
     expect(uploadFile).toHaveBeenCalledWith(file, "documents");
   });
 
-  it("does not treat API error payloads as success", async () => {
+  it("does not call onSuccess when the upload fails", async () => {
     const user = userEvent.setup();
-    mockedUseFileUpload.mockReturnValue(
-      hookReturn({
-        uploadFile: vi.fn().mockResolvedValue({
-          status: "error",
-          message: "アップロード失敗",
-        }),
-      }),
-    );
+    const uploadFile = vi.fn().mockRejectedValue(new Error("アップロード失敗"));
+    mockedUseFileUpload.mockReturnValue(hookReturn({ uploadFile }));
     const { onSuccess } = renderModal();
 
     await user.click(
       screen.getByRole("button", { name: MESSAGES.UPLOAD_FILE_ARIA_LABEL }),
     );
 
-    expect(await screen.findByText("アップロード失敗")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(uploadFile).toHaveBeenCalledOnce();
+    });
     expect(onSuccess).not.toHaveBeenCalled();
+  });
+
+  it("shows the error reported by the upload hook", () => {
+    mockedUseFileUpload.mockReturnValue(
+      hookReturn({ error: "アップロード失敗" }),
+    );
+    renderModal();
+
+    expect(screen.getByText("アップロード失敗")).toBeInTheDocument();
   });
 
   it("disables the upload button while uploading", () => {

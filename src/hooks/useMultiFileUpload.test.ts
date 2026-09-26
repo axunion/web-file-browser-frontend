@@ -16,9 +16,9 @@ describe("useMultiFileUpload", () => {
     global.fetch = vi.fn();
   });
 
-  it("initializes with empty progress and isUploading false", () => {
+  it("initializes with empty statuses and isUploading false", () => {
     const { result } = renderHook(() => useMultiFileUpload());
-    expect(result.current.progress).toEqual([]);
+    expect(result.current.statuses).toEqual([]);
     expect(result.current.isUploading).toBe(false);
   });
 
@@ -30,17 +30,16 @@ describe("useMultiFileUpload", () => {
 
       const { result } = renderHook(() => useMultiFileUpload());
 
+      let finalStatuses: unknown;
       await act(async () => {
-        await result.current.uploadFiles(
+        finalStatuses = await result.current.uploadFiles(
           [makeFile("a.txt"), makeFile("b.txt")],
           "docs",
         );
       });
 
-      expect(result.current.progress).toEqual([
-        { fileName: "a.txt", status: "success" },
-        { fileName: "b.txt", status: "success" },
-      ]);
+      expect(finalStatuses).toEqual(["success", "success"]);
+      expect(result.current.statuses).toEqual(["success", "success"]);
       expect(result.current.isUploading).toBe(false);
     });
 
@@ -51,15 +50,16 @@ describe("useMultiFileUpload", () => {
 
       const { result } = renderHook(() => useMultiFileUpload());
 
+      let finalStatuses: unknown;
       await act(async () => {
-        await result.current.uploadFiles(
+        finalStatuses = await result.current.uploadFiles(
           [makeFile("a.txt"), makeFile("b.txt")],
           "docs",
         );
       });
 
-      expect(result.current.progress[0].status).toBe("success");
-      expect(result.current.progress[1].status).toBe("error");
+      expect(finalStatuses).toEqual(["success", "error"]);
+      expect(result.current.statuses).toEqual(["success", "error"]);
     });
 
     it("marks the file as error when response is not ok", async () => {
@@ -73,7 +73,7 @@ describe("useMultiFileUpload", () => {
         await result.current.uploadFiles([makeFile("a.txt")], "docs");
       });
 
-      expect(result.current.progress[0].status).toBe("error");
+      expect(result.current.statuses).toEqual(["error"]);
     });
 
     it("sets isUploading to false after all uploads complete", async () => {
@@ -110,39 +110,62 @@ describe("useMultiFileUpload", () => {
   });
 
   describe("abort", () => {
-    it("marks in-progress and remaining files as error when aborted during fetch", async () => {
-      vi.mocked(global.fetch).mockImplementation((_url, options) => {
-        return new Promise<Response>((_, reject) => {
-          options?.signal?.addEventListener("abort", () => {
-            reject(
-              new DOMException("The operation was aborted.", "AbortError"),
-            );
-          });
-        });
-      });
+    it("resolves null for a run superseded by a new call without touching its statuses", async () => {
+      vi.mocked(global.fetch)
+        .mockImplementationOnce(
+          (_url, options) =>
+            new Promise<Response>((_, reject) => {
+              options?.signal?.addEventListener("abort", () => {
+                reject(
+                  new DOMException("The operation was aborted.", "AbortError"),
+                );
+              });
+            }),
+        )
+        .mockResolvedValueOnce(successResponse());
 
       const { result } = renderHook(() => useMultiFileUpload());
 
+      let firstRun: Promise<unknown> = Promise.resolve();
       act(() => {
-        void result.current.uploadFiles(
+        firstRun = result.current.uploadFiles(
           [makeFile("a.txt"), makeFile("b.txt")],
           "docs",
         );
       });
+      await waitFor(() => expect(result.current.statuses[0]).toBe("uploading"));
 
-      await waitFor(() =>
-        expect(result.current.progress[0].status).toBe("uploading"),
-      );
+      let secondRun: unknown;
+      await act(async () => {
+        secondRun = await result.current.uploadFiles(
+          [makeFile("c.txt")],
+          "docs",
+        );
+      });
+
+      await expect(firstRun).resolves.toBeNull();
+      expect(secondRun).toEqual(["success"]);
+      expect(result.current.statuses).toEqual(["success"]);
+      expect(result.current.isUploading).toBe(false);
+    });
+
+    it("aborts the in-flight upload on unmount", async () => {
+      const abortSpy = vi.fn();
+      vi.mocked(global.fetch).mockImplementationOnce((_url, options) => {
+        options?.signal?.addEventListener("abort", abortSpy);
+        return new Promise<Response>(() => {});
+      });
+
+      const { result, unmount } = renderHook(() => useMultiFileUpload());
 
       act(() => {
-        result.current.abort();
+        void result.current.uploadFiles([makeFile("a.txt")], "docs");
       });
+      await waitFor(() => expect(global.fetch).toHaveBeenCalledOnce());
 
-      await waitFor(() => {
-        expect(result.current.progress[0].status).toBe("error");
-        expect(result.current.progress[1].status).toBe("error");
-        expect(result.current.isUploading).toBe(false);
-      });
+      unmount();
+
+      expect(abortSpy).toHaveBeenCalled();
     });
 
     it("aborts the previous upload when a new uploadFiles call is made", async () => {
@@ -161,9 +184,7 @@ describe("useMultiFileUpload", () => {
         void result.current.uploadFiles([makeFile("a.txt")], "docs");
       });
 
-      await waitFor(() =>
-        expect(result.current.progress[0].status).toBe("uploading"),
-      );
+      await waitFor(() => expect(result.current.statuses[0]).toBe("uploading"));
 
       await act(async () => {
         await result.current.uploadFiles([makeFile("b.txt")], "docs");

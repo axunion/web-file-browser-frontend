@@ -48,7 +48,6 @@ describe("MoveModal", () => {
       items: [{ name: "dest", type: "directory" }],
       isLoading: false,
       errorMessage: null,
-      setPath: vi.fn(),
       refresh: vi.fn().mockResolvedValue(undefined),
     });
   });
@@ -76,23 +75,43 @@ describe("MoveModal", () => {
     });
   });
 
-  it("does not treat API error payloads as success", async () => {
+  it("does not call onSuccess when the move fails", async () => {
     const user = userEvent.setup();
-    mockedUseFileMove.mockReturnValue(
-      hookReturn({
-        moveFile: vi.fn().mockResolvedValue({
-          status: "error",
-          message: "移動失敗",
-        }),
-      }),
-    );
+    const moveFile = vi.fn().mockRejectedValue(new Error("移動失敗"));
+    mockedUseFileMove.mockReturnValue(hookReturn({ moveFile }));
     const { onSuccess } = renderModal();
 
     await user.click(screen.getByRole("button", { name: "dest" }));
     await user.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
 
-    expect(await screen.findByText("移動失敗")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(moveFile).toHaveBeenCalledOnce();
+    });
     expect(onSuccess).not.toHaveBeenCalled();
+  });
+
+  it("shows the error reported by the move hook", () => {
+    mockedUseFileMove.mockReturnValue(hookReturn({ error: "移動失敗" }));
+    renderModal();
+
+    expect(screen.getByText("移動失敗")).toBeInTheDocument();
+  });
+
+  it("lists the directories of the folder being browsed", async () => {
+    const user = userEvent.setup();
+    renderModal();
+
+    expect(mockedUseFileList).toHaveBeenLastCalledWith("");
+
+    await user.click(screen.getByRole("button", { name: "dest" }));
+
+    expect(mockedUseFileList).toHaveBeenLastCalledWith("dest");
+
+    await user.click(
+      screen.getByRole("button", { name: MESSAGES.NAVIGATE_PARENT }),
+    );
+
+    expect(mockedUseFileList).toHaveBeenLastCalledWith("");
   });
 
   it("disables the confirm button while the destination equals the current path", () => {

@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { ENDPOINT_DELETE } from "@/constants/config";
+import { MESSAGES } from "@/constants/messages";
 import type { DeleteFileRequest, DeleteFileResponse } from "@/types/api";
 import useApiRequest from "./useApiRequest";
 
@@ -7,7 +8,10 @@ const useDelete = () => {
   const { isLoading, error, execute, abort } = useApiRequest<
     DeleteFileRequest,
     DeleteFileResponse
-  >({ endpoint: ENDPOINT_DELETE });
+  >({
+    endpoint: ENDPOINT_DELETE,
+    fallbackErrorMessage: MESSAGES.FILE_DELETE_ERROR,
+  });
 
   const deleteFile = useCallback(
     (params: DeleteFileRequest) =>

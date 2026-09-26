@@ -59,24 +59,31 @@ describe("ImageUploadModal", () => {
     expect(uploadImages).toHaveBeenCalledWith(files, "photos");
   });
 
-  it("does not treat API error payloads as success", async () => {
+  it("does not call onSuccess when the upload fails", async () => {
     const user = userEvent.setup();
-    mockedUseImageUpload.mockReturnValue(
-      hookReturn({
-        uploadImages: vi.fn().mockResolvedValue({
-          status: "error",
-          message: "画像アップロード失敗",
-        }),
-      }),
-    );
+    const uploadImages = vi
+      .fn()
+      .mockRejectedValue(new Error("画像アップロード失敗"));
+    mockedUseImageUpload.mockReturnValue(hookReturn({ uploadImages }));
     const { onSuccess } = renderModal();
 
     await user.click(
       screen.getByRole("button", { name: MESSAGES.UPLOAD_IMAGES_ARIA_LABEL }),
     );
 
-    expect(await screen.findByText("画像アップロード失敗")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(uploadImages).toHaveBeenCalledOnce();
+    });
     expect(onSuccess).not.toHaveBeenCalled();
+  });
+
+  it("shows the error reported by the upload hook", () => {
+    mockedUseImageUpload.mockReturnValue(
+      hookReturn({ error: "画像アップロード失敗" }),
+    );
+    renderModal();
+
+    expect(screen.getByText("画像アップロード失敗")).toBeInTheDocument();
   });
 
   it("disables the upload button while uploading", () => {
