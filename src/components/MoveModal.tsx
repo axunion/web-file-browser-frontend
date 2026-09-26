@@ -36,13 +36,8 @@ const MoveModal = ({
   const browsePath = useMemo(() => browsePaths.join("/"), [browsePaths]);
 
   const directories = useMemo(
-    () =>
-      items.filter(
-        (listItem) =>
-          listItem.type === "directory" &&
-          !(browsePath === currentPath && listItem.name === item.name),
-      ),
-    [items, browsePath, currentPath, item.name],
+    () => items.filter((listItem) => listItem.type === "directory"),
+    [items],
   );
 
   const handleNavigateUp = () => {

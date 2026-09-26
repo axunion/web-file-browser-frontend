@@ -3,7 +3,6 @@ import { type ApiResponse, isErrorResponse } from "@/types/api";
 
 type ApiRequestOptions = {
   endpoint: string;
-  contentType?: string;
 };
 
 type ApiRequestState = {
@@ -64,10 +63,7 @@ const useApiRequest = <TParams, TResponse extends ApiResponse>(
           method: "POST",
           headers: isFormData
             ? undefined
-            : {
-                "Content-Type":
-                  options.contentType ?? "application/x-www-form-urlencoded",
-              },
+            : { "Content-Type": "application/x-www-form-urlencoded" },
           body: isFormData ? body : body.toString(),
           signal: abortController.signal,
         });
@@ -109,7 +105,7 @@ const useApiRequest = <TParams, TResponse extends ApiResponse>(
         }
       }
     },
-    [options.endpoint, options.contentType],
+    [options.endpoint],
   );
 
   return { isLoading, error, execute, abort };
