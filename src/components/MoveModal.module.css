@@ -72,9 +72,6 @@
 
 .error {
   margin-top: 0.5rem;
-  color: var(--error-color);
-  font-size: 0.875rem;
-  line-height: 1.25rem;
 }
 
 .actions {

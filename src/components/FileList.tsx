@@ -25,13 +25,15 @@ export type FileListProps = {
   isNavigatingRef: RefObject<boolean>;
 };
 
+type ModalType = "rename" | "move" | "trash";
+
 type FileListState = {
   contextMenu: {
     item: DirectoryItem;
     position: { x: number; y: number };
   } | null;
   activeModal: {
-    type: "rename" | "move" | "trash";
+    type: ModalType;
     item: DirectoryItem;
   } | null;
 };
@@ -43,9 +45,7 @@ type FileListAction =
       position: { x: number; y: number };
     }
   | { type: "CLOSE_CONTEXT_MENU" }
-  | { type: "OPEN_RENAME_MODAL" }
-  | { type: "OPEN_MOVE_MODAL" }
-  | { type: "OPEN_TRASH_MODAL" }
+  | { type: "OPEN_MODAL"; modal: ModalType }
   | { type: "CLOSE_MODAL" };
 
 const fileListInitialState: FileListState = {
@@ -65,23 +65,11 @@ const fileListReducer = (
       };
     case "CLOSE_CONTEXT_MENU":
       return { ...state, contextMenu: null };
-    case "OPEN_RENAME_MODAL":
+    case "OPEN_MODAL":
       if (!state.contextMenu) return state;
       return {
         contextMenu: null,
-        activeModal: { type: "rename", item: state.contextMenu.item },
-      };
-    case "OPEN_MOVE_MODAL":
-      if (!state.contextMenu) return state;
-      return {
-        contextMenu: null,
-        activeModal: { type: "move", item: state.contextMenu.item },
-      };
-    case "OPEN_TRASH_MODAL":
-      if (!state.contextMenu) return state;
-      return {
-        contextMenu: null,
-        activeModal: { type: "trash", item: state.contextMenu.item },
+        activeModal: { type: action.modal, item: state.contextMenu.item },
       };
     case "CLOSE_MODAL":
       return { ...state, activeModal: null };
@@ -148,15 +136,15 @@ const FileList = memo(
     }, []);
 
     const handleRename = useCallback(() => {
-      dispatch({ type: "OPEN_RENAME_MODAL" });
+      dispatch({ type: "OPEN_MODAL", modal: "rename" });
     }, []);
 
     const handleMove = useCallback(() => {
-      dispatch({ type: "OPEN_MOVE_MODAL" });
+      dispatch({ type: "OPEN_MODAL", modal: "move" });
     }, []);
 
     const handleTrash = useCallback(() => {
-      dispatch({ type: "OPEN_TRASH_MODAL" });
+      dispatch({ type: "OPEN_MODAL", modal: "trash" });
     }, []);
 
     const handleModalClose = useCallback(() => {
@@ -178,12 +166,6 @@ const FileList = memo(
             className={`content-reveal ${styles.itemButton}`}
             aria-label={getFileItemAriaLabel(item.name, item.type)}
             onClick={() => handleClick(item)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                handleClick(item);
-              }
-            }}
             onMouseDown={longPressHandlers.onMouseDown(item)}
             onMouseUp={longPressHandlers.onMouseUp}
             onMouseLeave={longPressHandlers.onMouseLeave}

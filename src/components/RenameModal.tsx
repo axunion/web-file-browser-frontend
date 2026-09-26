@@ -64,18 +64,11 @@ const RenameModal = ({
       return;
     }
 
-    const fullNewName = trimmed + extension;
-
-    if (trimmed === nameWithoutExt) {
-      onClose();
-      return;
-    }
-
     try {
       const response = await renameFile({
         path: currentPath,
         name: originalName,
-        newName: fullNewName,
+        newName: trimmed + extension,
       });
 
       if (isErrorResponse(response)) {

@@ -5,6 +5,7 @@ import { MESSAGES } from "@/constants/messages";
 import useFileList from "@/hooks/useFileList";
 import useFileMove from "@/hooks/useFileMove";
 import { type DirectoryItem, isErrorResponse } from "@/types/api";
+import { getParentPaths } from "@/utils/path";
 import commonStyles from "./ModalCommon.module.css";
 import styles from "./MoveModal.module.css";
 
@@ -35,12 +36,17 @@ const MoveModal = ({
   const browsePath = useMemo(() => browsePaths.join("/"), [browsePaths]);
 
   const directories = useMemo(
-    () => items.filter((listItem) => listItem.type === "directory"),
-    [items],
+    () =>
+      items.filter(
+        (listItem) =>
+          listItem.type === "directory" &&
+          !(browsePath === currentPath && listItem.name === item.name),
+      ),
+    [items, browsePath, currentPath, item.name],
   );
 
   const handleNavigateUp = () => {
-    const newPaths = browsePaths.slice(0, -1);
+    const newPaths = getParentPaths(browsePaths);
     setBrowsePaths(newPaths);
     setPath(newPaths.join("/"));
   };
@@ -75,8 +81,7 @@ const MoveModal = ({
   };
 
   const canMove = browsePath !== currentPath;
-  const displayPath =
-    browsePaths.length > 0 ? `/${browsePaths.join("/")}` : "/";
+  const displayPath = `/${browsePath}`;
 
   return (
     <Modal onClose={onClose}>
@@ -109,22 +114,17 @@ const MoveModal = ({
           ) : directories.length === 0 ? (
             <div className={styles.stateMessage}>{MESSAGES.NO_DIRECTORIES}</div>
           ) : (
-            directories
-              .filter(
-                (dir) =>
-                  !(browsePath === currentPath && dir.name === item.name),
-              )
-              .map((dir) => (
-                <button
-                  key={dir.name}
-                  type="button"
-                  className={styles.directoryButton}
-                  onClick={() => handleNavigateInto(dir.name)}
-                >
-                  <Icon icon="mdi:folder" className={styles.folderIcon} />
-                  <span className={styles.directoryName}>{dir.name}</span>
-                </button>
-              ))
+            directories.map((dir) => (
+              <button
+                key={dir.name}
+                type="button"
+                className={styles.directoryButton}
+                onClick={() => handleNavigateInto(dir.name)}
+              >
+                <Icon icon="mdi:folder" className={styles.folderIcon} />
+                <span className={styles.directoryName}>{dir.name}</span>
+              </button>
+            ))
           )}
         </div>
 

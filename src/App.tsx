@@ -49,7 +49,7 @@ const App = () => {
     <>
       <div className={styles.header}>
         <Header
-          title={hashResult.paths.slice(-1).pop()}
+          title={hashResult.paths.at(-1)}
           paths={hashResult.paths}
           onFileListUpdate={handleFileListUpdate}
           showToast={showToast}

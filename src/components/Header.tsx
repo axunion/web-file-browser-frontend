@@ -15,7 +15,7 @@ const MAX_IMAGE_COUNT = 10;
 const MAX_IMAGE_SIZE = 10 * 1024 * 1024;
 const MAX_TOTAL_SIZE = 30 * 1024 * 1024;
 
-type UploadMode = "idle" | "single" | "images" | "multi";
+type Upload = { mode: "single" | "images" | "multi"; files: File[] };
 
 export type HeaderProps = {
   title?: string;
@@ -27,8 +27,7 @@ export type HeaderProps = {
 const Header = ({ title, paths, onFileListUpdate, showToast }: HeaderProps) => {
   const currentPath = paths.join("/");
   const isTrashFolder = paths.length === 1 && paths[0] === TRASH_FOLDER_NAME;
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [uploadMode, setUploadMode] = useState<UploadMode>("idle");
+  const [upload, setUpload] = useState<Upload | null>(null);
 
   const onFilesSelected = useCallback(
     (files: File[]): void => {
@@ -37,8 +36,7 @@ const Header = ({ title, paths, onFileListUpdate, showToast }: HeaderProps) => {
       }
 
       if (files.length === 1) {
-        setSelectedFiles(files);
-        setUploadMode("single");
+        setUpload({ mode: "single", files });
         return;
       }
 
@@ -57,19 +55,16 @@ const Header = ({ title, paths, onFileListUpdate, showToast }: HeaderProps) => {
           showToast("error", MESSAGES.IMAGE_UPLOAD_TOTAL_TOO_LARGE);
           return;
         }
-        setSelectedFiles(files);
-        setUploadMode("images");
+        setUpload({ mode: "images", files });
       } else {
-        setSelectedFiles(files);
-        setUploadMode("multi");
+        setUpload({ mode: "multi", files });
       }
     },
     [showToast],
   );
 
   const onClosed = useCallback(() => {
-    setSelectedFiles([]);
-    setUploadMode("idle");
+    setUpload(null);
   }, []);
 
   const handleBack = useCallback(() => {
@@ -77,8 +72,7 @@ const Header = ({ title, paths, onFileListUpdate, showToast }: HeaderProps) => {
   }, [paths]);
 
   const handleUploadSuccess = useCallback(() => {
-    setSelectedFiles([]);
-    setUploadMode("idle");
+    setUpload(null);
     onFileListUpdate();
   }, [onFileListUpdate]);
 
@@ -100,27 +94,27 @@ const Header = ({ title, paths, onFileListUpdate, showToast }: HeaderProps) => {
         </span>
       </header>
 
-      {uploadMode === "single" && selectedFiles[0] && (
+      {upload?.mode === "single" && (
         <FileUploadModal
-          file={selectedFiles[0]}
+          file={upload.files[0]}
           currentPath={currentPath}
           onClose={onClosed}
           onSuccess={handleUploadSuccess}
         />
       )}
 
-      {uploadMode === "images" && (
+      {upload?.mode === "images" && (
         <ImageUploadModal
-          files={selectedFiles}
+          files={upload.files}
           currentPath={currentPath}
           onClose={onClosed}
           onSuccess={handleUploadSuccess}
         />
       )}
 
-      {uploadMode === "multi" && (
+      {upload?.mode === "multi" && (
         <MultiFileUploadModal
-          files={selectedFiles}
+          files={upload.files}
           currentPath={currentPath}
           onClose={onClosed}
           onSuccess={handleUploadSuccess}

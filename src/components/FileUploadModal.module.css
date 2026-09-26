@@ -8,9 +8,6 @@
 
 .error {
   margin-bottom: 1rem;
-  color: var(--error-color);
-  font-size: 0.875rem;
-  line-height: 1.25rem;
 }
 
 .submitButton {

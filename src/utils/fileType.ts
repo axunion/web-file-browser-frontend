@@ -1,25 +1,42 @@
 export type FileType = "video" | "audio" | "image" | "text" | "pdf" | "file";
 
+const VIDEO_EXTENSIONS = new Set([
+  "mp4",
+  "mov",
+  "avi",
+  "wmv",
+  "flv",
+  "mkv",
+  "webm",
+]);
+const AUDIO_EXTENSIONS = new Set(["mp3", "wav", "aac", "ogg", "m4a", "wma"]);
+const IMAGE_EXTENSIONS = new Set([
+  "jpg",
+  "jpeg",
+  "png",
+  "gif",
+  "bmp",
+  "webp",
+  "svg",
+]);
+const TEXT_EXTENSIONS = new Set(["txt", "doc", "docx", "csv", "rtf", "md"]);
+
 export const getFileType = (filename: string): FileType => {
   const extension = filename.split(".").pop()?.toLowerCase() || "";
-  const videoExtensions = ["mp4", "mov", "avi", "wmv", "flv", "mkv", "webm"];
-  const audioExtensions = ["mp3", "wav", "aac", "ogg", "m4a", "wma"];
-  const imageExtensions = ["jpg", "jpeg", "png", "gif", "bmp", "webp", "svg"];
-  const textExtensions = ["txt", "doc", "docx", "csv", "rtf", "md"];
 
-  if (videoExtensions.includes(extension)) {
+  if (VIDEO_EXTENSIONS.has(extension)) {
     return "video";
   }
 
-  if (audioExtensions.includes(extension)) {
+  if (AUDIO_EXTENSIONS.has(extension)) {
     return "audio";
   }
 
-  if (imageExtensions.includes(extension)) {
+  if (IMAGE_EXTENSIONS.has(extension)) {
     return "image";
   }
 
-  if (textExtensions.includes(extension)) {
+  if (TEXT_EXTENSIONS.has(extension)) {
     return "text";
   }
 
