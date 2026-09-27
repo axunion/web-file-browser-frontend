@@ -19,7 +19,12 @@ const App = () => {
     errorMessage: fileListErrorMessage,
     refresh,
   } = useFileList(hashResult.path);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  // Hidden while the retry started by closing the modal is in flight, so a
+  // retry that fails with the same message shows the modal again. Tracked per
+  // path so another folder's error isn't hidden by this retry.
+  const [retryingPath, setRetryingPath] = useState<string | null>(null);
+  const errorMessage =
+    retryingPath === hashResult.path ? null : fileListErrorMessage;
   const isNavigatingRef = useRef(false);
   const { toasts, showToast, dismissToast } = useToast();
 
@@ -32,13 +37,12 @@ const App = () => {
     return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);
 
-  useEffect(() => {
-    setErrorMessage(fileListErrorMessage);
-  }, [fileListErrorMessage]);
-
   const handleErrorClose = () => {
-    setErrorMessage(null);
-    void refresh();
+    const path = hashResult.path;
+    setRetryingPath(path);
+    void refresh().finally(() =>
+      setRetryingPath((current) => (current === path ? null : current)),
+    );
   };
 
   const handleFileListUpdate = useCallback(() => {
@@ -66,7 +70,10 @@ const App = () => {
             <Icon icon="eos-icons:loading" className={styles.loadingIcon} />
           </div>
         ) : items.length > 0 ? (
+          // Keyed by path so menus and dialogs opened for one folder can't
+          // act on a same-named item after navigating to another.
           <FileList
+            key={hashResult.path}
             list={items}
             paths={hashResult.paths}
             onFileListUpdate={handleFileListUpdate}

@@ -48,7 +48,7 @@ const MultiFileUploadModal = ({
   const { isUploading, statuses, uploadFiles } = useMultiFileUpload();
 
   const handleUpload = async () => {
-    const result = await uploadFiles(files, currentPath);
+    const result = await uploadFiles(files, currentPath, statuses);
     if (!result) return;
 
     if (result.every((status) => status === "success")) {
@@ -60,6 +60,15 @@ const MultiFileUploadModal = ({
     }
   };
 
+  // Closing aborts the run, but files that finished before that are already on
+  // the server. The one in flight may still land after this refresh.
+  const handleClose = () => {
+    if (isUploading) {
+      onFileListUpdate();
+    }
+    onClose();
+  };
+
   const completedCount = statuses.filter(
     (status) => status === "success" || status === "error",
   ).length;
@@ -68,7 +77,7 @@ const MultiFileUploadModal = ({
     isUploading || statuses.some((status) => status !== "pending");
 
   return (
-    <Modal onClose={onClose}>
+    <Modal onClose={handleClose}>
       <section>
         <div className={commonStyles.header}>
           <Icon icon="line-md:upload-loop" className={commonStyles.icon} />

@@ -143,6 +143,34 @@ describe("FileList", () => {
       ).toBeInTheDocument();
     });
 
+    it("opens the context menu from the keyboard with Shift+F10", async () => {
+      const user = userEvent.setup();
+      renderFileList();
+
+      screen
+        .getByRole("button", {
+          name: getFileItemAriaLabel("notes.txt", "file"),
+        })
+        .focus();
+      await user.keyboard("{Shift>}{F10}{/Shift}");
+
+      expect(screen.getByRole("menu")).toBeInTheDocument();
+    });
+
+    it("opens the context menu on right-click", async () => {
+      const user = userEvent.setup();
+      renderFileList();
+
+      await user.pointer({
+        keys: "[MouseRight]",
+        target: screen.getByRole("button", {
+          name: getFileItemAriaLabel("notes.txt", "file"),
+        }),
+      });
+
+      expect(screen.getByRole("menu")).toBeInTheDocument();
+    });
+
     it("omits the move action for directories", async () => {
       renderFileList();
 

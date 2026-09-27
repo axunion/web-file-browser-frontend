@@ -91,6 +91,9 @@ const ContextMenu = ({
         }}
         onPointerDown={(e) => e.stopPropagation()}
         onKeyDown={handleKeyDown}
+        // Windows fires the keyboard contextmenu event after focus has moved into
+        // this menu, so suppress the native menu here too.
+        onContextMenu={(e) => e.preventDefault()}
         role="menu"
         aria-label={MESSAGES.FILE_ACTIONS}
       >

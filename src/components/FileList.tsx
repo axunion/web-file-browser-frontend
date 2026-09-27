@@ -89,6 +89,29 @@ const FileList = memo(
       [],
     );
 
+    // Right-click, and the ContextMenu key / Shift+F10 on the focused item.
+    const handleContextMenu = useCallback(
+      (item: DirectoryItem, event: React.MouseEvent<HTMLElement>) => {
+        event.preventDefault();
+        handleLongPress(item, event.currentTarget);
+      },
+      [handleLongPress],
+    );
+
+    // Browsers on macOS don't turn these keys into a contextmenu event.
+    const handleKeyDown = useCallback(
+      (item: DirectoryItem, event: React.KeyboardEvent<HTMLElement>) => {
+        if (
+          event.key === "ContextMenu" ||
+          (event.shiftKey && event.key === "F10")
+        ) {
+          event.preventDefault();
+          handleLongPress(item, event.currentTarget);
+        }
+      },
+      [handleLongPress],
+    );
+
     const longPressHandlers = useLongPress<DirectoryItem>(handleLongPress, {
       delay: 300,
     });
@@ -149,10 +172,13 @@ const FileList = memo(
             aria-label={getFileItemAriaLabel(item.name, item.type)}
             onClickCapture={longPressHandlers.onClickCapture}
             onClick={() => handleClick(item)}
+            onContextMenu={(event) => handleContextMenu(item, event)}
+            onKeyDown={(event) => handleKeyDown(item, event)}
             onMouseDown={longPressHandlers.onMouseDown(item)}
             onMouseUp={longPressHandlers.onMouseUp}
             onMouseLeave={longPressHandlers.onMouseLeave}
             onTouchStart={longPressHandlers.onTouchStart(item)}
+            onTouchMove={longPressHandlers.onTouchMove}
             onTouchEnd={longPressHandlers.onTouchEnd}
             onTouchCancel={longPressHandlers.onTouchCancel}
           >

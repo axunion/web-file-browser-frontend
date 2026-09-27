@@ -338,6 +338,53 @@ describe("useApiRequest", () => {
     expect(abortSpy).toHaveBeenCalled();
   });
 
+  it("should stay loading when a superseded request settles", async () => {
+    let requestCount = 0;
+    let resolveSecond: (value: Response) => void = () => {};
+    global.fetch = vi.fn().mockImplementation((_url, options) => {
+      requestCount++;
+      if (requestCount === 1) {
+        return new Promise((_resolve, reject) => {
+          options?.signal?.addEventListener("abort", () =>
+            reject(new DOMException("Aborted", "AbortError")),
+          );
+        });
+      }
+      return new Promise<Response>((resolve) => {
+        resolveSecond = resolve;
+      });
+    });
+
+    const { result } = renderHook(() =>
+      useApiRequest({
+        endpoint: "/api/test",
+        fallbackErrorMessage: "Fallback",
+      }),
+    );
+
+    let first: Promise<unknown> = Promise.resolve();
+    act(() => {
+      first = result.current.execute({}, () => new URLSearchParams());
+    });
+
+    let second: Promise<unknown> = Promise.resolve();
+    await act(async () => {
+      second = result.current.execute({}, () => new URLSearchParams());
+      await first.catch(() => {});
+    });
+
+    expect(result.current.isLoading).toBe(true);
+
+    await act(async () => {
+      resolveSecond(
+        new Response(JSON.stringify({ status: "success" }), { status: 200 }),
+      );
+      await second;
+    });
+
+    expect(result.current.isLoading).toBe(false);
+  });
+
   it("should use FormData when provided", async () => {
     const mockFetch = vi.fn().mockResolvedValue({
       ok: true,

@@ -89,6 +89,28 @@ describe("useMultiFileUpload", () => {
     });
   });
 
+  describe("retry", () => {
+    it("sends only the files that did not succeed in the previous run", async () => {
+      vi.mocked(global.fetch).mockResolvedValueOnce(successResponse());
+
+      const { result } = renderHook(() => useMultiFileUpload());
+
+      let finalStatuses: unknown;
+      await act(async () => {
+        finalStatuses = await result.current.uploadFiles(
+          [makeFile("a.txt"), makeFile("b.txt")],
+          "docs",
+          ["success", "error"],
+        );
+      });
+
+      expect(global.fetch).toHaveBeenCalledOnce();
+      const body = vi.mocked(global.fetch).mock.calls[0][1]?.body as FormData;
+      expect((body.get("file") as File).name).toBe("b.txt");
+      expect(finalStatuses).toEqual(["success", "success"]);
+    });
+  });
+
   describe("FormData payload", () => {
     it("sends the file and path in FormData to the upload endpoint", async () => {
       vi.mocked(global.fetch).mockResolvedValueOnce(successResponse());

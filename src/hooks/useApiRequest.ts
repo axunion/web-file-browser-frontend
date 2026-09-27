@@ -110,7 +110,11 @@ const useApiRequest = <TParams, TResponse extends ApiResponse>(
         }
         throw err;
       } finally {
-        if (isMountedRef.current) {
+        // A superseded request must not end the loading state of its successor.
+        if (
+          isMountedRef.current &&
+          abortControllerRef.current === abortController
+        ) {
           setIsLoading(false);
         }
       }

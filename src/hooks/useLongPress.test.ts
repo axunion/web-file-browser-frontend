@@ -3,12 +3,15 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import useLongPress from "./useLongPress";
 
 /** Creates a minimal mouse event with a real currentTarget element. */
-const makeMouseEvent = (element: HTMLElement) =>
-  ({ currentTarget: element }) as unknown as React.MouseEvent;
+const makeMouseEvent = (element: HTMLElement, button = 0) =>
+  ({ currentTarget: element, button }) as unknown as React.MouseEvent;
 
 /** Creates a minimal touch event with a real currentTarget element. */
-const makeTouchEvent = (element: HTMLElement) =>
-  ({ currentTarget: element }) as unknown as React.TouchEvent;
+const makeTouchEvent = (element: HTMLElement, clientX = 0, clientY = 0) =>
+  ({
+    currentTarget: element,
+    touches: [{ clientX, clientY }],
+  }) as unknown as React.TouchEvent;
 
 describe("useLongPress", () => {
   let element: HTMLButtonElement;
@@ -81,6 +84,20 @@ describe("useLongPress", () => {
   });
 
   describe("cancellation", () => {
+    it("ignores presses of buttons other than the primary one", () => {
+      const callback = vi.fn();
+      const { result } = renderHook(() => useLongPress(callback));
+
+      act(() => {
+        result.current.onMouseDown("data")(makeMouseEvent(element, 2));
+      });
+      act(() => {
+        vi.advanceTimersByTime(300);
+      });
+
+      expect(callback).not.toHaveBeenCalled();
+    });
+
     it("does not call the callback when onMouseUp fires before the delay", () => {
       const callback = vi.fn();
       const { result } = renderHook(() => useLongPress(callback));
@@ -130,6 +147,40 @@ describe("useLongPress", () => {
       });
 
       expect(callback).not.toHaveBeenCalled();
+    });
+
+    it("does not call the callback when the finger moves beyond the tolerance", () => {
+      const callback = vi.fn();
+      const { result } = renderHook(() => useLongPress(callback));
+
+      act(() => {
+        result.current.onTouchStart("data")(makeTouchEvent(element, 100, 100));
+      });
+      act(() => {
+        result.current.onTouchMove(makeTouchEvent(element, 100, 120));
+      });
+      act(() => {
+        vi.advanceTimersByTime(300);
+      });
+
+      expect(callback).not.toHaveBeenCalled();
+    });
+
+    it("still calls the callback when the finger only jitters within the tolerance", () => {
+      const callback = vi.fn();
+      const { result } = renderHook(() => useLongPress(callback));
+
+      act(() => {
+        result.current.onTouchStart("data")(makeTouchEvent(element, 100, 100));
+      });
+      act(() => {
+        result.current.onTouchMove(makeTouchEvent(element, 103, 104));
+      });
+      act(() => {
+        vi.advanceTimersByTime(300);
+      });
+
+      expect(callback).toHaveBeenCalledWith("data", element);
     });
 
     it("does not call the callback when onTouchCancel fires before the delay", () => {

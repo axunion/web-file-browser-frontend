@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import MultiFileUploadModal from "@/components/MultiFileUploadModal";
@@ -75,7 +75,58 @@ describe("MultiFileUploadModal", () => {
       screen.getByRole("button", { name: MESSAGES.UPLOAD_FILES_ARIA_LABEL }),
     );
 
-    expect(hook.uploadFiles).toHaveBeenCalledWith(files, "docs");
+    expect(hook.uploadFiles).toHaveBeenCalledWith(files, "docs", []);
+  });
+
+  it("passes the previous statuses on retry so succeeded files are skipped", async () => {
+    const user = userEvent.setup();
+    const hook = setupHook({ statuses: ["success", "error"] });
+    renderModal();
+
+    await user.click(
+      screen.getByRole("button", { name: MESSAGES.UPLOAD_FILES_ARIA_LABEL }),
+    );
+
+    expect(hook.uploadFiles).toHaveBeenCalledWith(files, "docs", [
+      "success",
+      "error",
+    ]);
+  });
+
+  describe("closing", () => {
+    it("refreshes the file list when closed mid-upload", async () => {
+      const user = userEvent.setup();
+      setupHook({ isUploading: true, statuses: ["success", "uploading"] });
+      const { onClose, onFileListUpdate } = renderModal();
+
+      await user.click(
+        screen.getByRole("button", { name: MESSAGES.CLOSE_MODAL }),
+      );
+      // Modal calls onClose once its closing animation ends.
+      fireEvent.animationEnd(
+        screen.getByRole("dialog").parentElement as HTMLElement,
+      );
+
+      expect(onFileListUpdate).toHaveBeenCalledOnce();
+      expect(onClose).toHaveBeenCalledOnce();
+    });
+
+    it("does not refresh the file list when closed before uploading", async () => {
+      const user = userEvent.setup();
+      setupHook();
+      const { onClose, onFileListUpdate } = renderModal();
+
+      await user.click(
+        screen.getByRole("button", { name: MESSAGES.CLOSE_MODAL }),
+      );
+      // Modal calls onClose once its closing animation ends.
+      fireEvent.animationEnd(
+        screen.getByRole("dialog").parentElement as HTMLElement,
+      );
+
+      expect(onFileListUpdate).not.toHaveBeenCalled();
+      expect(onClose).toHaveBeenCalledOnce();
+    });
   });
 
   it("disables the confirm button while uploading", () => {

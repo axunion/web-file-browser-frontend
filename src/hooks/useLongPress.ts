@@ -2,6 +2,8 @@ import { useCallback, useEffect, useRef } from "react";
 
 // Browsers replay a tap as mousedown/mouseup/click shortly after touchend.
 const EMULATED_MOUSE_WINDOW_MS = 1000;
+// A finger that drifts further than this is scrolling, not pressing.
+const TOUCH_MOVE_TOLERANCE_PX = 10;
 
 type LongPressCallback<T> = (data: T, element: HTMLElement) => void;
 
@@ -14,6 +16,7 @@ type LongPressResult<T> = {
   onMouseUp: () => void;
   onMouseLeave: () => void;
   onTouchStart: (data: T) => (event: React.TouchEvent) => void;
+  onTouchMove: (event: React.TouchEvent) => void;
   onTouchEnd: () => void;
   onTouchCancel: () => void;
   /** Swallows the pointer click that follows a completed long press. */
@@ -28,6 +31,7 @@ const useLongPress = <T>(
   const timeoutRef = useRef<number | null>(null);
   const firedRef = useRef(false);
   const lastTouchEndRef = useRef(0);
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
 
   const clearLongPress = useCallback(() => {
     if (timeoutRef.current) {
@@ -66,6 +70,11 @@ const useLongPress = <T>(
   return {
     onMouseDown: useCallback(
       (data: T) => (event: React.MouseEvent) => {
+        // Only the primary button presses; a right press opens the menu via
+        // contextmenu and is never followed by a click that would reset firedRef.
+        if (event.button !== 0) {
+          return;
+        }
         // Ignore the replayed mousedown so it can't reset a completed touch long press.
         if (Date.now() - lastTouchEndRef.current < EMULATED_MOUSE_WINDOW_MS) {
           return;
@@ -77,8 +86,26 @@ const useLongPress = <T>(
     onMouseUp: clearLongPress,
     onMouseLeave: clearLongPress,
     onTouchStart: useCallback(
-      (data: T) => (event: React.TouchEvent) => startLongPress(data, event),
+      (data: T) => (event: React.TouchEvent) => {
+        const touch = event.touches[0];
+        touchStartRef.current = { x: touch.clientX, y: touch.clientY };
+        startLongPress(data, event);
+      },
       [startLongPress],
+    ),
+    onTouchMove: useCallback(
+      (event: React.TouchEvent) => {
+        const start = touchStartRef.current;
+        const touch = event.touches[0];
+        if (
+          start &&
+          Math.hypot(touch.clientX - start.x, touch.clientY - start.y) >
+            TOUCH_MOVE_TOLERANCE_PX
+        ) {
+          clearLongPress();
+        }
+      },
+      [clearLongPress],
     ),
     onTouchEnd: endTouch,
     onTouchCancel: endTouch,
