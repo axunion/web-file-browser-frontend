@@ -19,8 +19,8 @@
 
 .fileName {
   flex: 1;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-sm);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -51,7 +51,7 @@
 
 .progress {
   text-align: center;
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
   color: var(--gray-600);
   margin-bottom: 0.75rem;
 }

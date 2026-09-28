@@ -16,8 +16,8 @@
 .name {
   overflow: hidden;
   padding: 0.25rem;
-  font-size: 0.75rem;
-  line-height: 1rem;
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-xs);
   word-break: break-all;
   display: -webkit-box;
   -webkit-line-clamp: 2;

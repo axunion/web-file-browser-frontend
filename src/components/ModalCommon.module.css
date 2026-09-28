@@ -11,14 +11,14 @@
 }
 
 .title {
-  font-size: 1.5rem;
-  line-height: 2rem;
+  font-size: var(--font-size-xl);
+  line-height: var(--line-height-xl);
 }
 
 .error {
   color: var(--error-color);
-  font-size: 0.875rem;
-  line-height: 1.25rem;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-sm);
 }
 
 .actions {
@@ -32,8 +32,8 @@
   border-radius: var(--radius-full);
   background: var(--primary-color);
   color: var(--background-color);
-  font-size: 1.25rem;
-  line-height: 1.75rem;
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-lg);
   cursor: pointer;
 }
 

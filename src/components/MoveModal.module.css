@@ -6,8 +6,8 @@
 .pathLabel {
   margin-bottom: 0.5rem;
   color: var(--gray-600);
-  font-size: 0.875rem;
-  line-height: 1.25rem;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-sm);
 }
 
 .pathValue {
@@ -16,8 +16,8 @@
   border-radius: var(--radius-sm);
   background: var(--gray-100);
   color: var(--gray-500);
-  font-size: 0.875rem;
-  line-height: 1.25rem;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-sm);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -35,8 +35,8 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 0.75rem;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-sm);
   cursor: pointer;
   text-align: left;
 }
@@ -65,8 +65,8 @@
 .stateMessage {
   padding: 1rem 0.75rem;
   color: var(--gray-500);
-  font-size: 0.875rem;
-  line-height: 1.25rem;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-sm);
   text-align: center;
 }
 

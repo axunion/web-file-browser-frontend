@@ -22,6 +22,7 @@
   /* --- Glass --- */
   --glass-bg-heavy: rgb(255 255 255 / 72%);
   --glass-bg-light: rgb(255 255 255 / 45%);
+  --glass-bg-subtle: rgb(255 255 255 / 38%);
   --glass-border: rgb(255 255 255 / 50%);
   --glass-blur-lg: blur(24px);
   --glass-blur-md: blur(16px);
@@ -38,7 +39,25 @@
   --radius-full: 9999px;
 
   /* --- Shadow --- */
+  --shadow-sm: 0 2px 8px rgb(0 0 0 / 6%);
   --shadow-md: 0 4px 16px rgb(0 0 0 / 8%);
+
+  /* --- Typography (font-size / line-height pairs) --- */
+  --font-size-xs: 0.75rem;
+  --line-height-xs: 1rem;
+  --font-size-sm: 0.875rem;
+  --line-height-sm: 1.25rem;
+  --font-size-lg: 1.25rem;
+  --line-height-lg: 1.75rem;
+  --font-size-xl: 1.5rem;
+  --line-height-xl: 2rem;
+
+  /* --- Z-Index (header and modal share a layer; the modal wins by DOM order) --- */
+  --z-header: 10;
+  --z-modal: 10;
+  --z-toast: 20;
+  --z-context-menu: 50;
+  --z-loading: 50;
 
   /* --- Focus Ring --- */
   --focus-ring:

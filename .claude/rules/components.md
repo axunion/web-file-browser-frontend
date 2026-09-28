@@ -31,6 +31,11 @@ export default Xxx;
 
 - CSS Modules: one `Xxx.module.css` per component, imported as `styles`.
 - Modals additionally share `ModalCommon.module.css` (header / icon / actions / error).
+- Design tokens live in `:root` of `src/App.css`. Colors, z-index, font-size /
+  line-height, radius, and shadow must use tokens (`var(--…)`); add a token there
+  rather than hardcoding a new value.
+- Not tokenized: breakpoints (CSS variables don't work in `@media`), animation
+  timing, and one-off component dimensions.
 
 ## Modals
 
