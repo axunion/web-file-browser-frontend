@@ -34,6 +34,9 @@ export default Xxx;
 - Design tokens live in `:root` of `src/App.css`. Colors, z-index, font-size /
   line-height, radius, and shadow must use tokens (`var(--…)`); add a token there
   rather than hardcoding a new value.
+- Spacing (padding / margin / gap / position offsets) uses the `--space-N` scale
+  (N × 0.25rem). A raw value is allowed only when it is derived from another element's
+  geometry (e.g. clearing a fixed header); leave a comment explaining the derivation.
 - Not tokenized: breakpoints (CSS variables don't work in `@media`), animation
   timing, and one-off component dimensions.
 

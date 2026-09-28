@@ -9,14 +9,15 @@
 
 .breadcrumb {
   min-height: 1.5rem;
+  /* Clears the fixed header (1rem padding × 2 + 2rem content) */
   margin-top: 4rem;
-  margin-bottom: 1rem;
+  margin-bottom: var(--space-4);
 }
 
 .main {
-  padding-right: 1rem;
-  padding-bottom: 5rem;
-  padding-left: 1rem;
+  padding-right: var(--space-4);
+  padding-bottom: var(--space-20);
+  padding-left: var(--space-4);
 }
 
 .loadingState {

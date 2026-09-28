@@ -15,7 +15,7 @@
 
 .name {
   overflow: hidden;
-  padding: 0.25rem;
+  padding: var(--space-1);
   font-size: var(--font-size-xs);
   line-height: var(--line-height-xs);
   word-break: break-all;
