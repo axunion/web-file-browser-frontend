@@ -77,10 +77,13 @@ const useApiRequest = <TParams, TResponse extends ApiResponse>(
           signal: abortController.signal,
         });
 
+        // Read the body outside the parse guard so an abort during the read
+        // still surfaces as an AbortError.
+        const text = await response.text();
         let data: TResponse | null = null;
 
         try {
-          data = JSON.parse(await response.text()) as TResponse | null;
+          data = JSON.parse(text) as TResponse | null;
         } catch {
           // Non-JSON bodies (e.g. a proxy's HTML error page) fall back below.
         }

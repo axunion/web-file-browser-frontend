@@ -345,8 +345,9 @@ describe("useApiRequest", () => {
       requestCount++;
       if (requestCount === 1) {
         return new Promise((_resolve, reject) => {
+          // jsdom's DOMException is not an Error instance, unlike browsers'.
           options?.signal?.addEventListener("abort", () =>
-            reject(new DOMException("Aborted", "AbortError")),
+            reject(Object.assign(new Error("Aborted"), { name: "AbortError" })),
           );
         });
       }
@@ -383,6 +384,44 @@ describe("useApiRequest", () => {
     });
 
     expect(result.current.isLoading).toBe(false);
+  });
+
+  it("should not set an error when aborted while reading the body", async () => {
+    const text = vi.fn();
+    global.fetch = vi.fn().mockImplementation((_url, options) => {
+      text.mockImplementation(
+        () =>
+          new Promise((_resolve, reject) => {
+            options?.signal?.addEventListener("abort", () =>
+              reject(
+                Object.assign(new Error("Aborted"), { name: "AbortError" }),
+              ),
+            );
+          }),
+      );
+      return Promise.resolve({ ok: true, text });
+    });
+
+    const { result } = renderHook(() =>
+      useApiRequest({
+        endpoint: "/api/test",
+        fallbackErrorMessage: "Fallback",
+      }),
+    );
+
+    let pending: Promise<unknown> = Promise.resolve();
+    act(() => {
+      pending = result.current.execute({}, () => new URLSearchParams());
+    });
+
+    await waitFor(() => expect(text).toHaveBeenCalled());
+
+    await act(async () => {
+      result.current.abort();
+      await expect(pending).rejects.toMatchObject({ name: "AbortError" });
+    });
+
+    expect(result.current.error).toBeNull();
   });
 
   it("should use FormData when provided", async () => {
