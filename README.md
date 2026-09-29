@@ -1,91 +1,71 @@
 # Web File Browser Frontend
 
-A modern web file browser frontend built with **React + TypeScript + Vite**.  
-Provides an intuitive UI for browsing and managing files and directories on a server.
+A web UI for browsing and managing files on a server, built with React, TypeScript, and Vite.
 
-> **⚠️ Note**: This project is frontend-only. A separate backend API server is required.
+This repository contains the frontend only; it requires a separate backend API server.
 
-## ✨ Features
+## Features
 
-- 📁 Directory and file listing with breadcrumb navigation
-- 📤 File upload — single file, multi-file with per-file progress, and image upload
-- ✏️ File and directory renaming
-- 🗑️ Move to trash and permanent deletion
-- 📂 Move files and directories
-- 🖱️ Context menu with right-click / long-press support
-- 🔔 Toast notifications for operation feedback
-- ❌ Error handling with modal dialogs
-- ⏳ Loading indicators
+- Browse directories with breadcrumb navigation
+- Upload files (multiple files with per-file progress, and images)
+- Rename, move, trash, and delete files and directories
+- Context menu via right-click or long-press
 
-## 🛠️ Tech Stack
+## Requirements
 
-| Package | Version | Purpose |
-|---------|---------|---------|
-| React | 19 | UI framework |
-| TypeScript | 5.9 | Type-safe development |
-| Vite | 7 | Build tool and dev server |
-| SWR | 2 | Data fetching and caching |
-| Lightning CSS | 1 | CSS transformer and minifier |
-| CSS Modules | — | Component-scoped styling |
-| @iconify/react | 6 | Icon library |
-| @biomejs/biome | 2 | Formatter and linter |
-| Vitest | 3 | Unit testing framework |
-| @testing-library/react | 16 | Component testing utilities |
+- Node.js 24
+- pnpm
 
-## 🚀 Setup
-
-### 1. Install dependencies
+## Getting Started
 
 ```bash
 pnpm install
 ```
 
-### 2. Configure environment variables
-
-Create a `.env` file in the project root:
+Create `.env.local` in the project root and point it at your backend:
 
 ```env
 VITE_ENDPOINT_API=http://localhost:8000/api/
 VITE_ENDPOINT_DATA=http://localhost:8000/data/
 ```
 
-| Variable | Description |
-|----------|-------------|
-| `VITE_ENDPOINT_API` | Backend API base URL |
-| `VITE_ENDPOINT_DATA` | File data retrieval base URL |
+| Variable             | Description                             |
+| -------------------- | --------------------------------------- |
+| `VITE_ENDPOINT_API`  | Base URL of the backend API             |
+| `VITE_ENDPOINT_DATA` | Base URL for serving file contents      |
 
-### 3. Start the development server
+Then start the dev server:
 
 ```bash
 pnpm dev
 ```
 
-Open `http://localhost:5173` in your browser.
+## Scripts
 
-### 4. Build for production
+| Command              | Description                              |
+| -------------------- | ---------------------------------------- |
+| `pnpm dev`           | Start the dev server                     |
+| `pnpm build`         | Type-check and build to `dist/`          |
+| `pnpm preview`       | Preview the production build             |
+| `pnpm check`         | Lint, format-check, and type-check       |
+| `pnpm fix`           | Apply lint and format fixes              |
+| `pnpm test`          | Run tests in watch mode                  |
+| `pnpm test:run`      | Run tests once                           |
+| `pnpm test:coverage` | Run tests with a coverage report         |
 
-```bash
-pnpm build
-```
+## Backend API
 
-Output is written to the `dist/` directory.
+The app expects the following endpoints under `VITE_ENDPOINT_API`:
 
-## 🧪 Testing
+| Method | Path              | Description              |
+| ------ | ----------------- | ------------------------ |
+| GET    | `list/`           | List a directory         |
+| POST   | `upload/`         | Upload files             |
+| POST   | `upload-images/`  | Upload images            |
+| POST   | `rename/`         | Rename a file or folder  |
+| POST   | `move/`           | Move a file or folder    |
+| POST   | `delete/`         | Delete a file or folder  |
 
-```bash
-pnpm test:run       # Run tests once
-pnpm test:coverage  # Run with coverage report
-```
+## License
 
-## 📡 API Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/api/list/` | Retrieve file and directory listing |
-| `POST` | `/api/upload/` | Upload files |
-| `POST` | `/api/upload-images/` | Upload image files |
-| `POST` | `/api/rename/` | Rename a file or directory |
-| `POST` | `/api/move/` | Move a file or directory |
-| `POST` | `/api/delete/` | Delete a file or directory |
-
-For detailed specifications, refer to the backend project documentation.
+[MIT](LICENSE)
