@@ -3,6 +3,8 @@
   --background-color: #fafaf9;
   --text-color: #4d4945;
   --primary-color: #f57e00;
+  /* Deeper primary for text and filled buttons (≥4.5:1 on light surfaces) */
+  --primary-strong: #ad5400;
   --error-color: #dc2626;
   --success-color: #16a34a;
   --warning-color: #d97706;
@@ -19,18 +21,33 @@
   --folder-color: #eab308;
   --focus-ring-color: #3b82f6;
 
+  /* --- Page Background --- */
+  --bg-glow: color-mix(in srgb, var(--primary-color) 5%, transparent);
+  --bg-top: #fcfbfa;
+  --bg-bottom: #f3f1ee;
+
   /* --- Glass --- */
-  --glass-bg-heavy: rgb(255 255 255 / 72%);
+  --glass-bg-heavy: rgb(255 255 255 / 88%);
   --glass-bg-light: rgb(255 255 255 / 45%);
   --glass-bg-subtle: rgb(255 255 255 / 38%);
   --glass-border: rgb(255 255 255 / 50%);
-  --glass-blur-lg: blur(24px);
+  --glass-edge: color-mix(in srgb, var(--gray-700) 8%, transparent);
+  --glass-highlight: inset 0 1px 0 rgb(255 255 255 / 80%);
+  --glass-sheen: linear-gradient(
+    rgb(255 255 255 / 60%),
+    transparent 40%,
+    rgb(245 240 235 / 40%)
+  );
+  --glass-blur-lg: blur(24px) saturate(160%);
   --glass-blur-md: blur(16px);
   --glass-blur-sm: blur(12px);
   --glass-blur-xs: blur(8px);
   --glass-shadow: 0 8px 32px rgb(0 0 0 / 8%);
-  --overlay-bg: rgb(0 0 0 / 30%);
-  --overlay-blur: blur(12px);
+  --overlay-bg: rgb(41 37 36 / 18%);
+  --overlay-blur: blur(12px) saturate(140%);
+
+  /* --- Surfaces placed on glass --- */
+  --surface-field: rgb(255 255 255 / 85%);
 
   /* --- Border Radius --- */
   --radius-sm: 0.5rem;
@@ -41,6 +58,12 @@
   /* --- Shadow --- */
   --shadow-sm: 0 2px 8px rgb(0 0 0 / 6%);
   --shadow-md: 0 4px 16px rgb(0 0 0 / 8%);
+  --shadow-lg:
+    0 1px 2px color-mix(in srgb, var(--gray-700) 6%, transparent),
+    0 12px 32px color-mix(in srgb, var(--gray-700) 10%, transparent),
+    0 32px 64px color-mix(in srgb, var(--gray-700) 8%, transparent);
+  --shadow-inset: inset 0 1px 2px
+    color-mix(in srgb, var(--gray-700) 6%, transparent);
 
   /* --- Spacing (--space-N = N × 0.25rem) --- */
   --space-1: 0.25rem;
@@ -74,7 +97,7 @@
   --focus-ring:
     0 0 0 2px var(--background-color), 0 0 0 4px var(--focus-ring-color);
 
-  background: var(--background-color);
+  background: var(--bg-bottom);
   color: var(--text-color);
 }
 
@@ -106,6 +129,18 @@ body {
   margin: 0;
   color: var(--text-color);
   line-height: inherit;
+}
+
+/* Fixed layer instead of background-attachment: fixed, which iOS Safari ignores */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse 120% 60% at 50% 0%, var(--bg-glow), transparent),
+    linear-gradient(to bottom, var(--bg-top), var(--bg-bottom));
+  pointer-events: none;
 }
 
 button,
