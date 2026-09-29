@@ -121,7 +121,7 @@ const RenameModal = ({
                 !newName.trim() ||
                 newName.trim() === nameWithoutExt
               }
-              className={`${commonStyles.submitButton} ${styles.submitButton}`}
+              className={commonStyles.submitButton}
             >
               {MESSAGES.CONFIRM}
             </button>

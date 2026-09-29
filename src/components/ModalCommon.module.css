@@ -2,18 +2,20 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
+  /* Keeps the title clear of the absolutely positioned close button */
+  padding-right: var(--space-12);
   color: var(--primary-color);
 }
 
 .icon {
-  width: 2rem;
-  height: 2rem;
+  width: 1.75rem;
+  height: 1.75rem;
 }
 
 .title {
   color: var(--primary-strong);
-  font-size: var(--font-size-xl);
-  line-height: var(--line-height-xl);
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-lg);
 }
 
 .error {
@@ -29,12 +31,15 @@
 
 .submitButton {
   display: block;
+  min-width: 10rem;
+  min-height: 2.75rem;
   margin: auto;
+  padding: var(--space-2) var(--space-8);
   border-radius: var(--radius-full);
   background: var(--primary-strong);
   color: var(--background-color);
-  font-size: var(--font-size-lg);
-  line-height: var(--line-height-lg);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-md);
   cursor: pointer;
 }
 
@@ -42,4 +47,16 @@
   background: var(--gray-300);
   color: var(--gray-600);
   cursor: default;
+}
+
+@media (min-width: 640px) {
+  .icon {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .title {
+    font-size: var(--font-size-xl);
+    line-height: var(--line-height-xl);
+  }
 }

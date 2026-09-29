@@ -2,6 +2,7 @@ import { Icon } from "@iconify/react";
 import Modal from "@/components/Modal";
 import { MESSAGES } from "@/constants/messages";
 import styles from "./ErrorModal.module.css";
+import commonStyles from "./ModalCommon.module.css";
 
 export type ErrorModalProps = {
   onClose: () => void;
@@ -12,7 +13,7 @@ const ErrorModal = ({ onClose, children }: ErrorModalProps) => {
   return (
     <Modal onClose={onClose}>
       <section>
-        <div className={styles.header}>
+        <div className={commonStyles.header}>
           <Icon icon="flat-color-icons:high-priority" className={styles.icon} />
           <span className={styles.title}>{MESSAGES.ERROR}</span>
         </div>

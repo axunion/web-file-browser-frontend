@@ -52,7 +52,7 @@ const MoveToTrashModal = ({
             <button
               type="submit"
               disabled={isLoading}
-              className={`${commonStyles.submitButton} ${styles.submitButton}`}
+              className={commonStyles.submitButton}
             >
               {MESSAGES.CONFIRM}
             </button>

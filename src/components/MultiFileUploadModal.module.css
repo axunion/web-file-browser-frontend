@@ -55,7 +55,3 @@
   color: var(--gray-600);
   margin-bottom: var(--space-3);
 }
-
-.submitButton {
-  padding: var(--space-2) var(--space-12);
-}

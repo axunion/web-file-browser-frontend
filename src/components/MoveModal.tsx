@@ -110,7 +110,7 @@ const MoveModal = ({
             type="button"
             onClick={handleMove}
             disabled={isLoading || !canMove}
-            className={`${commonStyles.submitButton} ${styles.submitButton}`}
+            className={commonStyles.submitButton}
           >
             {MESSAGES.CONFIRM}
           </button>

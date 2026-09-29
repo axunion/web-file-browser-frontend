@@ -11,10 +11,11 @@
 
 .panel {
   position: relative;
-  width: 80%;
-  max-width: 20rem;
-  max-height: 80vh;
-  padding: var(--space-6);
+  width: calc(100% - var(--space-8));
+  max-width: 24rem;
+  max-height: 85dvh;
+  overflow-y: auto;
+  padding: var(--space-5);
   border: 1px solid var(--glass-edge);
   border-radius: var(--radius-lg);
   background: var(--glass-sheen), var(--glass-bg-heavy);
@@ -25,12 +26,25 @@
 
 .closeButton {
   position: absolute;
-  top: var(--space-4);
-  right: var(--space-4);
+  top: var(--space-3);
+  right: var(--space-3);
+  padding: var(--space-2);
   cursor: pointer;
 }
 
 .closeIcon {
   width: 1.5rem;
   height: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .panel {
+    max-width: 28rem;
+    padding: var(--space-6);
+  }
+
+  .closeButton {
+    top: var(--space-4);
+    right: var(--space-4);
+  }
 }

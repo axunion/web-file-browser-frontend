@@ -110,7 +110,7 @@ const MultiFileUploadModal = ({
           type="button"
           disabled={isUploading}
           aria-label={MESSAGES.UPLOAD_FILES_ARIA_LABEL}
-          className={`${commonStyles.submitButton} ${styles.submitButton}`}
+          className={commonStyles.submitButton}
           onClick={handleUpload}
         >
           {MESSAGES.CONFIRM}
