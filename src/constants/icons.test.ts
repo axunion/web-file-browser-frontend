@@ -3,7 +3,8 @@ import { describe, expect, it } from "vitest";
 import { scanIconReferences } from "../../scripts/iconScan.mjs";
 import { ICON_COLLECTIONS } from "./icons";
 
-// Vitest runs from the project root; import.meta.url is not a file: URL in jsdom.
+// Vitest runs from the project root; Vite rewrites `new URL(..., import.meta.url)`
+// to a dev-server URL, so it can't locate src on disk.
 const srcDir = join(process.cwd(), "src");
 
 describe("ICON_COLLECTIONS", () => {

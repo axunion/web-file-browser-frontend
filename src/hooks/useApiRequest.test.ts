@@ -345,9 +345,8 @@ describe("useApiRequest", () => {
       requestCount++;
       if (requestCount === 1) {
         return new Promise((_resolve, reject) => {
-          // jsdom's DOMException is not an Error instance, unlike browsers'.
           options?.signal?.addEventListener("abort", () =>
-            reject(Object.assign(new Error("Aborted"), { name: "AbortError" })),
+            reject(new DOMException("Aborted", "AbortError")),
           );
         });
       }
@@ -393,9 +392,7 @@ describe("useApiRequest", () => {
         () =>
           new Promise((_resolve, reject) => {
             options?.signal?.addEventListener("abort", () =>
-              reject(
-                Object.assign(new Error("Aborted"), { name: "AbortError" }),
-              ),
+              reject(new DOMException("Aborted", "AbortError")),
             );
           }),
       );
