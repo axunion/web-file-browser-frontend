@@ -1,4 +1,4 @@
-import { Icon } from "@iconify/react";
+import { Folder, FolderInput, FolderOpen } from "lucide-react";
 import { useMemo, useState } from "react";
 import Modal from "@/components/Modal";
 import { MESSAGES } from "@/constants/messages";
@@ -60,7 +60,7 @@ const MoveModal = ({
     <Modal onClose={onClose}>
       <section>
         <div className={commonStyles.header}>
-          <Icon icon="mdi:folder-move-outline" className={commonStyles.icon} />
+          <FolderInput className={commonStyles.icon} />
           <span className={commonStyles.title}>{MESSAGES.MOVE}</span>
         </div>
 
@@ -77,7 +77,7 @@ const MoveModal = ({
               onClick={handleNavigateUp}
               aria-label={MESSAGES.NAVIGATE_PARENT}
             >
-              <Icon icon="mdi:folder-open" className={styles.folderIcon} />
+              <FolderOpen className={styles.folderIcon} />
               <span aria-hidden="true">..</span>
             </button>
           )}
@@ -94,7 +94,7 @@ const MoveModal = ({
                 className={styles.directoryButton}
                 onClick={() => handleNavigateInto(dir.name)}
               >
-                <Icon icon="mdi:folder" className={styles.folderIcon} />
+                <Folder className={styles.folderIcon} />
                 <span className={styles.directoryName}>{dir.name}</span>
               </button>
             ))

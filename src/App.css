@@ -239,6 +239,16 @@ p {
   animation: fadeOut 0.2s ease-in-out forwards;
 }
 
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;

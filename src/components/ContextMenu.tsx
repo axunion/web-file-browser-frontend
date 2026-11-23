@@ -1,4 +1,4 @@
-import { Icon } from "@iconify/react";
+import { FolderInput, PencilLine, Trash2 } from "lucide-react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { MESSAGES } from "@/constants/messages";
@@ -103,7 +103,7 @@ const ContextMenu = ({
           onClick={onRename}
           role="menuitem"
         >
-          <Icon icon="mdi:rename-outline" className={styles.icon} />
+          <PencilLine className={styles.icon} />
           <span>{MESSAGES.RENAME}</span>
         </button>
 
@@ -114,7 +114,7 @@ const ContextMenu = ({
             onClick={onMove}
             role="menuitem"
           >
-            <Icon icon="mdi:folder-move-outline" className={styles.icon} />
+            <FolderInput className={styles.icon} />
             <span>{MESSAGES.MOVE}</span>
           </button>
         )}
@@ -125,7 +125,7 @@ const ContextMenu = ({
           onClick={onTrash}
           role="menuitem"
         >
-          <Icon icon="mdi:trash-can-outline" className={styles.icon} />
+          <Trash2 className={styles.icon} />
           <span>{MESSAGES.DELETE}</span>
         </button>
       </div>

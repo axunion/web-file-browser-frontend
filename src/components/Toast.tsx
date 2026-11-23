@@ -1,4 +1,10 @@
-import { Icon } from "@iconify/react";
+import {
+  CircleAlert,
+  CircleCheck,
+  type LucideIcon,
+  TriangleAlert,
+  X,
+} from "lucide-react";
 import { memo, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { MESSAGES } from "@/constants/messages";
@@ -7,10 +13,10 @@ import styles from "./Toast.module.css";
 
 const TOAST_DURATION_MS = 4000;
 
-const ICON_BY_TYPE: Record<ToastType, string> = {
-  error: "flat-color-icons:high-priority",
-  success: "line-md:confirm-circle",
-  warning: "line-md:alert",
+const ICON_BY_TYPE: Record<ToastType, LucideIcon> = {
+  error: CircleAlert,
+  success: CircleCheck,
+  warning: TriangleAlert,
 };
 
 const STYLE_BY_TYPE: Record<ToastType, string> = {
@@ -25,6 +31,7 @@ type ToastEntryProps = {
 };
 
 const ToastEntry = memo(({ toast, onDismiss }: ToastEntryProps) => {
+  const Icon = ICON_BY_TYPE[toast.type];
   const [isDismissing, setIsDismissing] = useState(false);
 
   const dismiss = () => {
@@ -48,11 +55,7 @@ const ToastEntry = memo(({ toast, onDismiss }: ToastEntryProps) => {
       className={`${styles.toast} ${STYLE_BY_TYPE[toast.type]} ${isDismissing ? styles.dismissing : ""}`}
       onAnimationEnd={handleAnimationEnd}
     >
-      <Icon
-        icon={ICON_BY_TYPE[toast.type]}
-        className={styles.icon}
-        aria-hidden
-      />
+      <Icon className={styles.icon} />
       <span className={styles.message}>{toast.message}</span>
       <button
         type="button"
@@ -60,7 +63,7 @@ const ToastEntry = memo(({ toast, onDismiss }: ToastEntryProps) => {
         aria-label={MESSAGES.DISMISS_TOAST}
         onClick={dismiss}
       >
-        <Icon icon="line-md:close" width={16} height={16} aria-hidden />
+        <X size={16} />
       </button>
     </div>
   );

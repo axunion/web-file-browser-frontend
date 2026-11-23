@@ -1,4 +1,4 @@
-import { Icon } from "@iconify/react";
+import { Upload } from "lucide-react";
 import { useCallback } from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import Modal from "@/components/Modal";
@@ -35,7 +35,7 @@ const ImageUploadModal = ({
     <Modal onClose={onClose}>
       <section>
         <div className={commonStyles.header}>
-          <Icon icon="line-md:upload-loop" className={commonStyles.icon} />
+          <Upload className={commonStyles.icon} />
           <span className={commonStyles.title}>{MESSAGES.UPLOAD_IMAGES}</span>
         </div>
 

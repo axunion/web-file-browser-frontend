@@ -20,11 +20,10 @@ resolved version) and confirm the docs match what's actually installed.
 
 1. **Current API usage**: Vite 8 config (including its Lightning CSS integration),
    Biome 2 config and rule names, Vitest 3 config and APIs, SWR 2 options and
-   revalidation behavior, and `@iconify/react` 6 (offline icon registration via
-   `addCollection`). Look it up. Do not answer from memory. Use `WebSearch` to find the
-   library's own official documentation, then `WebFetch` that page directly — don't
-   settle for a search-result snippet or a third-party blog post when the primary source
-   is reachable.
+   revalidation behavior, and `lucide-react` 1 (icon names and deprecated aliases).
+   Look it up. Do not answer from memory. Use `WebSearch` to find the library's own
+   official documentation, then `WebFetch` that page directly — don't settle for a
+   search-result snippet or a third-party blog post when the primary source is reachable.
 2. **Version fit**: check the version this project pins before trusting any doc page.
    Flag it when current docs describe an API the pinned version doesn't have, or when
    the pinned version relies on something since deprecated.

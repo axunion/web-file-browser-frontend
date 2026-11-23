@@ -1,4 +1,4 @@
-import { Icon } from "@iconify/react";
+import { ChevronLeft } from "lucide-react";
 import { MESSAGES } from "@/constants/messages";
 import styles from "./BackButton.module.css";
 
@@ -14,7 +14,7 @@ const BackButton = ({ onBack }: BackButtonProps) => {
       onClick={onBack}
       aria-label={MESSAGES.BACK}
     >
-      <Icon icon="line-md:chevron-left" className={styles.icon} />
+      <ChevronLeft className={styles.icon} />
     </button>
   );
 };

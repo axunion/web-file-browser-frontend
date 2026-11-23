@@ -1,4 +1,11 @@
-import { Icon } from "@iconify/react";
+import {
+  CircleCheck,
+  CircleMinus,
+  CircleX,
+  LoaderCircle,
+  type LucideIcon,
+  Upload,
+} from "lucide-react";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import Modal from "@/components/Modal";
 import {
@@ -13,16 +20,16 @@ import type { ToastType } from "@/hooks/useToast";
 import commonStyles from "./ModalCommon.module.css";
 import styles from "./MultiFileUploadModal.module.css";
 
-const STATUS_ICON: Record<FileUploadStatus, string> = {
-  pending: "line-md:minus-circle",
-  uploading: "eos-icons:loading",
-  success: "line-md:confirm-circle",
-  error: "flat-color-icons:cancel",
+const STATUS_ICON: Record<FileUploadStatus, LucideIcon> = {
+  pending: CircleMinus,
+  uploading: LoaderCircle,
+  success: CircleCheck,
+  error: CircleX,
 };
 
 const STATUS_STYLE: Record<FileUploadStatus, string> = {
   pending: styles.statusPending,
-  uploading: styles.statusUploading,
+  uploading: `${styles.statusUploading} spin`,
   success: styles.statusSuccess,
   error: styles.statusError,
 };
@@ -80,19 +87,18 @@ const MultiFileUploadModal = ({
     <Modal onClose={handleClose}>
       <section>
         <div className={commonStyles.header}>
-          <Icon icon="line-md:upload-loop" className={commonStyles.icon} />
+          <Upload className={commonStyles.icon} />
           <span className={commonStyles.title}>{MESSAGES.UPLOAD_FILES}</span>
         </div>
 
         <div className={styles.fileList} aria-busy={isUploading}>
           {files.map((file, index) => {
             const status = statuses[index] ?? "pending";
+            const StatusIcon = STATUS_ICON[status];
             return (
               <div key={file.name} className={styles.fileItem}>
-                <Icon
-                  icon={STATUS_ICON[status]}
+                <StatusIcon
                   className={`${styles.statusIcon} ${STATUS_STYLE[status]}`}
-                  aria-hidden
                 />
                 <span className={styles.fileName}>{file.name}</span>
               </div>

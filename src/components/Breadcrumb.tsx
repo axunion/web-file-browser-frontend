@@ -1,4 +1,4 @@
-import { Icon } from "@iconify/react";
+import { ChevronRight, FolderOpen } from "lucide-react";
 import { useCallback } from "react";
 import { MESSAGES } from "@/constants/messages";
 import { setPaths } from "@/utils/path";
@@ -35,7 +35,7 @@ const Breadcrumb = ({ paths }: BreadcrumbProps) => {
         <li className={styles.item}>
           <Button onClick={() => handleClick(-1)}>
             <span className={styles.root}>
-              <Icon icon="mdi:folder-open" className={styles.folderIcon} />
+              <FolderOpen className={styles.folderIcon} />
               {MESSAGES.BREADCRUMB_ROOT}
             </span>
           </Button>
@@ -43,7 +43,7 @@ const Breadcrumb = ({ paths }: BreadcrumbProps) => {
 
         {paths.map((path, index) => (
           <li key={getKey(index)} className={styles.item}>
-            <Icon icon="mdi:chevron-right" className={styles.chevronIcon} />
+            <ChevronRight className={styles.chevronIcon} />
             <Button onClick={() => handleClick(index)}>{path}</Button>
           </li>
         ))}

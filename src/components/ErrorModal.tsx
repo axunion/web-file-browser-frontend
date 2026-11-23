@@ -1,4 +1,4 @@
-import { Icon } from "@iconify/react";
+import { CircleAlert } from "lucide-react";
 import Modal from "@/components/Modal";
 import { MESSAGES } from "@/constants/messages";
 import styles from "./ErrorModal.module.css";
@@ -14,7 +14,7 @@ const ErrorModal = ({ onClose, children }: ErrorModalProps) => {
     <Modal onClose={onClose}>
       <section>
         <div className={commonStyles.header}>
-          <Icon icon="flat-color-icons:high-priority" className={styles.icon} />
+          <CircleAlert className={styles.icon} />
           <span className={styles.title}>{MESSAGES.ERROR}</span>
         </div>
 

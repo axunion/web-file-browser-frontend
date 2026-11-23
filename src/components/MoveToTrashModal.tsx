@@ -1,4 +1,4 @@
-import { Icon } from "@iconify/react";
+import { Trash2 } from "lucide-react";
 import Modal from "@/components/Modal";
 import { MESSAGES } from "@/constants/messages";
 import useDelete from "@/hooks/useDelete";
@@ -36,7 +36,7 @@ const MoveToTrashModal = ({
     <Modal onClose={onClose}>
       <section>
         <div className={commonStyles.header}>
-          <Icon icon="line-md:trash" className={commonStyles.icon} />
+          <Trash2 className={commonStyles.icon} />
           <span className={commonStyles.title}>{MESSAGES.DELETE}</span>
         </div>
 

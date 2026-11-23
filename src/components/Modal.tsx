@@ -1,4 +1,4 @@
-import { Icon } from "@iconify/react";
+import { X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { MESSAGES } from "@/constants/messages";
@@ -105,7 +105,7 @@ const Modal = ({ onClose, children, title }: ModalProps) => {
           onClick={close}
           aria-label={MESSAGES.CLOSE_MODAL}
         >
-          <Icon icon="mdi:close-thick" className={styles.closeIcon} />
+          <X className={styles.closeIcon} />
         </button>
       </div>
     </div>,

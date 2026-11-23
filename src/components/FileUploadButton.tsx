@@ -1,4 +1,4 @@
-import { Icon } from "@iconify/react";
+import { FileUp } from "lucide-react";
 import type { ChangeEvent } from "react";
 import { MESSAGES } from "@/constants/messages";
 import styles from "./FileUploadButton.module.css";
@@ -25,7 +25,7 @@ const FileUploadButton = ({ onFilesSelected }: FileUploadButtonProps) => {
         onChange={onFileChange}
       />
 
-      <Icon icon="line-md:file-upload" className={styles.icon} />
+      <FileUp className={styles.icon} />
     </label>
   );
 };

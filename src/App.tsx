@@ -1,4 +1,4 @@
-import { Icon } from "@iconify/react";
+import { LoaderCircle } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Breadcrumb from "@/components/Breadcrumb";
 import ErrorModal from "@/components/ErrorModal";
@@ -67,7 +67,7 @@ const App = () => {
       <main className={styles.main} aria-busy={isLoading}>
         {isLoading ? (
           <div className={styles.loadingState}>
-            <Icon icon="eos-icons:loading" className={styles.loadingIcon} />
+            <LoaderCircle className={`${styles.loadingIcon} spin`} />
           </div>
         ) : items.length > 0 ? (
           // Keyed by path so menus and dialogs opened for one folder can't

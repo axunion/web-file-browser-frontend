@@ -1,4 +1,10 @@
-import { Icon } from "@iconify/react";
+import {
+  FileHeadphone,
+  FileIcon,
+  FilePlay,
+  FileText,
+  Folder,
+} from "lucide-react";
 import { memo } from "react";
 import { ENDPOINT_DATA } from "@/constants/config";
 import { getImageAlt, getOpenFileAriaLabel } from "@/constants/messages";
@@ -13,18 +19,18 @@ export type FileItemProps = {
 };
 
 const icons = {
-  video: <Icon icon="flat-color-icons:video-file" className={styles.icon} />,
-  audio: <Icon icon="flat-color-icons:audio-file" className={styles.icon} />,
-  text: <Icon icon="flat-color-icons:document" className={styles.icon} />,
-  pdf: <Icon icon="vscode-icons:file-type-pdf2" className={styles.icon} />,
-  file: <Icon icon="flat-color-icons:file" className={styles.icon} />,
+  video: <FilePlay className={styles.icon} />,
+  audio: <FileHeadphone className={styles.icon} />,
+  text: <FileText className={styles.icon} />,
+  pdf: <FileText className={styles.icon} />,
+  file: <FileIcon className={styles.icon} />,
 };
 
 const FileItem = memo(({ file, dirPaths }: FileItemProps) => {
   if (file.type === "directory") {
     return (
       <>
-        <Icon icon="flat-color-icons:folder" className={styles.icon} />
+        <Folder className={styles.icon} />
         <div className={styles.name}>{file.name}</div>
       </>
     );

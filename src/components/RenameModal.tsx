@@ -1,4 +1,4 @@
-import { Icon } from "@iconify/react";
+import { PencilLine } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import Modal from "@/components/Modal";
 import { MESSAGES } from "@/constants/messages";
@@ -90,7 +90,7 @@ const RenameModal = ({
     <Modal onClose={onClose}>
       <section>
         <div className={commonStyles.header}>
-          <Icon icon="line-md:edit" className={commonStyles.icon} />
+          <PencilLine className={commonStyles.icon} />
           <span className={commonStyles.title}>{MESSAGES.RENAME}</span>
         </div>
 
