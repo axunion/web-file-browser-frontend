@@ -11,6 +11,7 @@ const renderMenu = (
     position: { x: 100, y: 100 },
     onClose: vi.fn(),
     onRename: vi.fn(),
+    onMove: vi.fn(),
     onDelete: vi.fn(),
     ...props,
   };
@@ -24,30 +25,17 @@ describe("ContextMenu", () => {
   });
 
   describe("rendering", () => {
-    it("renders rename and delete menu items", () => {
+    it("renders rename, move, and delete menu items", () => {
       renderMenu();
 
       expect(
         screen.getByRole("menuitem", { name: MESSAGES.RENAME }),
       ).toBeInTheDocument();
       expect(
-        screen.getByRole("menuitem", { name: MESSAGES.DELETE }),
-      ).toBeInTheDocument();
-    });
-
-    it("does not render the move button when onMove is not provided", () => {
-      renderMenu();
-
-      expect(
-        screen.queryByRole("menuitem", { name: MESSAGES.MOVE }),
-      ).not.toBeInTheDocument();
-    });
-
-    it("renders the move button when onMove is provided", () => {
-      renderMenu({ onMove: vi.fn() });
-
-      expect(
         screen.getByRole("menuitem", { name: MESSAGES.MOVE }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole("menuitem", { name: MESSAGES.DELETE }),
       ).toBeInTheDocument();
     });
 
@@ -81,7 +69,7 @@ describe("ContextMenu", () => {
 
     it("calls onMove when the move item is clicked", async () => {
       const user = userEvent.setup();
-      const { onMove } = renderMenu({ onMove: vi.fn() });
+      const { onMove } = renderMenu();
 
       await user.click(screen.getByRole("menuitem", { name: MESSAGES.MOVE }));
 
@@ -127,7 +115,7 @@ describe("ContextMenu", () => {
 
     it("moves focus down and wraps with ArrowDown", async () => {
       const user = userEvent.setup();
-      renderMenu({ onMove: vi.fn() });
+      renderMenu();
 
       await user.keyboard("{ArrowDown}");
       expect(

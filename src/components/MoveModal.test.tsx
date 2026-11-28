@@ -122,6 +122,61 @@ describe("MoveModal", () => {
     ).toBeDisabled();
   });
 
+  describe("moving a directory", () => {
+    it("hides the directory itself from its parent's listing", async () => {
+      const user = userEvent.setup();
+      mockedUseFileList.mockImplementation((path: string) => ({
+        items:
+          path === ""
+            ? [{ name: "a", type: "directory" }]
+            : [
+                { name: "photos", type: "directory" },
+                { name: "dest", type: "directory" },
+              ],
+        isLoading: false,
+        errorMessage: null,
+        refresh: vi.fn().mockResolvedValue(undefined),
+      }));
+      renderModal({
+        item: { name: "photos", type: "directory" },
+        currentPath: "a",
+      });
+
+      await user.click(screen.getByRole("button", { name: "a" }));
+
+      expect(
+        screen.queryByRole("button", { name: "photos" }),
+      ).not.toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "dest" })).toBeInTheDocument();
+    });
+
+    it("lists a same-named directory found outside its parent", async () => {
+      const user = userEvent.setup();
+      mockedUseFileList.mockImplementation((path: string) => ({
+        items:
+          path === ""
+            ? [
+                { name: "photos", type: "directory" },
+                { name: "dest", type: "directory" },
+              ]
+            : [{ name: "photos", type: "directory" }],
+        isLoading: false,
+        errorMessage: null,
+        refresh: vi.fn().mockResolvedValue(undefined),
+      }));
+      renderModal({
+        item: { name: "photos", type: "directory" },
+        currentPath: "",
+      });
+
+      await user.click(screen.getByRole("button", { name: "dest" }));
+
+      expect(
+        screen.getByRole("button", { name: "photos" }),
+      ).toBeInTheDocument();
+    });
+  });
+
   it("disables the confirm button while moving", async () => {
     mockedUseFileMove.mockReturnValue(hookReturn({ isLoading: true }));
     renderModal();

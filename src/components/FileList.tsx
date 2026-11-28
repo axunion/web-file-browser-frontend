@@ -191,7 +191,7 @@ const FileList = memo(
             position={contextMenu.position}
             onClose={handleContextMenuClose}
             onRename={handleRename}
-            onMove={contextMenu.item.type === "file" ? handleMove : undefined}
+            onMove={handleMove}
             onDelete={handleDelete}
           />
         )}

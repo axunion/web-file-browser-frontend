@@ -8,7 +8,7 @@ export type ContextMenuProps = {
   position: { x: number; y: number };
   onClose: () => void;
   onRename: () => void;
-  onMove?: () => void;
+  onMove: () => void;
   onDelete: () => void;
 };
 
@@ -107,17 +107,15 @@ const ContextMenu = ({
           <span>{MESSAGES.RENAME}</span>
         </button>
 
-        {onMove && (
-          <button
-            type="button"
-            className={styles.button}
-            onClick={onMove}
-            role="menuitem"
-          >
-            <FolderInput className={styles.icon} />
-            <span>{MESSAGES.MOVE}</span>
-          </button>
-        )}
+        <button
+          type="button"
+          className={styles.button}
+          onClick={onMove}
+          role="menuitem"
+        >
+          <FolderInput className={styles.icon} />
+          <span>{MESSAGES.MOVE}</span>
+        </button>
 
         <button
           type="button"

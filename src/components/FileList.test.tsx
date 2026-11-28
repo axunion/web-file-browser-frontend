@@ -171,7 +171,7 @@ describe("FileList", () => {
       expect(screen.getByRole("menu")).toBeInTheDocument();
     });
 
-    it("omits the move action for directories", async () => {
+    it("offers the move action for directories", async () => {
       renderFileList();
 
       const menu = await openContextMenu(
@@ -179,8 +179,8 @@ describe("FileList", () => {
       );
 
       expect(
-        within(menu).queryByRole("menuitem", { name: MESSAGES.MOVE }),
-      ).not.toBeInTheDocument();
+        within(menu).getByRole("menuitem", { name: MESSAGES.MOVE }),
+      ).toBeInTheDocument();
     });
 
     it("does not open the context menu when the press is released early", async () => {

@@ -27,9 +27,20 @@ const MoveModal = ({
   const browsePath = browsePaths.join("/");
   const { items, isLoading: isLoadingDirs } = useFileList(browsePath);
 
+  // Hiding a folder being moved from its own parent's listing keeps the
+  // folder itself and everything inside it out of reach as a destination.
   const directories = useMemo(
-    () => items.filter((listItem) => listItem.type === "directory"),
-    [items],
+    () =>
+      items.filter(
+        (listItem) =>
+          listItem.type === "directory" &&
+          !(
+            item.type === "directory" &&
+            browsePath === currentPath &&
+            listItem.name === item.name
+          ),
+      ),
+    [items, item, browsePath, currentPath],
   );
 
   const handleNavigateUp = () => {
