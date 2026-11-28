@@ -7,7 +7,7 @@ This repository contains the frontend only; it requires a separate backend API s
 ## Features
 
 - Browse directories with breadcrumb navigation
-- Upload files (multiple files with per-file progress, and images)
+- Upload files (multiple files with per-file progress)
 - Rename, move, trash, and delete files and directories
 - Context menu via right-click or long-press
 
@@ -61,7 +61,6 @@ The app expects the following endpoints under `VITE_ENDPOINT_API`:
 | ------ | ----------------- | ------------------------ |
 | GET    | `list/`           | List a directory         |
 | POST   | `upload/`         | Upload files             |
-| POST   | `upload-images/`  | Upload images            |
 | POST   | `rename/`         | Rename a file or folder  |
 | POST   | `move/`           | Move a file or folder    |
 | POST   | `delete/`         | Delete a file or folder  |

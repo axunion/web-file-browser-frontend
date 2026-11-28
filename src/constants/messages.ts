@@ -26,12 +26,6 @@ export const MESSAGES = {
   UPLOAD_FILE_ARIA_LABEL: "ファイルをアップロード",
   FILE_UPLOAD_BUTTON_ARIA_LABEL: "アップロードするファイルを選択",
   NAVIGATE_PARENT: "親ディレクトリへ移動",
-  UPLOAD_IMAGES: "アップロード",
-  UPLOAD_IMAGES_ARIA_LABEL: "アップロード",
-  IMAGE_UPLOAD_ERROR: "画像のアップロードに失敗しました。",
-  IMAGE_UPLOAD_TOO_MANY: "アップロードできるのは10件までです",
-  IMAGE_UPLOAD_FILE_TOO_LARGE: "1ファイルあたり10MB以下にしてください",
-  IMAGE_UPLOAD_TOTAL_TOO_LARGE: "合計サイズが30MBを超えています",
   UPLOAD_FILES: "アップロード",
   UPLOAD_FILES_ARIA_LABEL: "アップロード",
   MULTI_FILE_UPLOAD_SUCCESS: "すべてのファイルをアップロードしました",
@@ -48,8 +42,6 @@ export const getOpenFileAriaLabel = (name: string) =>
   `${name} を新しいタブで開く`;
 
 export const getImageAlt = (name: string) => `${name} のプレビュー`;
-
-export const getImageUploadCountLabel = (count: number) => `${count} 件の画像`;
 
 export const getMultiFileUploadCountLabel = (count: number) =>
   `${count} 件のファイル`;

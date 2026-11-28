@@ -39,22 +39,6 @@ export type UploadFileResponse =
   | UploadFileSuccessResponse
   | UploadFileErrorResponse;
 
-export type UploadImagesRequest = {
-  images: File[];
-  path: string;
-};
-
-export type UploadImagesSuccessResponse = {
-  status: "success";
-  files: string[];
-};
-
-export type UploadImagesErrorResponse = ErrorResponse;
-
-export type UploadImagesResponse =
-  | UploadImagesSuccessResponse
-  | UploadImagesErrorResponse;
-
 export type RenameFileRequest = {
   path: string;
   name: string;
