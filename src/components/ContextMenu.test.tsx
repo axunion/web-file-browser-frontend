@@ -11,7 +11,7 @@ const renderMenu = (
     position: { x: 100, y: 100 },
     onClose: vi.fn(),
     onRename: vi.fn(),
-    onTrash: vi.fn(),
+    onDelete: vi.fn(),
     ...props,
   };
   render(<ContextMenu {...merged} />);
@@ -70,13 +70,13 @@ describe("ContextMenu", () => {
       expect(onRename).toHaveBeenCalledOnce();
     });
 
-    it("calls onTrash when the delete item is clicked", async () => {
+    it("calls onDelete when the delete item is clicked", async () => {
       const user = userEvent.setup();
-      const { onTrash } = renderMenu();
+      const { onDelete } = renderMenu();
 
       await user.click(screen.getByRole("menuitem", { name: MESSAGES.DELETE }));
 
-      expect(onTrash).toHaveBeenCalledOnce();
+      expect(onDelete).toHaveBeenCalledOnce();
     });
 
     it("calls onMove when the move item is clicked", async () => {

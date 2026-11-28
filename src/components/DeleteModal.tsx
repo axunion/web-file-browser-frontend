@@ -3,22 +3,22 @@ import Modal from "@/components/Modal";
 import { MESSAGES } from "@/constants/messages";
 import useDelete from "@/hooks/useDelete";
 import type { DirectoryItem } from "@/types/api";
+import styles from "./DeleteModal.module.css";
 import commonStyles from "./ModalCommon.module.css";
-import styles from "./MoveToTrashModal.module.css";
 
-export type MoveToTrashModalProps = {
+export type DeleteModalProps = {
   item: DirectoryItem;
   currentPath: string;
   onClose: () => void;
   onSuccess: () => void;
 };
 
-const MoveToTrashModal = ({
+const DeleteModal = ({
   item,
   currentPath,
   onClose,
   onSuccess,
-}: MoveToTrashModalProps) => {
+}: DeleteModalProps) => {
   const { deleteFile, isLoading, error } = useDelete();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -63,4 +63,4 @@ const MoveToTrashModal = ({
   );
 };
 
-export default MoveToTrashModal;
+export default DeleteModal;

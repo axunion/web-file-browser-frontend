@@ -2,7 +2,6 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import Header from "@/components/Header";
-import { TRASH_FOLDER_NAME } from "@/constants/config";
 import { getMultiFileUploadCountLabel, MESSAGES } from "@/constants/messages";
 import useFileUpload from "@/hooks/useFileUpload";
 import useMultiFileUpload from "@/hooks/useMultiFileUpload";
@@ -65,20 +64,6 @@ describe("Header", () => {
       expect(
         screen.getByRole("button", { name: MESSAGES.BACK }),
       ).toBeInTheDocument();
-    });
-
-    it("hides the back button and upload button inside the trash folder", () => {
-      renderHeader({
-        title: TRASH_FOLDER_NAME,
-        paths: [TRASH_FOLDER_NAME],
-      });
-
-      expect(
-        screen.queryByRole("button", { name: MESSAGES.BACK }),
-      ).not.toBeInTheDocument();
-      expect(
-        screen.queryByLabelText(MESSAGES.FILE_UPLOAD_BUTTON_ARIA_LABEL),
-      ).not.toBeInTheDocument();
     });
   });
 

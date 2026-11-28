@@ -9,7 +9,7 @@ export type ContextMenuProps = {
   onClose: () => void;
   onRename: () => void;
   onMove?: () => void;
-  onTrash: () => void;
+  onDelete: () => void;
 };
 
 const MENU_WIDTH = 140;
@@ -20,7 +20,7 @@ const ContextMenu = ({
   onClose,
   onRename,
   onMove,
-  onTrash,
+  onDelete,
   position,
 }: ContextMenuProps) => {
   const menuRef = useRef<HTMLDivElement>(null);
@@ -122,7 +122,7 @@ const ContextMenu = ({
         <button
           type="button"
           className={styles.button}
-          onClick={onTrash}
+          onClick={onDelete}
           role="menuitem"
         >
           <Trash2 className={styles.icon} />

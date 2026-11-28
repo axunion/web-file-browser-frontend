@@ -1,8 +1,8 @@
 import { memo, type RefObject, useCallback, useReducer } from "react";
 import ContextMenu from "@/components/ContextMenu";
+import DeleteModal from "@/components/DeleteModal";
 import FileItem from "@/components/FileItem";
 import MoveModal from "@/components/MoveModal";
-import MoveToTrashModal from "@/components/MoveToTrashModal";
 import RenameModal from "@/components/RenameModal";
 import { getFileItemAriaLabel } from "@/constants/messages";
 import useLongPress from "@/hooks/useLongPress";
@@ -17,7 +17,7 @@ export type FileListProps = {
   isNavigatingRef: RefObject<boolean>;
 };
 
-type ModalType = "rename" | "move" | "trash";
+type ModalType = "rename" | "move" | "delete";
 
 type FileListState = {
   contextMenu: {
@@ -148,8 +148,8 @@ const FileList = memo(
       dispatch({ type: "OPEN_MODAL", modal: "move" });
     }, []);
 
-    const handleTrash = useCallback(() => {
-      dispatch({ type: "OPEN_MODAL", modal: "trash" });
+    const handleDelete = useCallback(() => {
+      dispatch({ type: "OPEN_MODAL", modal: "delete" });
     }, []);
 
     const handleModalClose = useCallback(() => {
@@ -192,7 +192,7 @@ const FileList = memo(
             onClose={handleContextMenuClose}
             onRename={handleRename}
             onMove={contextMenu.item.type === "file" ? handleMove : undefined}
-            onTrash={handleTrash}
+            onDelete={handleDelete}
           />
         )}
 
@@ -214,8 +214,8 @@ const FileList = memo(
           />
         )}
 
-        {activeModal?.type === "trash" && (
-          <MoveToTrashModal
+        {activeModal?.type === "delete" && (
+          <DeleteModal
             item={activeModal.item}
             currentPath={currentPath}
             onClose={handleModalClose}

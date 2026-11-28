@@ -8,7 +8,7 @@ This repository contains the frontend only; it requires a separate backend API s
 
 - Browse directories with breadcrumb navigation
 - Upload files (multiple files with per-file progress)
-- Rename, move, trash, and delete files and directories
+- Rename, move, and delete files and directories
 - Context menu via right-click or long-press
 
 ## Requirements

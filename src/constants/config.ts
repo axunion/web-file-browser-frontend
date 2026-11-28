@@ -48,5 +48,3 @@ export const ENDPOINT_UPLOAD = `${ENDPOINT_API}upload/`;
 export const ENDPOINT_RENAME = `${ENDPOINT_API}rename/`;
 export const ENDPOINT_MOVE = `${ENDPOINT_API}move/`;
 export const ENDPOINT_DELETE = `${ENDPOINT_API}delete/`;
-
-export const TRASH_FOLDER_NAME = "trash";

@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import MoveToTrashModal from "@/components/MoveToTrashModal";
+import DeleteModal from "@/components/DeleteModal";
 import { MESSAGES } from "@/constants/messages";
 import useDelete from "@/hooks/useDelete";
 
@@ -22,7 +22,7 @@ const hookReturn = (overrides: Partial<ReturnType<typeof useDelete>> = {}) => ({
 });
 
 const renderModal = (
-  props: Partial<React.ComponentProps<typeof MoveToTrashModal>> = {},
+  props: Partial<React.ComponentProps<typeof DeleteModal>> = {},
 ) => {
   const merged = {
     item: { name: "old.txt", type: "file" as const },
@@ -31,11 +31,11 @@ const renderModal = (
     onSuccess: vi.fn(),
     ...props,
   };
-  render(<MoveToTrashModal {...merged} />);
+  render(<DeleteModal {...merged} />);
   return merged;
 };
 
-describe("MoveToTrashModal", () => {
+describe("DeleteModal", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockedUseDelete.mockReturnValue(hookReturn());
