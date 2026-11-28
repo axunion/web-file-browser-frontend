@@ -40,6 +40,11 @@ Then start the dev server:
 pnpm dev
 ```
 
+## Localization
+
+The UI ships in English. All user-visible text is in `src/constants/messages.ts`;
+translate that file and set `lang` in `index.html` to localize it.
+
 ## Scripts
 
 | Command              | Description                              |

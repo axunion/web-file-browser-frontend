@@ -1,50 +1,50 @@
+// Every user-visible string lives here; translate this file to localize the UI.
 export const MESSAGES = {
   APP_TITLE: "Web File Browser",
-  BREADCRUMB: "パンくずリスト",
+  BREADCRUMB: "Breadcrumb",
   BREADCRUMB_ROOT: "TOP",
-  BACK: "戻る",
-  CLOSE_MODAL: "モーダルを閉じる",
-  FILE_ACTIONS: "ファイル操作",
+  BACK: "Back",
+  CLOSE_MODAL: "Close dialog",
+  FILE_ACTIONS: "File actions",
   CONFIRM: "OK",
-  FILE_LOAD_ERROR: "ファイルの読み込み中にエラーが発生しました。",
-  FILE_UPLOAD_ERROR: "アップロードに失敗しました。",
-  FILE_RENAME_ERROR: "名前の変更に失敗しました。",
-  FILE_MOVE_ERROR: "移動に失敗しました。",
-  FILE_DELETE_ERROR: "削除に失敗しました。",
-  NO_DATA: "データはありません",
-  LOADING: "読み込み中...",
-  UPLOAD: "アップロード",
-  RENAME: "名前を変更",
-  MOVE: "移動",
-  DELETE: "削除",
-  SELECT_DESTINATION: "移動先を選択",
-  NO_DIRECTORIES: "ディレクトリがありません",
-  CONFIRM_DELETE: "削除しますか",
-  INVALID_NAME: "この名前は使用できません",
-  INVALID_NAME_CHARACTERS: "使用できない文字が含まれています",
-  ERROR: "エラー",
-  UPLOAD_FILE_ARIA_LABEL: "ファイルをアップロード",
-  FILE_UPLOAD_BUTTON_ARIA_LABEL: "アップロードするファイルを選択",
-  NAVIGATE_PARENT: "親ディレクトリへ移動",
-  UPLOAD_FILES: "アップロード",
-  UPLOAD_FILES_ARIA_LABEL: "アップロード",
-  MULTI_FILE_UPLOAD_SUCCESS: "すべてのファイルをアップロードしました",
-  MULTI_FILE_UPLOAD_PARTIAL_ERROR: "一部のファイルのアップロードに失敗しました",
-  DISMISS_TOAST: "通知を閉じる",
+  FILE_LOAD_ERROR: "Failed to load files.",
+  FILE_UPLOAD_ERROR: "Upload failed.",
+  FILE_RENAME_ERROR: "Rename failed.",
+  FILE_MOVE_ERROR: "Move failed.",
+  FILE_DELETE_ERROR: "Delete failed.",
+  NO_DATA: "No items",
+  LOADING: "Loading...",
+  UPLOAD: "Upload",
+  RENAME: "Rename",
+  MOVE: "Move",
+  DELETE: "Delete",
+  SELECT_DESTINATION: "Select destination",
+  NO_DIRECTORIES: "No folders",
+  CONFIRM_DELETE: "Delete this item?",
+  INVALID_NAME: "This name can't be used",
+  INVALID_NAME_CHARACTERS: "The name contains characters that aren't allowed",
+  ERROR: "Error",
+  UPLOAD_FILE_ARIA_LABEL: "Upload file",
+  FILE_UPLOAD_BUTTON_ARIA_LABEL: "Choose files to upload",
+  NAVIGATE_PARENT: "Go to parent folder",
+  UPLOAD_FILES: "Upload",
+  UPLOAD_FILES_ARIA_LABEL: "Upload",
+  MULTI_FILE_UPLOAD_SUCCESS: "All files uploaded",
+  MULTI_FILE_UPLOAD_PARTIAL_ERROR: "Some files failed to upload",
+  DISMISS_TOAST: "Dismiss notification",
 } as const;
 
 export const getFileItemAriaLabel = (
   name: string,
   type: "file" | "directory",
-) => `${name}、${type === "directory" ? "フォルダ" : "ファイル"}`;
+) => `${name}, ${type === "directory" ? "folder" : "file"}`;
 
 export const getOpenFileAriaLabel = (name: string) =>
-  `${name} を新しいタブで開く`;
+  `Open ${name} in a new tab`;
 
-export const getImageAlt = (name: string) => `${name} のプレビュー`;
+export const getImageAlt = (name: string) => `Preview of ${name}`;
 
-export const getMultiFileUploadCountLabel = (count: number) =>
-  `${count} 件のファイル`;
+export const getMultiFileUploadCountLabel = (count: number) => `${count} files`;
 
 export const getMultiFileUploadProgressLabel = (
   current: number,

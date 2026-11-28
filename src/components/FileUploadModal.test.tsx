@@ -59,7 +59,7 @@ describe("FileUploadModal", () => {
 
   it("does not call onSuccess when the upload fails", async () => {
     const user = userEvent.setup();
-    const uploadFile = vi.fn().mockRejectedValue(new Error("アップロード失敗"));
+    const uploadFile = vi.fn().mockRejectedValue(new Error("Upload failed"));
     mockedUseFileUpload.mockReturnValue(hookReturn({ uploadFile }));
     const { onSuccess } = renderModal();
 
@@ -74,12 +74,10 @@ describe("FileUploadModal", () => {
   });
 
   it("shows the error reported by the upload hook", () => {
-    mockedUseFileUpload.mockReturnValue(
-      hookReturn({ error: "アップロード失敗" }),
-    );
+    mockedUseFileUpload.mockReturnValue(hookReturn({ error: "Upload failed" }));
     renderModal();
 
-    expect(screen.getByText("アップロード失敗")).toBeInTheDocument();
+    expect(screen.getByText("Upload failed")).toBeInTheDocument();
   });
 
   it("disables the upload button while uploading", () => {

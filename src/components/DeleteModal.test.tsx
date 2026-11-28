@@ -64,7 +64,7 @@ describe("DeleteModal", () => {
 
   it("keeps the modal open when the delete fails", async () => {
     const user = userEvent.setup();
-    const deleteFile = vi.fn().mockRejectedValue(new Error("削除失敗"));
+    const deleteFile = vi.fn().mockRejectedValue(new Error("Delete failed"));
     mockedUseDelete.mockReturnValue(hookReturn({ deleteFile }));
     const { onSuccess } = renderModal();
 
@@ -78,10 +78,10 @@ describe("DeleteModal", () => {
   });
 
   it("shows the error reported by the delete hook", () => {
-    mockedUseDelete.mockReturnValue(hookReturn({ error: "削除失敗" }));
+    mockedUseDelete.mockReturnValue(hookReturn({ error: "Delete failed" }));
     renderModal();
 
-    expect(screen.getByText("削除失敗")).toBeInTheDocument();
+    expect(screen.getByText("Delete failed")).toBeInTheDocument();
   });
 
   it("disables the confirm button while deleting", () => {

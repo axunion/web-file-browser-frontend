@@ -10,11 +10,11 @@ describe("ErrorModal", () => {
   });
 
   it("renders the error title and message inside a dialog", () => {
-    render(<ErrorModal onClose={vi.fn()}>読み込みに失敗しました</ErrorModal>);
+    render(<ErrorModal onClose={vi.fn()}>Failed to load</ErrorModal>);
 
     expect(screen.getByRole("dialog")).toBeInTheDocument();
     expect(screen.getByText(MESSAGES.ERROR)).toBeInTheDocument();
-    expect(screen.getByText("読み込みに失敗しました")).toBeInTheDocument();
+    expect(screen.getByText("Failed to load")).toBeInTheDocument();
   });
 
   it("calls onClose after the close button is clicked and the animation ends", async () => {

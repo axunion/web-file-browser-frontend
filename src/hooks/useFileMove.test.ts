@@ -39,7 +39,7 @@ describe("useFileMove", () => {
   it("exposes the API error message when the move fails", async () => {
     vi.mocked(global.fetch).mockResolvedValueOnce(
       new Response(
-        JSON.stringify({ status: "error", message: "移動できません" }),
+        JSON.stringify({ status: "error", message: "Cannot move" }),
         { status: 200 },
       ),
     );
@@ -58,7 +58,7 @@ describe("useFileMove", () => {
       }
     });
 
-    expect(result.current.error).toBe("移動できません");
+    expect(result.current.error).toBe("Cannot move");
     expect(result.current.isLoading).toBe(false);
   });
 

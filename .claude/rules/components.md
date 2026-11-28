@@ -60,7 +60,7 @@ export default Xxx;
 ## User-Facing Text
 
 - Every user-visible string comes from the `MESSAGES` constant
-  (`src/constants/messages.ts`) — never hardcode Japanese in JSX.
+  (`src/constants/messages.ts`) — never hardcode them in JSX.
 
 ## State
 

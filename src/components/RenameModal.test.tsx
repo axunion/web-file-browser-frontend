@@ -283,7 +283,7 @@ describe("RenameModal", () => {
 
   describe("error path", () => {
     it("keeps the modal open when the rename fails", async () => {
-      const renameFile = vi.fn().mockRejectedValue(new Error("名前変更失敗"));
+      const renameFile = vi.fn().mockRejectedValue(new Error("Rename failed"));
       const onSuccess = vi.fn();
       mockedUseFileRename.mockReturnValue({
         isLoading: false,
@@ -314,7 +314,7 @@ describe("RenameModal", () => {
     it("shows the hook's error until the user edits the name again", async () => {
       mockedUseFileRename.mockReturnValue({
         isLoading: false,
-        error: "名前変更失敗",
+        error: "Rename failed",
         renameFile: vi.fn(),
         abort: vi.fn(),
       });
@@ -328,18 +328,18 @@ describe("RenameModal", () => {
         />,
       );
 
-      expect(screen.getByText("名前変更失敗")).toBeInTheDocument();
+      expect(screen.getByText("Rename failed")).toBeInTheDocument();
 
       await typeNewName("photo-renamed");
 
-      expect(screen.queryByText("名前変更失敗")).not.toBeInTheDocument();
+      expect(screen.queryByText("Rename failed")).not.toBeInTheDocument();
     });
 
     it("shows the request error again after resubmitting an edited name", async () => {
       const hook = {
         isLoading: false,
-        error: "名前変更失敗" as string | null,
-        renameFile: vi.fn().mockRejectedValue(new Error("再度失敗")),
+        error: "Rename failed" as string | null,
+        renameFile: vi.fn().mockRejectedValue(new Error("Failed again")),
         abort: vi.fn(),
       };
       mockedUseFileRename.mockImplementation(() => hook);
@@ -354,10 +354,10 @@ describe("RenameModal", () => {
       );
 
       const { user } = await typeNewName("photo-renamed");
-      expect(screen.queryByText("名前変更失敗")).not.toBeInTheDocument();
+      expect(screen.queryByText("Rename failed")).not.toBeInTheDocument();
 
       await user.click(screen.getByRole("button", { name: MESSAGES.CONFIRM }));
-      hook.error = "再度失敗";
+      hook.error = "Failed again";
       rerender(
         <RenameModal
           item={{ name: "photo.jpg", type: "file" }}
@@ -367,7 +367,7 @@ describe("RenameModal", () => {
         />,
       );
 
-      expect(await screen.findByText("再度失敗")).toBeInTheDocument();
+      expect(await screen.findByText("Failed again")).toBeInTheDocument();
     });
   });
 

@@ -77,7 +77,7 @@ describe("MoveModal", () => {
 
   it("does not call onSuccess when the move fails", async () => {
     const user = userEvent.setup();
-    const moveFile = vi.fn().mockRejectedValue(new Error("移動失敗"));
+    const moveFile = vi.fn().mockRejectedValue(new Error("Move failed"));
     mockedUseFileMove.mockReturnValue(hookReturn({ moveFile }));
     const { onSuccess } = renderModal();
 
@@ -91,10 +91,10 @@ describe("MoveModal", () => {
   });
 
   it("shows the error reported by the move hook", () => {
-    mockedUseFileMove.mockReturnValue(hookReturn({ error: "移動失敗" }));
+    mockedUseFileMove.mockReturnValue(hookReturn({ error: "Move failed" }));
     renderModal();
 
-    expect(screen.getByText("移動失敗")).toBeInTheDocument();
+    expect(screen.getByText("Move failed")).toBeInTheDocument();
   });
 
   it("lists the directories of the folder being browsed", async () => {
