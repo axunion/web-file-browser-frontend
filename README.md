@@ -13,7 +13,7 @@ This repository contains the frontend only; it requires a separate backend API s
 
 ## Requirements
 
-- Node.js 24
+- Node.js 26
 - pnpm
 
 ## Getting Started
@@ -69,6 +69,14 @@ The app expects the following endpoints under `VITE_ENDPOINT_API`:
 | POST   | `rename/`         | Rename a file or folder  |
 | POST   | `move/`           | Move a file or folder    |
 | POST   | `delete/`         | Delete a file or folder  |
+
+## Security
+
+This frontend has no authentication or access control: it sends no credentials,
+and file contents are loaded directly from URLs under `VITE_ENDPOINT_DATA`.
+Anyone who can reach the backend can read and change its files, so restrict
+access in the backend or a reverse proxy in front of it before exposing it
+beyond a trusted network.
 
 ## License
 
